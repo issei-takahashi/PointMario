@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PointGrabber", "PointGrabbe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataLoader", "DataLoader\DataLoader.vcxproj", "{11D900D6-AD23-4D61-83A0-066FD23F8691}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MirrorSimulation", "MirrorSimulation\MirrorSimulation.vcxproj", "{BBCD8BFB-0FFE-43FF-928E-9262A0071204}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +21,10 @@ Global
 		{11D900D6-AD23-4D61-83A0-066FD23F8691}.Debug|Win32.Build.0 = Debug|Win32
 		{11D900D6-AD23-4D61-83A0-066FD23F8691}.Release|Win32.ActiveCfg = Release|Win32
 		{11D900D6-AD23-4D61-83A0-066FD23F8691}.Release|Win32.Build.0 = Release|Win32
+		{BBCD8BFB-0FFE-43FF-928E-9262A0071204}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BBCD8BFB-0FFE-43FF-928E-9262A0071204}.Debug|Win32.Build.0 = Debug|Win32
+		{BBCD8BFB-0FFE-43FF-928E-9262A0071204}.Release|Win32.ActiveCfg = Release|Win32
+		{BBCD8BFB-0FFE-43FF-928E-9262A0071204}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

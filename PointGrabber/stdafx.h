@@ -23,7 +23,23 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/sample_consensus/method_types.h>
 #include <pcl/filters/approximate_voxel_grid.h>
-
+// visualizer
+#include <pcl/common/common_headers.h>
+#include <pcl/common/common_headers.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/console/parse.h>
+// openni_viwer
+#include <pcl/common/time.h> //fps calculations
+#include <pcl/io/openni_grabber.h>
+#include <pcl/visualization/point_cloud_handlers.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/image_viewer.h>
+#include <pcl/console/print.h>
+#include <pcl/console/parse.h>
+#include <pcl/console/time.h>
 
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください。
 
+
+#include <boost/thread/thread.hpp>

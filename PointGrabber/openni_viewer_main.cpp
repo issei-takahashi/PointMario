@@ -97,7 +97,7 @@ void mouse_callback (const pcl::visualization::MouseEvent& mouse_event, void* co
 }
 
 /* ---[ */
-int main (int argc, char** argv)
+int oni_main (int argc, char** argv)
 {
 	if (argc > 1)
 	{

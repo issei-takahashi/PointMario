@@ -40,17 +40,27 @@ void issei::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>& cloud, double thresho
 	}
 }
 
-void issei::filterA(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
 	// フィルタリング
-	{
+	if( cloud ){
 		static pcl::PassThrough<pcl::PointXYZRGBA> pass; // 外れ値除去フィルタ
 		static pcl::VoxelGrid< pcl::PointXYZRGBA > sor; // ダウンサンプリングフィルタ
+		static bool isInitDone = false;
+		if( isInitDone == false ){
+			// 外れ値除去フィルタの設定
+			pass.setFilterFieldName ("z");
+			pass.setFilterLimits (0.0, 0.8);
+			// ダウンサンプリングフィルタの設定
+			static double leaf = 0.01;
+			sor.setLeafSize (leaf,leaf, leaf);
+			isInitDone = true;
+		}
 
 		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_pass_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
 		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_down_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
 		// はずれ値除去フィルタ
-		pass.setInputCloud (dst);
+		pass.setInputCloud (cloud);
 		///pass.setFilterLimitsNegative (true);
 		pass.filter (*cloud_pass_filtered);
 		// ダウンサンプリングフィルタ
@@ -58,6 +68,6 @@ void issei::filterA(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, 
 		sor.filter (*cloud_down_filtered);
 		// 平面抽出
 		issei::segmentate( *cloud_down_filtered, 0.005 );
-		dst = cloud_down_filtered;
+		dst = cloud_down_filtered->makeShared();
 	}
 }

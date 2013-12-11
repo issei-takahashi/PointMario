@@ -61,7 +61,7 @@ public:
 };
 
 
-int main ()
+int grabber_main ()
 {
 	SimpleOpenNIViewer v;
 	v.run ();

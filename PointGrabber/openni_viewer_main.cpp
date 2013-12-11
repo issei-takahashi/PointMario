@@ -57,8 +57,12 @@ struct EventHelper
 	{
 		FPS_CALC ("callback");
 
-		cld_mutex.lock ();
-		g_cloud = cloud;
+		cld_mutex.lock ();	
+		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
+		issei::filterA(cloud,filtered_cloud);
+		if( filtered_cloud ){
+			g_cloud = filtered_cloud->makeShared();
+		}
 		cld_mutex.unlock ();
 	}
 
@@ -97,7 +101,7 @@ void mouse_callback (const pcl::visualization::MouseEvent& mouse_event, void* co
 }
 
 /* ---[ */
-int oni_main (int argc, char** argv)
+int main (int argc, char** argv)
 {
 	if (argc > 1)
 	{
@@ -157,12 +161,10 @@ int oni_main (int argc, char** argv)
 			// ‰Šú‰»
 			if (!cld_init)
 			{
-				cld->getRenderWindow ()->SetSize (g_cloud->width, g_cloud->height);
-				cld->getRenderWindow ()->SetPosition (g_cloud->width, 0);
+				cld->getRenderWindow ()->SetSize (640, 480);
+				cld->getRenderWindow ()->SetPosition (200,200);
 				cld_init = !cld_init;
 			}
-			pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
-			issei::filterA(g_cloud,filtered_cloud);
 
 			pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> handler (g_cloud);
 			// ‚±‚±‚Åg_cloud‚©‚çƒrƒ…ƒ[‚É“_ŒQ‚ğ“¯Šú

@@ -10,6 +10,13 @@
     <ClCompile Include="visual_main.cpp" />
     <ClCompile Include="openni_viewer_main.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
+    <ClCompile Include="ObjectDetection.cpp" />
+    <ClCompile Include="openniDevice.cpp">
+      <Filter>NI_PCL</Filter>
+    </ClCompile>
+    <ClCompile Include="ni_pcl_main.cpp">
+      <Filter>NI_PCL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -19,10 +26,16 @@
     </ClInclude>
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
+    <ClInclude Include="openniDevice.h">
+      <Filter>NI_PCL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">
       <UniqueIdentifier>{db50c03f-3156-479c-a77f-541af8c6fb1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NI_PCL">
+      <UniqueIdentifier>{53011fdd-70b4-41ad-80ff-62f8c8d7e840}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

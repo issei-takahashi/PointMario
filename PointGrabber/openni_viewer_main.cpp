@@ -30,8 +30,8 @@
 #endif
 
 boost::mutex cld_mutex, img_mutex;
-pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr g_cloud;
-boost::shared_ptr<openni_wrapper::Image> g_image;
+pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
+boost::shared_ptr<openni_wrapper::Image> spImage;
 
 void printHelp (int argc, char **argv)
 {
@@ -62,7 +62,7 @@ struct EventHelper
 		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
 		issei::filterA(cloud,filtered_cloud);
 		if( filtered_cloud ){
-			g_cloud = filtered_cloud->makeShared();
+			spcCloud = filtered_cloud->makeShared();
 		}
 		cld_mutex.unlock ();
 	}
@@ -76,7 +76,7 @@ struct EventHelper
 		static boost::shared_ptr<openni_wrapper::Image> filtered_image;
 		issei::cvt2Mat(image,filtered_image);
 		if( filtered_image ){
-			g_image = image;
+			spImage = image;
 		}
 		img_mutex.unlock ();
 	}
@@ -162,7 +162,7 @@ int main (int argc, char** argv)
 		FPS_CALC ("drawing");
 
 		// Add the cloud
-		if (g_cloud && cld_mutex.try_lock ())
+		if (spcCloud && cld_mutex.try_lock ())
 		{
 			// 初期化
 			if (!cld_init)
@@ -172,11 +172,11 @@ int main (int argc, char** argv)
 				cld_init = !cld_init;
 			}
 
-			pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> handler (g_cloud);
-			// ここでg_cloudからビュワーに点群を同期
-			if (!cld->updatePointCloud (g_cloud, handler, "OpenNICloud"))
+			pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBA> handler (spcCloud);
+			// ここでspcCloudからビュワーに点群を同期
+			if (!cld->updatePointCloud (spcCloud, handler, "OpenNICloud"))
 			{
-				cld->addPointCloud (g_cloud, handler, "OpenNICloud");
+				cld->addPointCloud (spcCloud, handler, "OpenNICloud");
 				cld->resetCameraViewpoint ("OpenNICloud");
 			}
 
@@ -185,20 +185,20 @@ int main (int argc, char** argv)
 
 #if SHOW_IMAGE
 		// Add the image
-		if (g_image && img_mutex.try_lock ())
+		if (spImage && img_mutex.try_lock ())
 		{
-			if (g_image->getEncoding() == openni_wrapper::Image::RGB)
-				img->showRGBImage (g_image->getMetaData ().Data (), 
-				g_image->getWidth (), g_image->getHeight ());
+			if (spImage->getEncoding() == openni_wrapper::Image::RGB)
+				img->showRGBImage (spImage->getMetaData ().Data (), 
+				spImage->getWidth (), spImage->getHeight ());
 			else
 			{
-				if (rgb_data_size < g_image->getWidth () * g_image->getHeight ())
+				if (rgb_data_size < spImage->getWidth () * spImage->getHeight ())
 				{
-					rgb_data_size = g_image->getWidth () * g_image->getHeight ();
+					rgb_data_size = spImage->getWidth () * spImage->getHeight ();
 					rgb_data = new unsigned char [rgb_data_size * 3];
 				}
-				g_image->fillRGB (g_image->getWidth (), g_image->getHeight (), rgb_data);
-				img->showRGBImage (rgb_data, g_image->getWidth (), g_image->getHeight ());
+				spImage->fillRGB (spImage->getWidth (), spImage->getHeight (), rgb_data);
+				img->showRGBImage (rgb_data, spImage->getWidth (), spImage->getHeight ());
 			}
 			img_mutex.unlock ();
 		}

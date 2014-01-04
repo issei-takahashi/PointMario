@@ -79,7 +79,7 @@ void issei::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 	float x=0,y=0,z=0;
 	int rcount=0;
 	for(int count=0;count<cloud.points.size();count++){
-		if( cloud.points[count].r > 100 && 
+		if( cloud.points[count].r > 50 && 
 			cloud.points[count].r > cloud.points[count].g*1.5 &&
 			cloud.points[count].r > cloud.points[count].b*1.5 ){
 			cloud.points[count].r = 0;
@@ -150,6 +150,9 @@ void issei::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boos
 				if (rgb_data_size < input->getWidth () * input->getHeight ())
 				{
 					rgb_data_size = input->getWidth () * input->getHeight ();
+					if( rgb_data ){
+						delete rgb_data;
+					}
 					rgb_data = new unsigned char [rgb_data_size * 3];
 				}
 				input->fillRGB (input->getWidth (), input->getHeight (), rgb_data);

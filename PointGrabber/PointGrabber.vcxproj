@@ -91,14 +91,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Base.h" />
+    <ClInclude Include="FileIO.h" />
+    <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Base.cpp" />
+    <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="MeasureBasement.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="openni_viewer_main.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
@@ -106,6 +110,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

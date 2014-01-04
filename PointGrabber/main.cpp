@@ -1,7 +1,13 @@
-#include "Base.h"
+#include "MeasureBasement.h"
 
 int main()
 {
-	Base base;
-	return base.run();
+	MeasureBasement base;
+	try{
+		return base.measureLoop();
+	}
+	catch( std::exception& ex ){
+		cout << ex.what() << endl;
+	}
+	return -1;
 }

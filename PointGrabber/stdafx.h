@@ -7,10 +7,27 @@
 
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
-#include <iostream>
 #include <string>
+#include <vector>
+#include <map>
+#include <list>
+#include <deque>
+#include <queue>
+#include <stack>
+//#include <memory>
+#include <fstream>
+#include <iostream>
+#include <cassert>
+#include <algorithm>
+#include <functional>
+#include <sstream>
+
+
+//#include <string.h>
+//#include <Windows.h>
+#include <math.h>
+//#include <process.h>
+#include  <time.h>
 
 /* ---------- PCL ---------- */
 #include <pcl/io/pcd_io.h>
@@ -80,10 +97,32 @@
 
 /* ---------- boost ---------- */
 #include <boost/thread/thread.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/map.hpp> 
+#include <boost/serialization/list.hpp> 
+#include <boost/serialization/vector.hpp> 
+#include <boost/serialization/nvp.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>    // テキスト形式アーカイブに書き込み
+#include <boost/archive/text_iarchive.hpp>    // テキスト形式アーカイブから読み込み
+#include <boost/archive/binary_oarchive.hpp>  // バイナリ形式アーカイブに書き込み
+#include <boost/archive/binary_iarchive.hpp>  // バイナリ形式アーカイブから読み込み
+
+#include <boost/algorithm/string.hpp>
+
+#include <boost/lambda/lambda.hpp>
+
+#include <boost/make_shared.hpp>
+#include <boost/shared_array.hpp>
 
 /* OpenCV1 */
-#include<opencv/cv.h>  
-#include<opencv/highgui.h>
+#include <opencv/cv.h>  
+#include <opencv/highgui.h>
 
 /* ---------- OpenCV2.2 ---------- */
 #include <opencv2/core/core.hpp>

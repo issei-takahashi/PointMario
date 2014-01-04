@@ -22,7 +22,7 @@ public:
 			this->sor.setInputCloud (cloud_pass_filterd);
 			this->sor.filter (*cloud_down_filtered);
 			// 平面抽出
-			issei::segmentate( *cloud_down_filtered, 0.005 );
+			issei::segmentate( cloud_down_filtered, 0.005 );
 			// 表示
 			viewer.showCloud (cloud_down_filtered);
 		}

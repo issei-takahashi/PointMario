@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 
+/* ---------- PCL ---------- */
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/ModelCoefficients.h>
@@ -39,7 +40,52 @@
 #include <pcl/console/parse.h>
 #include <pcl/console/time.h>
 
-// TODO: プログラムに必要な追加ヘッダーをここで参照してください。
+#include <pcl/ModelCoefficients.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/segmentation/extract_clusters.h>
+#include <pcl/console/parse.h>
+#include <pcl/visualization/cloud_viewer.h>
+
+ #include "pcl/segmentation/sac_segmentation.h"
+
+// Sample Consensus methods
+#include "pcl/sample_consensus/method_types.h"
+#include "pcl/sample_consensus/sac.h"
+#include "pcl/sample_consensus/lmeds.h"
+#include "pcl/sample_consensus/mlesac.h"
+#include "pcl/sample_consensus/msac.h"
+#include "pcl/sample_consensus/ransac.h"
+#include "pcl/sample_consensus/rmsac.h"
+#include "pcl/sample_consensus/rransac.h"
+
+// Sample Consensus models
+#include "pcl/sample_consensus/model_types.h"
+#include "pcl/sample_consensus/sac_model.h"
+#include "pcl/sample_consensus/sac_model_circle.h"
+#include "pcl/sample_consensus/sac_model_cylinder.h"
+#include "pcl/sample_consensus/sac_model_line.h"
+#include "pcl/sample_consensus/sac_model_normal_plane.h"
+#include "pcl/sample_consensus/sac_model_parallel_plane.h"
+#include "pcl/sample_consensus/sac_model_normal_parallel_plane.h"
+#include "pcl/sample_consensus/sac_model_parallel_line.h"
+#include "pcl/sample_consensus/sac_model_perpendicular_plane.h"
+#include "pcl/sample_consensus/sac_model_plane.h"
+#include "pcl/sample_consensus/sac_model_sphere.h"
 
 
+/* ---------- boost ---------- */
 #include <boost/thread/thread.hpp>
+
+/* OpenCV1 */
+#include<opencv/cv.h>  
+#include<opencv/highgui.h>
+
+/* ---------- OpenCV2.2 ---------- */
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>

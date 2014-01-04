@@ -3,7 +3,7 @@
 
 #define MEASURE_FUNCTION_TIME
 //#define SHOW_IMAGE !((VTK_MAJOR_VERSION == 5)&&(VTK_MINOR_VERSION <= 4))
-#define SHOW_IMAGE 0
+#define SHOW_IMAGE 1
 
 #define SHOW_FPS 1
 #if SHOW_FPS
@@ -70,8 +70,13 @@ struct EventHelper
 	void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
 	{
 		FPS_CALC ("image callback");
+
 		img_mutex.lock ();
-		g_image = image;
+		static boost::shared_ptr<openni_wrapper::Image> filtered_image;
+		issei::cvt2Mat(image,filtered_image);
+		if( filtered_image ){
+			g_image = image;
+		}
 		img_mutex.unlock ();
 	}
 #endif  

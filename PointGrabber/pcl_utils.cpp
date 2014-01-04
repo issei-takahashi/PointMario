@@ -1,4 +1,5 @@
 #include "pcl_utils.h"
+#include "FileIO.h"
 
 pcl::PointIndices::Ptr 
 issei::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
@@ -76,12 +77,14 @@ void issei::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 
 void issei::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 {
-	float x=0,y=0,z=0;
+	double x=0,y=0,z=0;
 	int rcount=0;
+	static double RED_VAL = FileIO::getConst("RED_VAL");
+	static double RED_RATE = FileIO::getConst("RED_RATE");
 	for(int count=0;count<cloud.points.size();count++){
-		if( cloud.points[count].r > 50 && 
-			cloud.points[count].r > cloud.points[count].g*1.5 &&
-			cloud.points[count].r > cloud.points[count].b*1.5 ){
+		if( cloud.points[count].r > RED_VAL && 
+			cloud.points[count].r > cloud.points[count].g*RED_RATE &&
+			cloud.points[count].r > cloud.points[count].b*RED_RATE ){
 			cloud.points[count].r = 0;
 			cloud.points[count].g = 255;
 			cloud.points[count].b = 0;
@@ -100,6 +103,11 @@ void issei::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 
 void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
+	static double OUT_FILTER_LOWER = FileIO::getConst("OUT_FILTER_LOWER");
+	static double OUT_FILTER_UPPER = FileIO::getConst("OUT_FILTER_UPPER");
+	static double DOWN_FILTER_LEAF = FileIO::getConst("DOWN_FILTER_LEAF"); // 大きいほど除去する
+	static int const filterNum = 3;
+	static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloudPtrs[filterNum+1];
 	// フィルタリング
 	if( cloud ){
 		static pcl::PassThrough<pcl::PointXYZRGBA> pass; // 外れ値除去フィルタ
@@ -108,22 +116,37 @@ void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 		if( isInitDone == false ){
 			// 外れ値除去フィルタの設定
 			pass.setFilterFieldName ("z");
-			pass.setFilterLimits (0.0, 3.0);
+			pass.setFilterLimits (OUT_FILTER_LOWER, OUT_FILTER_UPPER);
 			// ダウンサンプリングフィルタの設定
-			static double leaf = 0.01; // 大きいほど除去する
-			sor.setLeafSize (leaf,leaf, leaf);
+			if( DOWN_FILTER_LEAF > 0 ){
+				sor.setLeafSize (DOWN_FILTER_LEAF,DOWN_FILTER_LEAF, DOWN_FILTER_LEAF);
+			}
+			for( int i=0; i<filterNum; i++ ){
+				cloudPtrs[i] = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+			}
 			isInitDone = true;
 		}
 
-		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_pass_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
-		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_down_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
+		int filterCount = 0;
 		// はずれ値除去フィルタ
-		pass.setInputCloud (cloud);
-		///pass.setFilterLimitsNegative (true);
-		pass.filter (*cloud_pass_filtered);
+		if( OUT_FILTER_LOWER > 0 && OUT_FILTER_UPPER > 0 ){
+			pass.setInputCloud ( cloud );
+			///pass.setFilterLimitsNegative (true);
+			filterCount++;
+			pass.filter ( *cloudPtrs[filterCount] );
+			
+		}
 		// ダウンサンプリングフィルタ
-		sor.setInputCloud (cloud_pass_filtered);
-		sor.filter (*cloud_down_filtered);
+		if( DOWN_FILTER_LEAF > 0 ){
+			if( filterCount > 0 ){
+				sor.setInputCloud ( cloudPtrs[filterCount] );
+			}
+			else{
+				sor.setInputCloud ( cloud );
+			}
+			filterCount++;
+			sor.filter ( *cloudPtrs[filterCount] );
+		}
 		// 平面抽出
 		//auto inliers = issei::segmentate( cloud_down_filtered, 0.001 ); //大きいほどアバウトに検出
 		//auto cloud_plane_filtered = filter( cloud_down_filtered, inliers, true );
@@ -131,8 +154,8 @@ void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 		// 格納されている順番に赤く着色
 		//issei::redIteration( *cloud_down_filtered );
 		// 赤色を検出して緑色に変換
-		issei:redDetection( *cloud_down_filtered );
-		dst = cloud_down_filtered->makeShared();
+		issei:redDetection( *cloudPtrs[filterCount] );
+		dst = cloudPtrs[filterCount]->makeShared();
 	}
 }
 

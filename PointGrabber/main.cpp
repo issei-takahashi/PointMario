@@ -1,9 +1,11 @@
 #include "MeasureBasement.h"
+#include "FileIO.h"
 
 int main()
 {
-	MeasureBasement base;
 	try{
+		FileIO::loadAllData();
+		MeasureBasement base;
 		return base.measureLoop();
 	}
 	catch( std::exception& ex ){

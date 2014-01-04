@@ -25,7 +25,7 @@ void FileIO::loadAllData()
 	}
 	// コンフィグデータ(xml)
 	{
-		FileIO::loadConfigData(path::config_latest);
+		//FileIO::loadConfigData(path::config_latest);
 	}
 }
 

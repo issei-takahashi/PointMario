@@ -1,39 +1,7 @@
-#if 0
-
+#include "Base.h"
 #include "pcl_utils.h"
 
-#define MEASURE_FUNCTION_TIME
-//#define SHOW_IMAGE !((VTK_MAJOR_VERSION == 5)&&(VTK_MINOR_VERSION <= 4))
-#define SHOW_IMAGE 1
-
-#define SHOW_FPS 1
-#if SHOW_FPS
-#define FPS_CALC(_WHAT_) \
-	do \
-{ \
-	static unsigned count = 0;\
-	static double last = pcl::getTime ();\
-	double now = pcl::getTime (); \
-	++count; \
-	if (now - last >= 1.0) \
-	{ \
-	std::cout << "Average framerate("<< _WHAT_ << "): " << double(count)/double(now - last) << " Hz" <<  std::endl; \
-	count = 0; \
-	last = now; \
-	} \
-}while(false)
-#else
-#define FPS_CALC(_WHAT_) \
-	do \
-{ \
-}while(false)
-#endif
-
-boost::mutex cld_mutex, img_mutex;
-pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr g_cloud;
-boost::shared_ptr<openni_wrapper::Image> g_image;
-
-void printHelp (int argc, char **argv)
+void Base::printHelp (int argc, char **argv)
 {
 	using pcl::console::print_error;
 	using pcl::console::print_info;
@@ -46,42 +14,43 @@ void printHelp (int argc, char **argv)
 	print_info ("\n");
 }
 
-// Create the PCLVisualizer object
-boost::shared_ptr<pcl::visualization::PCLVisualizer> cld;
-#if SHOW_IMAGE
-boost::shared_ptr<pcl::visualization::ImageViewer> img;
-#endif
 
-struct EventHelper
+Base::EventHelper::EventHelper( Base* _aBase )
+	:aBase(_aBase)
 {
-	void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
-	{
-		FPS_CALC ("callback");
 
-		cld_mutex.lock ();	
-		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
-		issei::filterA(cloud,filtered_cloud);
-		if( filtered_cloud ){
-			g_cloud = filtered_cloud->makeShared();
-		}
-		cld_mutex.unlock ();
+}
+
+void Base::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
+{
+	FPS_CALC ("callback");
+
+	this->aBase->cld_mutex.lock ();	
+
+	static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
+	issei::filterA(cloud,filtered_cloud);
+	if( filtered_cloud ){
+		this->aBase->g_cloud = filtered_cloud->makeShared();
 	}
 
-#if SHOW_IMAGE
-	void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
-	{
-		FPS_CALC ("image callback");
+	this->aBase->cld_mutex.unlock ();
 
-		img_mutex.lock ();
-		static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-		issei::cvt2Mat(image,filtered_image);
-		if( filtered_image ){
-			g_image = image;
-		}
-		img_mutex.unlock ();
+}
+
+void Base::EventHelper::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
+{
+	FPS_CALC ("image callback");
+
+	this->aBase->img_mutex.lock ();
+	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
+	issei::cvt2Mat(image,filtered_image);
+	if( filtered_image ){
+		this->aBase->g_image = image;
 	}
-#endif  
-};
+	this->aBase->img_mutex.unlock ();
+}
+
+
 // Simple callbacks.
 void keyboard_callback (const pcl::visualization::KeyboardEvent& event, void* cookie)
 {
@@ -106,28 +75,16 @@ void mouse_callback (const pcl::visualization::MouseEvent& mouse_event, void* co
 	}
 }
 
-/* ---[ */
-int main (int argc, char** argv)
+int Base::run ()
 {
-	if (argc > 1)
-	{
-		for (int i = 1; i < argc; i++)
-		{
-			if (std::string (argv[i]) == "-h")
-			{
-				printHelp (argc, argv);
-				return (-1);
-			}
-		}
-	}
 
-	EventHelper event_helper;
+	EventHelper event_helper(this);
 	std::string device_id = "";
-	pcl::console::parse_argument (argc, argv, "-dev", device_id);
+	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
 
 	pcl::Grabber* interface = new pcl::OpenNIGrabber (device_id);
 
-	cld.reset (new pcl::visualization::PCLVisualizer (argc, argv, "OpenNI Viewer"));
+	cld.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
 
 	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 	std::string keyMsg3D ("Key event for PCL Visualizer");
@@ -136,7 +93,6 @@ int main (int argc, char** argv)
 	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
 	boost::signals2::connection c1 = interface->registerCallback (f);
 
-#if SHOW_IMAGE
 	img.reset (new pcl::visualization::ImageViewer ("OpenNI Viewer"));
 	// Register callbacks
 	std::string keyMsg2D ("Key event for image viewer");
@@ -147,7 +103,6 @@ int main (int argc, char** argv)
 	boost::signals2::connection image_connection = interface->registerCallback (image_cb);
 	unsigned char* rgb_data = 0;
 	unsigned rgb_data_size = 0;
-#endif 
 
 	interface->start ();
 	bool cld_init = false;
@@ -156,9 +111,7 @@ int main (int argc, char** argv)
 	{
 		// Render and process events in the two interactors
 		cld->spinOnce (); // ‚±‚±‚Å‰æ–ÊXV
-#if SHOW_IMAGE
 		img->spinOnce ();
-#endif
 		FPS_CALC ("drawing");
 
 		// Add the cloud
@@ -183,7 +136,6 @@ int main (int argc, char** argv)
 			cld_mutex.unlock ();
 		}
 
-#if SHOW_IMAGE
 		// Add the image
 		if (g_image && img_mutex.try_lock ())
 		{
@@ -202,13 +154,10 @@ int main (int argc, char** argv)
 			}
 			img_mutex.unlock ();
 		}
-#endif
 		boost::this_thread::sleep (boost::posix_time::microseconds (100));
 	}
 
 	interface->stop ();
+
+	return 1;
 }
-/* ]--- */
-
-
-#endif

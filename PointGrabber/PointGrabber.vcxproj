@@ -91,27 +91,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Base.h" />
     <ClInclude Include="defines.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="openniDevice.h" />
     <ClInclude Include="pcl_utils.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="grabber_main.cpp" />
+    <ClCompile Include="Base.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ni_pcl_main.cpp" />
-    <ClCompile Include="ObjectDetection.cpp" />
-    <ClCompile Include="openniDevice.cpp" />
     <ClCompile Include="openni_viewer_main.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="visual_main.cpp" />
-    <ClCompile Include="voxel_grid_main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,42 +6,44 @@
 #define getcelld(i,cells) utils::string2double(cells.at(i))
 #define INSERT(MAP,KEY,VAR) MAP.insert(make_pair(KEY,VAR)) 
 
-boost::mutex             FileIO::io_mutex;
-map< string, double >    FileIO::m_const;
-FileIO::ConfigData       FileIO::configData;
+boost::mutex             mario::FileIO::io_mutex;
+map< string, double >    mario::FileIO::m_const;
+mario::FileIO::CoordinatesData       mario::FileIO::coordinatesData;
 
 namespace path
 {
 	static string const const_data = "data/const_data.csv";
-	static string const config_latest = "config/latest.xml";
 };
 
+mario::FileIO::CoordinatesData::CoordinatesData()
+{}
+
 // loadPaths()で読み込んだ全てのパスのデータを読み込み
-void FileIO::loadAllData()
+void mario::FileIO::loadAllData()
 {
 		// 定数データ（csv）
 	{
-		FileIO::loadConst(path::const_data);
-	}
-	// コンフィグデータ(xml)
-	{
-		//FileIO::loadConfigData(path::config_latest);
+		mario::FileIO::loadConst(path::const_data);
 	}
 }
 
 // 定数の値を取得
-double FileIO::getConst( string const & _name )
+double mario::FileIO::getConst( string const & _name )
 {
-	auto it = FileIO::m_const.find( _name );
+	mario::FileIO::io_mutex.lock();
 
-	assert( it != FileIO::m_const.end() );
+	auto it = mario::FileIO::m_const.find( _name );
+	assert( it != mario::FileIO::m_const.end() );
+	auto ret = it->second;
 
-	return it->second;
+	mario::FileIO::io_mutex.unlock();
+	return ret;
 }
 
 // 定数データ読み込み
-void FileIO::loadConst( string const & _path )
+void mario::FileIO::loadConst( string const & _path )
 {
+	mario::FileIO::io_mutex.lock();
 	ifstream ifs( _path );
 	//1行分のバッファ
 	string line;
@@ -59,12 +61,12 @@ void FileIO::loadConst( string const & _path )
 		}
 		string name = getcell(i++,cells);
 		double var = getcelld(i++,cells);
-		INSERT( FileIO::m_const, name, var );
+		INSERT( mario::FileIO::m_const, name, var );
 	}
+	mario::FileIO::io_mutex.unlock();
 }
 
-// パスを指定してコンフィグデータ(xml)読み込み
-void FileIO::loadConfigData( string const & _path )
+void mario::FileIO::write( string const & _path, mario::FileIO::CoordinatesData::ConstPtr & _pData )
 {
 	ifstream ifs( _path );
 	// ファイルがなかったら
@@ -72,12 +74,6 @@ void FileIO::loadConfigData( string const & _path )
 		ofstream ofs( _path );
 		boost::archive::xml_oarchive oa(ofs);
 		// データを書き込む
-		oa << boost::serialization::make_nvp( "Root", FileIO::configData );
-	}
-	// ファイルがあったら
-	else{
-		/// メモリに読み出し
-		boost::archive::xml_iarchive ia(ifs);
-		ia >> boost::serialization::make_nvp( "Root", FileIO::configData );
+		oa << boost::serialization::make_nvp( "Root", *_pData );
 	}
 }

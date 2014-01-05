@@ -1,46 +1,47 @@
 #pragma once
 
+#include "Coordinate.h"
 
-class FileIO
-{
-public:
-	static boost::mutex io_mutex;
+namespace mario{
 
-public:
-	// 全てのデータを読み込み
-	static void loadAllData();
-	// 定数の値を取得
-	static double getConst( string const & _name );
-
-
-	// 実行中に書き換えてセーブするデータ
-	class ConfigData
+	class FileIO
 	{
-		friend class boost::serialization::access;
 	public:
-		ConfigData() 
-			: zoom(1){}
-		double zoom;           // ブロックを100pxから何倍に拡大するか
+		static boost::mutex io_mutex;
+
+	public:
+		static void loadAllData();
+		static double getConst( string const & _name );
+
+	public: 
+		class CoordinatesData{
+			friend class boost::serialization::access;
+		public:
+			CoordinatesData();
+		private:
+			Coordinate<typeR> pointR;
+			Coordinate<typeV> pointV;
+			vector<typeM> v_pointM;
+		private:
+			template<class Archive>
+			void serialize( Archive& ar, unsigned int ver )
+			{
+				ar & boost::serialization::make_nvp("pointR", this->pointR);
+				ar & boost::serialization::make_nvp("pointV", this->pointV);
+				ar & boost::serialization::make_nvp("v_pointM", this->v_pointM);
+			}
+		public:
+			typedef boost::shared_ptr<CoordinatesData> Ptr;
+			typedef boost::shared_ptr<const CoordinatesData> ConstPtr;
+		};
+
 	private:
-		//シリアライズ用
-		template<class Archive>
-		void serialize( Archive& ar, unsigned int ver )
-		{
-			ar & boost::serialization::make_nvp("zoom", this->zoom);
-		}
+		static map< string, double > m_const;   // 定数テーブル
+		static CoordinatesData coordinatesData;
+
+	private:
+		static void loadConst( string const& _path );
+		static void write( string const & _path, mario::FileIO::CoordinatesData::ConstPtr & _pData );
 	};
-
-	static ConfigData configData;
-
-
-private:
-	static map< string, double > m_const;   // 定数テーブル
-
-
-private:
-	// パスを指定して定数データ(csv)読み込み
-	static void loadConst( string const& _path );
-	// パスを指定してコンフィグデータ(xml)読み込み
-	static void loadConfigData( string const & _path );
 
 };

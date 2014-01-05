@@ -2,7 +2,7 @@
 #include "FileIO.h"
 
 pcl::PointIndices::Ptr 
-issei::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
+mario::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
 {
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
@@ -29,7 +29,7 @@ issei::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double thresho
 }
 
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
-issei::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
+mario::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
 {
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr result =
         pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
@@ -61,7 +61,7 @@ bool compare( const pcl::PointXYZRGBA& left, const pcl::PointXYZRGBA& right )
 }
 
 
-void issei::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
+void mario::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 {
 	std::sort(cloud.points.begin(),cloud.points.end(),compare);
 	static int count = 0;
@@ -75,7 +75,7 @@ void issei::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 	};
 }
 
-void issei::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
+void mario::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 {
 	double x=0,y=0,z=0;
 	int rcount=0;
@@ -101,7 +101,7 @@ void issei::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 	cout<<x<<" "<<y<<" "<<z<<endl;
 }
 
-void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
 	static double OUT_FILTER_LOWER = FileIO::getConst("OUT_FILTER_LOWER");
 	static double OUT_FILTER_UPPER = FileIO::getConst("OUT_FILTER_UPPER");
@@ -148,19 +148,19 @@ void issei::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 			sor.filter ( *cloudPtrs[filterCount] );
 		}
 		// 平面抽出
-		//auto inliers = issei::segmentate( cloud_down_filtered, 0.001 ); //大きいほどアバウトに検出
+		//auto inliers = mario::segmentate( cloud_down_filtered, 0.001 ); //大きいほどアバウトに検出
 		//auto cloud_plane_filtered = filter( cloud_down_filtered, inliers, true );
-		//inliers = issei::segmentate( cloud_plane_filtered, 0.001 ); //大きいほどアバウトに検出
+		//inliers = mario::segmentate( cloud_plane_filtered, 0.001 ); //大きいほどアバウトに検出
 		// 格納されている順番に赤く着色
-		//issei::redIteration( *cloud_down_filtered );
+		//mario::redIteration( *cloud_down_filtered );
 		// 赤色を検出して緑色に変換
-		issei:redDetection( *cloudPtrs[filterCount] );
+		mario:redDetection( *cloudPtrs[filterCount] );
 		dst = cloudPtrs[filterCount]->makeShared();
 	}
 }
 
 
-void issei::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boost::shared_ptr<openni_wrapper::Image>& output )
+void mario::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boost::shared_ptr<openni_wrapper::Image>& output )
 {
 	if( input ){
 		try{

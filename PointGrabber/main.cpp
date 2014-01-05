@@ -4,8 +4,8 @@
 int main()
 {
 	try{
-		FileIO::loadAllData();
-		MeasureBasement base;
+		mario::FileIO::loadAllData();
+		mario::MeasureBasement base;
 		return base.measureLoop();
 	}
 	catch( std::exception& ex ){

@@ -1,26 +1,26 @@
 #include "MeasureBasement.h"
 #include "pcl_utils.h"
 
-MeasureBasement::MeasureBasement()
+mario::MeasureBasement::MeasureBasement()
 	:isInitDone(false),rgb_data(0), rgb_data_size(0)
 {
 
 }
 
-MeasureBasement::EventHelper::EventHelper( MeasureBasement* _aMeasureBasement )
+mario::MeasureBasement::EventHelper::EventHelper( mario::MeasureBasement* _aMeasureBasement )
 	:aMeasureBasement(_aMeasureBasement)
 {
 
 }
 
-void MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
+void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
 {
 	FPS_CALC ("callback");
 
 	this->aMeasureBasement->cld_mutex.lock ();	
 
 	static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
-	issei::filterA(cloud,filtered_cloud);
+	mario::filterA(cloud,filtered_cloud);
 	if( filtered_cloud ){
 		this->aMeasureBasement->spcCloud = filtered_cloud->makeShared();
 	}
@@ -29,13 +29,13 @@ void MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZ
 
 }
 
-void MeasureBasement::EventHelper::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
+void mario::MeasureBasement::EventHelper::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
 {
 	FPS_CALC ("image callback");
 
 	this->aMeasureBasement->img_mutex.lock ();
 	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-	issei::cvt2Mat(image,filtered_image);
+	mario::cvt2Mat(image,filtered_image);
 	if( filtered_image ){
 		this->aMeasureBasement->spImage = image;
 	}
@@ -43,7 +43,7 @@ void MeasureBasement::EventHelper::image_callback (const boost::shared_ptr<openn
 }
 
 
-int MeasureBasement::simpleViewLoop ()
+int mario::MeasureBasement::simpleViewLoop ()
 {
 
 	EventHelper event_helper(this);
@@ -56,8 +56,8 @@ int MeasureBasement::simpleViewLoop ()
 
 	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 	std::string keyMsg3D ("Key event for PCL Visualizer");
-	cld->registerMouseCallback (&MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
-	cld->registerKeyboardCallback(&MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
+	cld->registerMouseCallback (&mario::MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
+	cld->registerKeyboardCallback(&mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
 	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
 	boost::signals2::connection c1 = interface->registerCallback (f);
 
@@ -92,7 +92,7 @@ int MeasureBasement::simpleViewLoop ()
 	return 1;
 }
 
-int MeasureBasement::measureLoop()
+int mario::MeasureBasement::measureLoop()
 {
 
 	EventHelper event_helper(this);
@@ -105,8 +105,8 @@ int MeasureBasement::measureLoop()
 
 	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 	std::string keyMsg3D ("Key event for PCL Visualizer");
-	cld->registerMouseCallback (&MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
-	cld->registerKeyboardCallback(&MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
+	cld->registerMouseCallback (&mario::MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
+	cld->registerKeyboardCallback(&mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
 	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
 	boost::signals2::connection c1 = interface->registerCallback (f);
 
@@ -133,7 +133,7 @@ int MeasureBasement::measureLoop()
 }
 
 
-void MeasureBasement::showCloud()
+void mario::MeasureBasement::showCloud()
 {
 	// Add the cloud
 	if (spcCloud && cld_mutex.try_lock ())
@@ -158,7 +158,7 @@ void MeasureBasement::showCloud()
 	}
 }
 
-void MeasureBasement::showImage()
+void mario::MeasureBasement::showImage()
 {
 	// Add the image
 	if (spImage && img_mutex.try_lock ())
@@ -182,7 +182,7 @@ void MeasureBasement::showImage()
 }
 
 // Simple callbacks.
-void MeasureBasement::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
+void mario::MeasureBasement::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
 {
 	std::string* message = (std::string*)cookie;
 	cout << (*message) << " :: ";
@@ -206,7 +206,7 @@ void MeasureBasement::keyboard_callback( const pcl::visualization::KeyboardEvent
 	}
 }
 
-void MeasureBasement::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
+void mario::MeasureBasement::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
 {
 	std::string* message = (std::string*) cookie;
 	// ¶ƒNƒŠƒbƒN

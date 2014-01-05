@@ -51,6 +51,9 @@
     <ClInclude Include="FileIO.h">
       <Filter>devices</Filter>
     </ClInclude>
+    <ClInclude Include="Coordinate.h">
+      <Filter>Coordinate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">
@@ -64,6 +67,9 @@
     </Filter>
     <Filter Include="devices">
       <UniqueIdentifier>{523524d8-f0db-4a30-86a9-fb3a34254a9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Coordinate">
+      <UniqueIdentifier>{0cda7b52-af35-4dac-accf-8c3ba1924776}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

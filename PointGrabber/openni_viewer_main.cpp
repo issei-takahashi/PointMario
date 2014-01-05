@@ -60,7 +60,7 @@ struct EventHelper
 
 		cld_mutex.lock ();	
 		static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
-		issei::filterA(cloud,filtered_cloud);
+		mario::filterA(cloud,filtered_cloud);
 		if( filtered_cloud ){
 			spcCloud = filtered_cloud->makeShared();
 		}
@@ -74,7 +74,7 @@ struct EventHelper
 
 		img_mutex.lock ();
 		static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-		issei::cvt2Mat(image,filtered_image);
+		mario::cvt2Mat(image,filtered_image);
 		if( filtered_image ){
 			spImage = image;
 		}

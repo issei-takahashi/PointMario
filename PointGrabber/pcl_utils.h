@@ -1,6 +1,6 @@
 #pragma once
 
-namespace issei{
+namespace mario{
 
 	pcl::PointIndices::Ptr 
 		segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould);

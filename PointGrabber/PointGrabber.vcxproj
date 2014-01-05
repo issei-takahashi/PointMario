@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Coordinate.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />

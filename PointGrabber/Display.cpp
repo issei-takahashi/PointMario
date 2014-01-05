@@ -5,19 +5,9 @@ static std::string const SCREEN_CAPTION = "SDL window test";
 mario::Display::Display()
 {
 	bool isOK = true;
-	// initialize SDL
-	if( SDL_Init(SDL_INIT_VIDEO) < 0 ){
-		isOK =  false;
-	}
-	// create indow
-	this->pWindow = SDL_CreateWindow( 
-		SCREEN_CAPTION.c_str(),
-		SDL_WINDOWPOS_CENTERED, 
-		SDL_WINDOWPOS_CENTERED,
-		640, 480, 0);
-	if (!pWindow){
-		isOK = false;
-	}
+
+	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
 
 	if( isOK == false ){
 		std::cerr << "ERROR: failed to initialize SDL" << std::endl;
@@ -34,36 +24,37 @@ mario::Display::~Display()
 void mario::Display::displayLoop()
 {
 	// main loop
-	while (true)
+	//while (true)
 	{
-		if ( !pollingEvent() ){
-			break;
-		}
+		this->showImageTest();
 	}
 }
 
-bool mario::Display::pollingEvent()
+void mario::Display::showImageTest()
 {
-	SDL_Event ev;
-	SDL_Keycode key;
-	while ( SDL_PollEvent(&ev) )
-	{
-		switch(ev.type){
-		case SDL_QUIT:
-			// raise when exit event is occur
-			return false;
-			break;
-		case SDL_KEYDOWN:
-			// raise when key down
-			{
-				key=ev.key.keysym.sym;
-				// ESC
-				if(key==27){
-					return false;
-				}
-			}
-			break;
-		}
-	}
-	return true;
+	SDL_Surface* image;
+	SDL_Rect rect, scr_rect;
+
+	/* 画像読み込み */
+	image = IMG_Load("image/sample.png");
+
+	/* 画像の矩形情報設定 */
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = image->w;
+	rect.h = image->h;
+
+	/* 画像配置位置情報の設定 */
+	scr_rect.x = 0;
+	scr_rect.y = 0;
+
+	/* サーフェスの複写 */
+	SDL_BlitSurface(image, &rect, SDL_GetVideoSurface(), &scr_rect);
+
+	/* サーフェスフリップ */
+	SDL_Flip(SDL_GetVideoSurface());
+
+	SDL_Delay(30000);
+
+	SDL_FreeSurface(image);
 }

@@ -8,9 +8,8 @@ namespace mario
 		Display();
 		~Display();
 		void displayLoop();
-		bool pollingEvent();
+		void showImageTest();
 	private:
-		SDL_Window* pWindow;
 		static int const SCREEN_WIDTH = 640;
 		static int const SCREEN_HEIGHT = 640;
 		static int const SCREEN_BPP = 32;

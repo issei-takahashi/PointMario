@@ -131,6 +131,7 @@
 
 /* SDL */
 #include <SDL.h>
-#pragma comment(lib, "SDL2.lib")
-#pragma comment(lib, "SDL2main.lib")
-#pragma comment(lib, "SDL2test.lib")
+#pragma comment(lib, "SDL.lib")
+#pragma comment(lib, "SDLmain.lib")
+#include <SDL_image.h>
+#pragma comment(lib, "SDL_image.lib")

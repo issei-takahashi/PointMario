@@ -4,9 +4,6 @@
     <ClCompile Include="main.cpp">
       <Filter>main</Filter>
     </ClCompile>
-    <ClCompile Include="openni_viewer_main.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>others</Filter>
     </ClCompile>
@@ -20,10 +17,16 @@
       <Filter>others</Filter>
     </ClCompile>
     <ClCompile Include="MeasureBasement.cpp">
-      <Filter>Base</Filter>
+      <Filter>Basement</Filter>
     </ClCompile>
     <ClCompile Include="FileIO.cpp">
       <Filter>devices</Filter>
+    </ClCompile>
+    <ClCompile Include="openni_viewer_main.cpp">
+      <Filter>sample</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>Basement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,13 +49,16 @@
       <Filter>others</Filter>
     </ClInclude>
     <ClInclude Include="MeasureBasement.h">
-      <Filter>Base</Filter>
+      <Filter>Basement</Filter>
     </ClInclude>
     <ClInclude Include="FileIO.h">
       <Filter>devices</Filter>
     </ClInclude>
     <ClInclude Include="Coordinate.h">
       <Filter>Coordinate</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -62,14 +68,17 @@
     <Filter Include="others">
       <UniqueIdentifier>{a821fc87-d5cc-4818-ba25-d0a04981aacc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Base">
-      <UniqueIdentifier>{62fbf6d9-24b5-4a31-9821-288c0ff803d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="devices">
       <UniqueIdentifier>{523524d8-f0db-4a30-86a9-fb3a34254a9b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Coordinate">
       <UniqueIdentifier>{0cda7b52-af35-4dac-accf-8c3ba1924776}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Basement">
+      <UniqueIdentifier>{62fbf6d9-24b5-4a31-9821-288c0ff803d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sample">
+      <UniqueIdentifier>{475bfb21-fab3-4091-8ebe-34ff4e54ea44}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

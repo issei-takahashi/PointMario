@@ -107,6 +107,8 @@ int mario::MeasureBasement::measureLoop()
 	std::string keyMsg3D ("Key event for PCL Visualizer");
 	cld->registerMouseCallback (&mario::MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
 	cld->registerKeyboardCallback(&mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
+	
+	// boostのスレッド関連
 	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
 	boost::signals2::connection c1 = interface->registerCallback (f);
 

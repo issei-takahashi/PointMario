@@ -28,6 +28,9 @@
     <ClCompile Include="Display.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -58,6 +61,9 @@
       <Filter>Coordinate</Filter>
     </ClInclude>
     <ClInclude Include="Display.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
       <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>

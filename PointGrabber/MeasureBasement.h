@@ -6,6 +6,7 @@ namespace mario{
 	{
 	public:
 		MeasureBasement();
+		static void measureThread();
 		int simpleViewLoop();
 		int measureLoop();
 	public:

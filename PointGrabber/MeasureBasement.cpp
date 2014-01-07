@@ -13,6 +13,12 @@ mario::MeasureBasement::EventHelper::EventHelper( mario::MeasureBasement* _aMeas
 
 }
 
+static mario::MeasureBasement g_mb;
+void mario::MeasureBasement::measureThread()
+{
+	g_mb.measureLoop();
+}
+
 void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
 {
 	FPS_CALC ("callback");

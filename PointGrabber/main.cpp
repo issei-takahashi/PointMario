@@ -21,13 +21,14 @@ namespace mario
 				mario::MeasureBasement base;
 				mario::Display disp;
 
-				boost::thread th1( boost::bind( &mario::MeasureBasement::measureLoop, &base ) );
-				boost::thread th2( boost::bind( &mario::Display::displayLoop, &disp ) );
+				disp.mainLoopIncludingThreads();
 
-				th1.join();
-				th2.join();
+				//boost::thread th1( boost::bind( &mario::MeasureBasement::measureLoop, &base ) );
+				//boost::thread th2( boost::bind( &mario::Display::displayLoop, &disp ) );
 
-				//base.measureLoop();
+
+				//th1.join();
+				//th2.join();
 
 				return 1;
 			}

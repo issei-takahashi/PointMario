@@ -7,16 +7,41 @@ mario::MeasureBasement::MeasureBasement()
 
 }
 
+mario::MeasureBasement::~MeasureBasement()
+{
+}
+
+void mario::MeasureBasement::start()
+{
+	this->upEventHelper = ( unique_ptr<EventHelper> )( new EventHelper(this) );
+	std::string device_id = "";
+	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
+
+	this->upGrabberInterface = ( unique_ptr<pcl::Grabber> )( new pcl::OpenNIGrabber (device_id) );
+
+	this->cld.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
+
+	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
+	std::string keyMsg3D ("Key event for PCL Visualizer");
+	this->cld->registerMouseCallback   ( &mario::MeasureBasement::mouse_callback   , (void*)(&mouseMsg3D) );    
+	this->cld->registerKeyboardCallback( &mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D) );
+	
+	// boostのスレッド関連
+	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, this->upEventHelper.get(), _1);
+	boost::signals2::connection c1 = this->upGrabberInterface->registerCallback (f);
+
+	this->upGrabberInterface->start();
+}
+
+void mario::MeasureBasement::stop()
+{
+	this->upGrabberInterface->stop();
+}
+
 mario::MeasureBasement::EventHelper::EventHelper( mario::MeasureBasement* _aMeasureBasement )
 	:aMeasureBasement(_aMeasureBasement)
 {
 
-}
-
-static mario::MeasureBasement g_mb;
-void mario::MeasureBasement::measureThread()
-{
-	g_mb.measureLoop();
 }
 
 void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
@@ -98,48 +123,30 @@ int mario::MeasureBasement::simpleViewLoop ()
 	return 1;
 }
 
-int mario::MeasureBasement::measureLoop()
+
+void mario::MeasureBasement::oneLoop()
 {
-
-	EventHelper event_helper(this);
-	std::string device_id = "";
-	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
-
-	pcl::Grabber* interface = new pcl::OpenNIGrabber (device_id);
-
-	cld.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
-
-	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
-	std::string keyMsg3D ("Key event for PCL Visualizer");
-	cld->registerMouseCallback (&mario::MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
-	cld->registerKeyboardCallback(&mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
-	
-	// boostのスレッド関連
-	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
-	boost::signals2::connection c1 = interface->registerCallback (f);
-
-	interface->start ();
-
-	// Loop
-	while (!cld->wasStopped ())
-	{
-		// Render and process events in the two interactors
-		cld->spinOnce (); // ここで画面更新
-		//img->spinOnce ();
-		FPS_CALC ("drawing");
-
-		this->showCloud();
-		//this->showImage();
-
-
-		boost::this_thread::sleep (boost::posix_time::microseconds (100));
-	}
-
-	interface->stop ();
-
-	return 1;
+	// Render and process events in the two interactors
+	this->cld->spinOnce (); // ここで画面更新
+	//img->spinOnce ();
+	FPS_CALC ("drawing");
+	this->showCloud();
+	//this->showImage();
+	boost::this_thread::sleep (boost::posix_time::microseconds (100));
 }
 
+void mario::MeasureBasement::measureLoop()
+{
+	// Loop
+	while ( !this->cld->wasStopped() ){
+		this->oneLoop();
+	}
+}
+
+bool mario::MeasureBasement::quitEvent()
+{
+	return this->cld->wasStopped();
+}
 
 void mario::MeasureBasement::showCloud()
 {

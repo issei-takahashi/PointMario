@@ -6,6 +6,16 @@ static std::string const SCREEN_CAPTION = "SDL window test";
 
 mario::Display::Display()
 {
+
+}
+
+mario::Display::~Display()
+{
+
+}
+
+void mario::Display::start()
+{
 	if(SDL_Init(SDL_INIT_VIDEO)==-1) {
 		SDL_Quit();
 	}
@@ -13,68 +23,44 @@ mario::Display::Display()
 	SDL_WM_SetCaption("Main Window",NULL);
 }
 
-mario::Display::~Display()
+void mario::Display::stop()
 {
 	// finalize SDL
 	SDL_Quit();
 }
 
-static mario::Display g_disp;
-void mario::Display::displayThread()
+void mario::Display::oneLoop()
 {
-	g_disp.displayLoop();
-}
-
-#include "MeasureBasement.h"
-void mario::Display::mainLoopIncludingThreads()
-{
-	mario::MeasureBasement base;
-
-	boost::thread th1( boost::bind( &mario::MeasureBasement::measureLoop, &base ) );
-	//boost::thread th2( boost::bind( &mario::Display::displayLoop, &disp ) );
-
-	this->displayLoop();
-	th1.join();
-	//th2.join();
+	this->showImageTest();
 }
 
 void mario::Display::displayLoop()
 {
 	while( this->quitEvent() == false ){
-		auto ms1 = mario::DisplayTimer::getTime();
-		this->showImageTest();
-		auto ms2 = mario::DisplayTimer::getTime();
-		if( ms2 - ms1 < 16 ){
-			this->wait( 16 - ( ms2 - ms1 ) );
-		}
+		this->oneLoop();
 	}
+}
+
+void PaintRect30( Uint16 x, Uint16 y, SDL_Surface* pSurface )
+{
+    SDL_Rect dstrect = { x, y, 30, 30 };
+    
+    SDL_FillRect( pSurface, &dstrect, 
+        (rand()%2==0) ? ~rand() | 0x00050505 : rand() | 0x00202020);
+
 }
 
 void mario::Display::showImageTest()
 {
 	SDL_FillRect( this->pMainWindow,NULL,
-		SDL_MapRGB(this->pMainWindow->format,255,0,0) );
-	SDL_Rect rect, scr_rect;
+	SDL_MapRGB(this->pMainWindow->format,255,0,0) );
 
-	/* 画像の矩形情報設定 */
-	rect.x = 0;
-	rect.y = 0;
-	//rect.w = image->w;
-	//rect.h = image->h;
-
-	/* 画像配置位置情報の設定 */
-	scr_rect.x = 0;
-	scr_rect.y = 0;
-
-	scr_rect.x += 1;
-	scr_rect.y += 1;
 	/* サーフェスの複写 */
 	//SDL_BlitSurface(image, &rect, SDL_GetVideoSurface(), &scr_rect);
-
+	static int x=0,y=0;
+	::PaintRect30(x++,y++,this->pMainWindow);
 	/* サーフェスフリップ */
 	SDL_Flip(SDL_GetVideoSurface());
-
-
 
 }
 

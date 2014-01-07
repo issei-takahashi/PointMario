@@ -6,9 +6,21 @@ namespace mario{
 	{
 	public:
 		MeasureBasement();
-		static void measureThread();
+		~MeasureBasement();
+		void start();
+		void stop();
 		int simpleViewLoop();
-		int measureLoop();
+		void oneLoop();
+		void measureLoop();
+		bool quitEvent();
+	public:
+		struct EventHelper
+		{
+			EventHelper( MeasureBasement* _aMeasureBasement );
+			MeasureBasement* const aMeasureBasement;
+			void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud);
+			void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image);
+		};
 	public:
 		boost::mutex cld_mutex, img_mutex;
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
@@ -18,14 +30,8 @@ namespace mario{
 		boost::shared_ptr<pcl::visualization::ImageViewer> img;
 		unsigned char* rgb_data;
 		unsigned rgb_data_size;
-	public:
-		struct EventHelper
-		{
-			EventHelper( MeasureBasement* _aMeasureBasement );
-			MeasureBasement* const aMeasureBasement;
-			void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud);
-			void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image);
-		};
+		unique_ptr<pcl::Grabber> upGrabberInterface;
+		unique_ptr<EventHelper> upEventHelper;
 	private:
 		void showCloud();
 		void showImage();

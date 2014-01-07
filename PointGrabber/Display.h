@@ -7,13 +7,13 @@ namespace mario
 	public:
 		Display();
 		~Display();
-		static void displayThread();
-		void mainLoopIncludingThreads();
+		void start();
+		void stop();
+		void oneLoop();
 		void displayLoop();
 		void showImageTest();
 		bool quitEvent() const;
 		void keyInputEvent();
-	private:
 		void wait( int _ms );
 	private:
 		static int const SCREEN_WIDTH = 640;

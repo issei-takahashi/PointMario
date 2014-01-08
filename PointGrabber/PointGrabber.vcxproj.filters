@@ -31,6 +31,9 @@
     <ClCompile Include="Image.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="WinRS.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -64,6 +67,12 @@
       <Filter>Basement</Filter>
     </ClInclude>
     <ClInclude Include="Image.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="WinRS.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="ifLine.h">
       <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>

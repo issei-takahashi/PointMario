@@ -19,7 +19,11 @@ namespace mario
 				mario::FileIO::loadAllData();
 
 				mario::MeasureBasement base;
-				mario::Display disp;
+				static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
+				static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
+				static int const DISP_X_px = FileIO::getConst("DISP_X_px");
+				static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
+				mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
 
 				//boost::thread th1( boost::bind( &mario::MeasureBasement::measureLoop, &base ) );
 				//boost::thread th2( boost::bind( &mario::Display::displayLoop, &disp ) );
@@ -51,6 +55,8 @@ namespace mario
 					if( ms2 - ms1 < 1000/FPS ){
 						disp.wait( 1000/FPS - ( ms2 - ms1 ) );
 					}
+					auto ms3 = mario::DisplayTimer::getTime();
+					cout << "fps == " << 1000/(ms3-ms1) << endl;
 				}
 
 				return 1;

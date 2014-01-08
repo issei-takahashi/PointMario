@@ -1,6 +1,9 @@
 #include "MeasureBasement.h"
 #include "pcl_utils.h"
 
+static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
+static string const keyMsg3D ("Key event for PCL Visualizer");
+
 mario::MeasureBasement::MeasureBasement()
 	:isInitDone(false),rgb_data(0), rgb_data_size(0)
 {
@@ -21,8 +24,6 @@ void mario::MeasureBasement::start()
 
 	this->cld.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
 
-	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
-	std::string keyMsg3D ("Key event for PCL Visualizer");
 	this->cld->registerMouseCallback   ( &mario::MeasureBasement::mouse_callback   , (void*)(&mouseMsg3D) );    
 	this->cld->registerKeyboardCallback( &mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D) );
 	
@@ -205,7 +206,7 @@ void mario::MeasureBasement::keyboard_callback( const pcl::visualization::Keyboa
 		switch(_evt.getKeyCode()){
 		case 'r': // ˜^‰æŠJŽn
 			{
-
+				cout << "rec start" << endl;
 				break;
 			}
 		}

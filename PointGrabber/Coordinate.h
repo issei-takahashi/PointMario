@@ -3,7 +3,7 @@
 namespace mario{
 
 	typedef double typeR;
-	typedef double typeV;
+	typedef double typeD;
 	typedef double typeM;
 
 	/*---------------------- Coordinate----------------------------

@@ -20,14 +20,14 @@ namespace mario{
 			CoordinatesData();
 		private:
 			Coordinate<typeR> pointR;
-			Coordinate<typeV> pointV;
+			Coordinate<typeD> pointD;
 			vector<typeM> v_pointM;
 		private:
 			template<class Archive>
 			void serialize( Archive& ar, unsigned int ver )
 			{
 				ar & boost::serialization::make_nvp("pointR", this->pointR);
-				ar & boost::serialization::make_nvp("pointV", this->pointV);
+				ar & boost::serialization::make_nvp("pointD", this->pointD);
 				ar & boost::serialization::make_nvp("v_pointM", this->v_pointM);
 			}
 		public:

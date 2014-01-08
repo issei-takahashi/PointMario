@@ -10,7 +10,8 @@ mario::Display::Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx )
 	:pMainWindow(NULL), isFullScreen(false),
 	screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx)
 {
-	this->calibMarkerPos = Coordinate<typeD>( 10,10,10 );
+	/* アクチュエータの初期化 */
+	this->upActuator = ( unique_ptr<mario::Actuator> )( new Actuator() );
 }
 
 mario::Display::~Display()
@@ -38,7 +39,10 @@ void mario::Display::stop()
 void mario::Display::oneLoop()
 {
 	this->keyInputEvent();
-	this->showImageTest();
+	static int count = 0;
+	Coordinate<typeD> p(count,count,count);
+	this->drawCross( p );
+	count++;
 }
 
 void mario::Display::displayLoop()
@@ -48,24 +52,32 @@ void mario::Display::displayLoop()
 	}
 }
 
-void mario::Display::showImageTest()
+void mario::Display::drawCross( Coordinate<typeD> _pd )
 {
 	SDL_FillRect( this->pMainWindow,NULL, 
 		SDL_MapRGB(this->pMainWindow->format,0,0,0) );
-	
-	static int const cR = FileIO::getConst("CALIB_CROSS_R");
-	static int const cG = FileIO::getConst("CALIB_CROSS_G");
-	static int const cB = FileIO::getConst("CALIB_CROSS_B");
-	int red = SDL_MapRGB( this->pMainWindow->format, cR, cG, cB ); 
-	int xpx = this->calibMarkerPos.x * ( this->screenXpx / this->screenXmm );
-	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
-	int ypx = ( DISP_Y_mm - this->calibMarkerPos.y ) * ( this->screenYpx / this->screenYmm );
-	int CROSS_SHORT = FileIO::getConst("CROSS_SHORT_px");
-	int CROSS_LONG  = FileIO::getConst("CROSS_LONG_px");
-	SDL_Rect rect1 = { xpx - CROSS_SHORT/2, ypx - CROSS_LONG/2 , CROSS_SHORT, CROSS_LONG };
-	SDL_Rect rect2 = { xpx - CROSS_LONG/2 , ypx - CROSS_SHORT/2, CROSS_LONG , CROSS_SHORT };
-	SDL_FillRect( this->pMainWindow, &rect1, red );
-	SDL_FillRect( this->pMainWindow, &rect2, red );
+
+	/* モニタ (x,y) */
+	{
+		static int const cR = FileIO::getConst("CALIB_CROSS_R");
+		static int const cG = FileIO::getConst("CALIB_CROSS_G");
+		static int const cB = FileIO::getConst("CALIB_CROSS_B");
+		int red = SDL_MapRGB( this->pMainWindow->format, cR, cG, cB ); 
+		int xpx = _pd.x * ( this->screenXpx / this->screenXmm );
+		static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
+		int ypx = (double)( DISP_Y_mm - _pd.y ) * ( (double)this->screenYpx / this->screenYmm );
+		int CROSS_SHORT = FileIO::getConst("CROSS_SHORT_px");
+		int CROSS_LONG  = FileIO::getConst("CROSS_LONG_px");
+		SDL_Rect rect1 = { xpx - CROSS_SHORT/2, ypx - CROSS_LONG/2 , CROSS_SHORT, CROSS_LONG };
+		SDL_Rect rect2 = { xpx - CROSS_LONG/2 , ypx - CROSS_SHORT/2, CROSS_LONG , CROSS_SHORT };
+		SDL_FillRect( this->pMainWindow, &rect1, red );
+		SDL_FillRect( this->pMainWindow, &rect2, red );
+	}
+
+	/* アクチュエータ(z) */
+	{
+		this->upActuator->moveTo( _pd.z );
+	}
 
 	/* サーフェスフリップ */
 	SDL_Flip(SDL_GetVideoSurface());

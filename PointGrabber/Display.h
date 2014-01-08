@@ -13,7 +13,7 @@ namespace mario
 		void stop();
 		void oneLoop();
 		void displayLoop();
-		void showImageTest();
+		void drawCross( Coordinate<typeD> _pd );
 		bool quitEvent() const;
 		void keyInputEvent();
 		void wait( int _ms );
@@ -23,9 +23,11 @@ namespace mario
 		int const screenXpx;
 		int const screenYpx;
 	private:
-		 SDL_Surface *pMainWindow; //メインウィンドウ
-		 bool isFullScreen;        //フルスクリーンモード
-		 Coordinate<typeD> calibMarkerPos; // キャリブレーションマーカーの位置
+		/* モニタ関連 */
+		SDL_Surface *pMainWindow; //メインウィンドウ
+		bool isFullScreen;        //フルスクリーンモードかどうか
+		/* アクチュエータ関連 */
+		unique_ptr<class Actuator> upActuator;
 	};
 
 	class Actuator

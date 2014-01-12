@@ -98,7 +98,7 @@ void mario::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 	x/=rcount;
 	y/=rcount;
 	z/=rcount;
-	cout<<x<<" "<<y<<" "<<z<<endl;
+	//cout<<x<<" "<<y<<" "<<z<<endl;
 }
 
 void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)

@@ -26,7 +26,7 @@ namespace mario{
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;
 		// Create the PCLVisualizer object
-		boost::shared_ptr<pcl::visualization::PCLVisualizer> cld;
+		boost::shared_ptr<pcl::visualization::PCLVisualizer> spVisualizer;
 		boost::shared_ptr<pcl::visualization::ImageViewer> img;
 		unsigned char* rgb_data;
 		unsigned rgb_data_size;

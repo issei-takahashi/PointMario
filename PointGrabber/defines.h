@@ -1,6 +1,6 @@
 #pragma once 
 #define foreach(it,con) for(auto it=con.begin();it!=con.end();it++)
-
+#define times(__i__,COUNT) for(int __i__=0;__i__<COUNT;__i__++)
 
 
 
@@ -19,7 +19,6 @@
 	++count; \
 	if (now - last >= 1.0) \
 	{ \
-	std::cout << "Average framerate("<< _WHAT_ << "): " << double(count)/double(now - last) << " Hz" <<  std::endl; \
 	count = 0; \
 	last = now; \
 	} \

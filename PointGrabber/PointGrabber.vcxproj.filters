@@ -34,6 +34,12 @@
     <ClCompile Include="WinRS.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="Experiment001.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
+    <ClCompile Include="Experiment002.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -73,6 +79,9 @@
       <Filter>Basement</Filter>
     </ClInclude>
     <ClInclude Include="ifLine.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="Experiment.h">
       <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>

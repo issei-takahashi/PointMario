@@ -3,37 +3,57 @@
 #include "Image.h"
 #include "FileIO.h"
 #include "WinRS.h"
+#include "utils.h"
 
 static std::string const SCREEN_CAPTION = "SDL window test";
+bool mario::Display::isSDLinited = false;
 
 mario::Display::Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx )
 	:pMainWindow(NULL), isFullScreen(false),
 	screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx)
 {
 	/* アクチュエータの初期化 */
-	this->upActuator = ( unique_ptr<mario::Actuator> )( new Actuator() );
+	this->upActuator = ( unique_ptr<mario::Display::Actuator> )( new mario::Display::Actuator() );
 }
 
 mario::Display::~Display()
 {
-
+	this->stop();
 }
 
 void mario::Display::start()
 {
-	if( SDL_Init(SDL_INIT_EVERYTHING) == -1 ) {
-		SDL_Quit();
+	if( Display::isSDLinited == false ){
+		if( SDL_Init(SDL_INIT_EVERYTHING) == -1 ) {
+			SDL_Quit();
+		}
+		if( TTF_Init() == -1 ) {
+			TTF_Quit();
+		}
+		Display::isSDLinited = true;
 	}
 	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
 	this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
 	SDL_WM_SetCaption("Main Window",NULL);
+	// フォント初期化
+	this->pFont = TTF_OpenFont("font/azuki.ttf", 24); 
 }
 
 void mario::Display::stop()
 {
-	// finalize SDL
-	SDL_Quit();
+	if( Display::isSDLinited == true ){
+		// finalize SDL
+		SDL_Quit();
+		TTF_Quit();
+		Display::isSDLinited = false;
+	}
+	if( this->pMainWindow ){
+		SDL_FreeSurface( this->pMainWindow );
+	}
+	if( this->pFont ){
+		TTF_CloseFont( this->pFont );
+	}
 }
 
 void mario::Display::oneLoop()
@@ -41,7 +61,7 @@ void mario::Display::oneLoop()
 	this->keyInputEvent();
 	static int count = 0;
 	Coordinate<typeD> p(count,count,count);
-	this->drawCross( p );
+	this->drawCross( p, true );
 	count++;
 }
 
@@ -52,7 +72,7 @@ void mario::Display::displayLoop()
 	}
 }
 
-void mario::Display::drawCross( Coordinate<typeD> _pd )
+void mario::Display::drawCross( Coordinate<typeD> _pd, bool _printStringFLag )
 {
 	SDL_FillRect( this->pMainWindow,NULL, 
 		SDL_MapRGB(this->pMainWindow->format,0,0,0) );
@@ -63,7 +83,7 @@ void mario::Display::drawCross( Coordinate<typeD> _pd )
 		static int const cG = FileIO::getConst("CALIB_CROSS_G");
 		static int const cB = FileIO::getConst("CALIB_CROSS_B");
 		int red = SDL_MapRGB( this->pMainWindow->format, cR, cG, cB ); 
-		int xpx = _pd.x * ( this->screenXpx / this->screenXmm );
+		int xpx = _pd.x * ( (double)this->screenXpx / this->screenXmm );
 		static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
 		int ypx = (double)( DISP_Y_mm - _pd.y ) * ( (double)this->screenYpx / this->screenYmm );
 		int CROSS_SHORT = FileIO::getConst("CROSS_SHORT_px");
@@ -72,6 +92,27 @@ void mario::Display::drawCross( Coordinate<typeD> _pd )
 		SDL_Rect rect2 = { xpx - CROSS_LONG/2 , ypx - CROSS_SHORT/2, CROSS_LONG , CROSS_SHORT };
 		SDL_FillRect( this->pMainWindow, &rect1, red );
 		SDL_FillRect( this->pMainWindow, &rect2, red );
+		if( _printStringFLag ){
+			SDL_Rect rect, scr_rect;
+			SDL_Color white = {0xff, 0xff, 0xff};
+			string str = string("Pd = (") + utils::int2string( _pd.x ) +","+
+				utils::int2string( _pd.y ) +","+
+				utils::int2string( _pd.z ) + ")";
+			SDL_Surface* pFontSurface = TTF_RenderUTF8_Blended( this->pFont, str.c_str(), white );
+			rect.x = 0;
+			rect.y = 0;
+			rect.w = pFontSurface->w;
+			rect.h = pFontSurface->h;
+
+			/* 画像配置位置情報の設定 */
+			int TEXT_SHIFT  = FileIO::getConst("TEXT_SHIFT");
+			scr_rect.x = xpx+TEXT_SHIFT;
+			scr_rect.y = ypx+TEXT_SHIFT;
+
+			/* 描画 */
+			/* サーフェスの複写 */
+			SDL_BlitSurface( pFontSurface, &rect, SDL_GetVideoSurface(), &scr_rect );
+		}
 	}
 
 	/* アクチュエータ(z) */
@@ -150,19 +191,19 @@ void mario::Display::wait( int _ms )
 
 /* ---------- アクチュエータ ---------- */
 
-mario::Actuator::Actuator()
+mario::Display::Actuator::Actuator()
 	:zd(0.0)
 {
 	static int const ARDUINO_COM_NUM = FileIO::getConst("ARDUINO_COM_NUM");
 	this->upPort = (unique_ptr<mario::WinRS>)( new mario::WinRS( ARDUINO_COM_NUM, 9600, ifLine::cr, "8N1", false ) );
 }
 
-mario::Actuator::~Actuator()
+mario::Display::Actuator::~Actuator()
 {
 
 }
 
-void mario::Actuator::moveTo( typeD _zd )
+void mario::Display::Actuator::moveTo( typeD _zd )
 {
 	this->upPort->putc1( max(0.0,_zd) );
 }

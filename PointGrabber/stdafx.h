@@ -135,3 +135,5 @@
 #pragma comment(lib, "SDLmain.lib")
 #include <SDL_image.h>
 #pragma comment(lib, "SDL_image.lib")
+#include <SDL_ttf.h>
+#pragma comment(lib, "SDL_ttf.lib")

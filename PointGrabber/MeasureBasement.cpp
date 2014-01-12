@@ -187,15 +187,13 @@ void mario::MeasureBasement::showCloud()
 void mario::MeasureBasement::showImage()
 {
 	// Add the image
-	if (spImage && img_mutex.try_lock ())
+	if( spImage && img_mutex.try_lock() )
 	{
-		if (spImage->getEncoding() == openni_wrapper::Image::RGB)
+		if( spImage->getEncoding() == openni_wrapper::Image::RGB )
 			img->showRGBImage (spImage->getMetaData ().Data (), 
 			spImage->getWidth (), spImage->getHeight ());
-		else
-		{
-			if (rgb_data_size < spImage->getWidth () * spImage->getHeight ())
-			{
+		else{
+			if (rgb_data_size < spImage->getWidth () * spImage->getHeight ()){
 				rgb_data_size = spImage->getWidth () * spImage->getHeight ();
 				if( rgb_data ) delete rgb_data;
 				rgb_data = new unsigned char [rgb_data_size * 3];

@@ -1,6 +1,6 @@
 #pragma once 
 #define foreach(it,con) for(auto it=con.begin();it!=con.end();it++)
-#define times(__i__,COUNT) for(int __i__=0;__i__<COUNT;__i__++)
+#define times(__i__,BEGIN,END) for(int __i__=BEGIN;__i__<END;__i__++)
 
 
 

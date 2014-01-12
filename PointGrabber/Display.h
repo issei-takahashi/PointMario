@@ -14,9 +14,12 @@ namespace mario
 		void oneLoop();
 		void displayLoop();
 		void drawCross( Coordinate<typeD> _pd, bool _printStringFLag );
+		void changeScreenMode();
 		bool quitEvent() const;
-		void keyInputEvent();
+		bool keyInputEvent1();
 		void wait( int _ms );
+		void set_crossPos( Coordinate<typeD> p ) { this->crossPos = p; }
+		Coordinate<typeD> get_crossPos() const { return this->crossPos; }
 	private:
 		class Actuator
 		{
@@ -34,6 +37,9 @@ namespace mario
 		int const screenXpx;
 		int const screenYpx;
 	private:
+		/* cross 関連 */
+		Coordinate<typeD> crossPos;
+		double crossSpeed;
 		static bool isSDLinited;
 		bool isActive;
 		/* モニタ関連 */

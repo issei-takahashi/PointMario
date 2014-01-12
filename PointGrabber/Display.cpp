@@ -10,7 +10,8 @@ bool mario::Display::isSDLinited = false;
 
 mario::Display::Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx )
 	:isActive(false), pMainWindow(NULL), pFont(NULL), isFullScreen(false),
-	screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx)
+	screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx),
+	crossSpeed(1.0)
 {
 	/* アクチュエータの初期化 */
 	this->upActuator = ( unique_ptr<mario::Display::Actuator> )( new mario::Display::Actuator() );
@@ -64,11 +65,8 @@ void mario::Display::stop()
 
 void mario::Display::oneLoop()
 {
-	this->keyInputEvent();
-	static int count = 0;
-	Coordinate<typeD> p(count,count,count);
-	this->drawCross( p, true );
-	count++;
+	this->keyInputEvent1();
+	this->drawCross( this->crossPos, true );
 }
 
 void mario::Display::displayLoop()
@@ -101,9 +99,9 @@ void mario::Display::drawCross( Coordinate<typeD> _pd, bool _printStringFLag )
 		if( _printStringFLag ){
 			SDL_Rect rect, scr_rect;
 			SDL_Color white = {0xff, 0xff, 0xff};
-			string str = string("Pd = (") + utils::int2string( _pd.x ) +","+
-				utils::int2string( _pd.y ) +","+
-				utils::int2string( _pd.z ) + ")";
+			string str = string("Pd = (") + utils::double2string( _pd.x ) +","+
+				utils::double2string( _pd.y ) +","+
+				utils::double2string( _pd.z ) + ")";
 			SDL_Surface* pFontSurface = TTF_RenderUTF8_Blended( this->pFont, str.c_str(), white );
 			rect.x = 0;
 			rect.y = 0;
@@ -129,6 +127,20 @@ void mario::Display::drawCross( Coordinate<typeD> _pd, bool _printStringFLag )
 	/* サーフェスフリップ */
 	SDL_Flip(SDL_GetVideoSurface());
 
+}
+
+void mario::Display::changeScreenMode()
+{
+	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
+	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
+	SDL_FreeSurface( this->pMainWindow );
+	if( this->isFullScreen ){
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+	}
+	else{
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE | SDL_FULLSCREEN );
+	}
+	this->isFullScreen = !this->isFullScreen;
 }
 
 bool mario::Display::quitEvent() const
@@ -158,35 +170,50 @@ bool mario::Display::quitEvent() const
 	return false;
 }
 
-void mario::Display::keyInputEvent()
+bool mario::Display::keyInputEvent1()
 {
 	Uint8 *getKeys = SDL_GetKeyState(NULL);
-	//-----------------------------------矢印キー確認
-	if( getKeys[SDLK_LEFT] == SDL_PRESSED )
-		;
-	else 
-		;
-	if( getKeys[SDLK_RIGHT] == SDL_PRESSED )
-		; 
-	else 
-		0;
 
-	//-----------------------------------Wキー確認
-
-	if( getKeys[SDLK_w]==SDL_PRESSED )
-	{
-		static int const DISP_X_px = FileIO::getConst("DISP_X_px");
-		static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
-		SDL_FreeSurface( this->pMainWindow );
-		if( this->isFullScreen ){
-			this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+	// 1～9キー
+	times(i,0,9){
+		if( getKeys[SDLK_1+i] == SDL_PRESSED ){
+			this->crossSpeed = (double)(i+1);
+			break;
 		}
-		else{
-			this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE | SDL_FULLSCREEN );
-		}
-		this->isFullScreen = !this->isFullScreen;
+	}
+	double speedBias = 1.0;
+	// Shiftキー
+	if( getKeys[SDLK_LSHIFT] == SDL_PRESSED ){
+		speedBias = 0.1;
 	}
 
+	// 左右キー
+	if       ( getKeys[SDLK_LEFT]  == SDL_PRESSED ){
+		this->crossPos.x -= 1.0 * this->crossSpeed * speedBias;
+	} else if( getKeys[SDLK_RIGHT] == SDL_PRESSED ){ 
+		this->crossPos.x += 1.0 * this->crossSpeed * speedBias;
+	}
+
+	// 上下キー
+	if       ( getKeys[SDLK_UP]    == SDL_PRESSED ){
+		this->crossPos.y += 1.0 * this->crossSpeed * speedBias;
+	} else if( getKeys[SDLK_DOWN]  == SDL_PRESSED ){ 
+		this->crossPos.y -= 1.0 * this->crossSpeed * speedBias;
+	}
+
+	// 上下キー
+	if       ( getKeys[SDLK_RSHIFT]    == SDL_PRESSED ){
+		this->crossPos.z -= 1.0 * this->crossSpeed * speedBias;
+	} else if( getKeys[SDLK_RCTRL]  == SDL_PRESSED ){ 
+		this->crossPos.z += 1.0 * this->crossSpeed * speedBias;
+	}	
+
+	// Enterキー
+	if( getKeys[SDLK_RETURN] ){
+		return true;
+	}
+
+	return false;
 }
 
 void mario::Display::wait( int _ms )

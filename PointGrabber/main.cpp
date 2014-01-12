@@ -1,6 +1,7 @@
 #include "main.h"
 #include "FileIO.h"
 #include "Experiment.h"
+#include "utils.h"
 
 int mario::Main::mode = 1;
 
@@ -13,8 +14,12 @@ int mario::Main::main()
 {
 	bool endFlag = false;
 	while( endFlag == false ){
-		cout << "モード(1/2)を入力してください．0を入力するとプログラムを終了します．" << endl;
-		cin >> Main::mode;
+		string buf = "";
+		while( utils::isNumber(buf) == false ){
+			cout << "モード(1/2)を入力してください(0で終了)：";
+			cin  >> buf;
+		}
+		Main::mode = utils::string2int(buf);
 		switch( Main::mode ){
 		case 0:
 			{

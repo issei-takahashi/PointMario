@@ -35,6 +35,7 @@ namespace mario
 		int const screenYpx;
 	private:
 		static bool isSDLinited;
+		bool isActive;
 		/* モニタ関連 */
 		SDL_Surface *pMainWindow; //メインウィンドウ
 		bool isFullScreen;        //フルスクリーンモードかどうか

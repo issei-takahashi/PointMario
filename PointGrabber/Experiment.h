@@ -11,6 +11,10 @@ namespace mario
 	{
 	public:
 		void experimentLoop();
+	private:
+		void inputRealPositionLoop();
+		void measureRedPointsLoop();
+		void showCrossAndRegisterCrossLoop();
 	};
 	class Experiment002 : public Experiment
 	{

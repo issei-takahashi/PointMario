@@ -32,6 +32,8 @@ namespace mario{
 		unsigned rgb_data_size;
 		unique_ptr<pcl::Grabber> upGrabberInterface;
 		unique_ptr<EventHelper> upEventHelper;
+		boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > bindedFunction;
+		boost::signals2::connection signals2Connection;
 	private:
 		void showCloud();
 		void showImage();

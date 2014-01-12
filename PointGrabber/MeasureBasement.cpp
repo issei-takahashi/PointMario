@@ -29,14 +29,20 @@ void mario::MeasureBasement::start()
 	this->spVisualizer->registerKeyboardCallback( &mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D) );
 	
 	// boostのスレッド関連
-	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, this->upEventHelper.get(), _1);
-	boost::signals2::connection c1 = this->upGrabberInterface->registerCallback (f);
+	this->bindedFunction = boost::bind( &EventHelper::cloud_cb, this->upEventHelper.get(), _1);
+	this->signals2Connection = this->upGrabberInterface->registerCallback( this->bindedFunction );
 
 	this->upGrabberInterface->start();
 }
 
 void mario::MeasureBasement::stop()
 {
+	this->cld_mutex.lock();
+	this->signals2Connection.disconnect();
+	this->bindedFunction.clear();
+	this->cld_mutex.unlock();
+
+	this->upEventHelper.reset();
 	this->spVisualizer->close();
 	this->spVisualizer.reset();
 	this->upGrabberInterface->stop();

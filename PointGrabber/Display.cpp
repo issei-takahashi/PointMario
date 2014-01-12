@@ -9,7 +9,7 @@ static std::string const SCREEN_CAPTION = "SDL window test";
 bool mario::Display::isSDLinited = false;
 
 mario::Display::Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx )
-	:pMainWindow(NULL), isFullScreen(false),
+	:isActive(false), pMainWindow(NULL), pFont(NULL), isFullScreen(false),
 	screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx)
 {
 	/* アクチュエータの初期化 */
@@ -23,36 +23,42 @@ mario::Display::~Display()
 
 void mario::Display::start()
 {
-	if( Display::isSDLinited == false ){
-		if( SDL_Init(SDL_INIT_EVERYTHING) == -1 ) {
-			SDL_Quit();
+	if( this->isActive == false ){
+		this->isActive = true;
+		if( Display::isSDLinited == false ){
+			if( SDL_Init(SDL_INIT_EVERYTHING) == -1 ) {
+				SDL_Quit();
+			}
+			if( TTF_Init() == -1 ) {
+				TTF_Quit();
+			}
+			Display::isSDLinited = true;
 		}
-		if( TTF_Init() == -1 ) {
-			TTF_Quit();
-		}
-		Display::isSDLinited = true;
+		static int const DISP_X_px = FileIO::getConst("DISP_X_px");
+		static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+		SDL_WM_SetCaption("Main Window",NULL);
+		// フォント初期化
+		this->pFont = TTF_OpenFont("font/azuki.ttf", 24); 
 	}
-	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
-	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
-	this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
-	SDL_WM_SetCaption("Main Window",NULL);
-	// フォント初期化
-	this->pFont = TTF_OpenFont("font/azuki.ttf", 24); 
 }
 
 void mario::Display::stop()
 {
-	if( Display::isSDLinited == true ){
-		// finalize SDL
-		SDL_Quit();
-		TTF_Quit();
-		Display::isSDLinited = false;
-	}
-	if( this->pMainWindow ){
-		SDL_FreeSurface( this->pMainWindow );
-	}
-	if( this->pFont ){
-		TTF_CloseFont( this->pFont );
+	if( this->isActive ){
+		this->isActive = false;
+		if( this->pMainWindow ){
+			SDL_FreeSurface( this->pMainWindow );
+		}
+		if( this->pFont ){
+			TTF_CloseFont( this->pFont );
+		}
+		if( Display::isSDLinited == true ){
+			// finalize SDL
+			SDL_Quit();
+			TTF_Quit();
+			Display::isSDLinited = false;
+		}
 	}
 }
 

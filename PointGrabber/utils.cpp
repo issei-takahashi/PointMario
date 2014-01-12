@@ -105,6 +105,72 @@ string utils::int2string(int d)
 	return rt;
 }
 
+//double‚ğwstring‚É•ÏŠ·
+wstring utils::double2wstring(double d)
+{
+	wstring rt;
+	wstringstream ss;
+	ss << d;
+	ss >> rt;
+	return rt;
+}
+
+//int‚ğwstring‚É•ÏŠ·
+wstring utils::int2wstring(int d)
+{
+	wstring rt;
+	wstringstream ss;
+	ss << d;
+	ss >> rt;
+	return rt;
+}
+
+// •¶š—ñ‚ª”š‚©‚Ç‚¤‚©”»’è
+bool utils::isNumber( string const & s )
+{
+	if( s.size() == 0 )
+		return false;
+
+	int dot = 0;
+
+	// ‚P•¶š–Ú
+	int i = 0;
+	if( s[i] == '-' || ( '0' <= s[i] && s[i] <= '9' ) ){
+		// ok.
+	}
+	else{
+		return false;
+	}
+	i++;
+		
+	// ‚Q`N-1•¶š–Ú
+	for( ; i < s.size() -1 ; i++ ){
+		if( (s[i]) == '.' ){
+			dot++;
+			if( dot > 1 )
+				return false;
+		}
+		else if( '0' <= (s[i]) && (s[i]) <= '9' ){
+			// ok.
+			continue;
+		}
+		else{
+			return false;
+		}
+	}
+
+	// N•¶š–Ú
+	if( i == s.size()-1 ){
+		if( '0' <= (s[i]) && (s[i]) <= '9' ){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	return true;
+}
+
 // csv‚Ì1s‚ğƒZƒ‹‚²‚Æ‚ÉƒJƒbƒg
 void utils::cutLine( string _line, vector<string>& _dst )
 {

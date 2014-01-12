@@ -38,6 +38,15 @@ namespace utils
 	//intをstringに変換
 	string int2string(int d);
 
+	//doubleをwstringに変換
+	wstring double2wstring(double d);
+
+	//intをwstringに変換
+	wstring int2wstring(int d);
+
+	// 文字列が数字かどうか判定
+	bool isNumber( string const & str );
+
 	// csvの1行をセルごとにカット
 	void cutLine( string _line, vector<string>& _dst );
 };

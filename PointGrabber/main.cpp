@@ -16,7 +16,7 @@ int mario::Main::main()
 	while( endFlag == false ){
 		string buf = "";
 		while( utils::isNumber(buf) == false ){
-			cout << "モード(1/2)を入力してください(0で終了)：";
+			cout << "モード(0～2,101～)を入力してください(0で終了)：";
 			cin  >> buf;
 		}
 		Main::mode = utils::string2int(buf);
@@ -36,6 +36,12 @@ int mario::Main::main()
 			{
 				mario::Experiment002 exp002;
 				exp002.experimentLoop();
+				break;
+			}
+		case 101:
+			{
+				mario::Experiment101 exp101;
+				exp101.experimentLoop();
 				break;
 			}
 		}

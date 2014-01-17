@@ -1,32 +1,6 @@
 #include "pcl_utils.h"
 #include "FileIO.h"
 
-pcl::PointIndices::Ptr 
-	mario::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
-{
-	pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-	pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
-
-	// Create the segmentation object
-	pcl::SACSegmentation<pcl::PointXYZRGBA> seg;
-	// Optional
-	seg.setOptimizeCoefficients (true);
-	// Mandatory
-	seg.setModelType (pcl::SACMODEL_PLANE);
-	seg.setMethodType (pcl::SAC_RANSAC);
-	seg.setDistanceThreshold (threshould);
-
-	seg.setInputCloud (cloud);
-	seg.segment (*inliers, *coefficients);
-
-	for (size_t i = 0; i < inliers->indices.size (); ++i) {
-		cloud->points[inliers->indices[i]].r = 255;
-		cloud->points[inliers->indices[i]].g = 0;
-		cloud->points[inliers->indices[i]].b = 0;
-	}
-
-	return inliers;
-}
 
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
 	mario::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
@@ -103,6 +77,73 @@ mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::
 	return mario::Coordinate<mario::typeM>(x,y,z);
 }
 
+mario::Coordinate<mario::typeM> mario::redExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+{
+	long double x=0,y=0,z=0;
+	int rcount=0;
+	static double RED_VAL = FileIO::getConst("RED_VAL");
+	static double RED_RATE = FileIO::getConst("RED_RATE");
+	for(int count=0;count<cloud->points.size();count++){
+		if( cloud->points[count].r > RED_VAL && 
+			cloud->points[count].r > cloud->points[count].g*RED_RATE &&
+			cloud->points[count].r > cloud->points[count].b*RED_RATE ){
+				pcl::PointXYZRGBA pt;
+				pt.r = 255;
+				pt.g = 0;
+				pt.b = 0;
+				pt.a = 255;
+				pt.x = cloud->points[count].x;
+				pt.y = cloud->points[count].y;
+				pt.z = cloud->points[count].z;
+				x += cloud->points[count].x;
+				y += cloud->points[count].y;
+				z += cloud->points[count].z;
+				dst->push_back( pt );
+				rcount++;
+		}
+	}
+	x/=rcount;
+	y/=rcount;
+	z/=rcount;
+	cout<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
+	return mario::Coordinate<mario::typeM>(x,y,z);
+}
+
+void mario::removePlane( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, double threshould )
+{
+	dst = cloud->makeShared();
+
+	pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+	pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+
+	// Create the segmentation object
+	pcl::SACSegmentation<pcl::PointXYZRGBA> seg;
+	// Optional
+	seg.setOptimizeCoefficients (true);
+	// Mandatory
+	seg.setModelType (pcl::SACMODEL_PLANE);
+	seg.setMethodType (pcl::SAC_RANSAC);
+	seg.setDistanceThreshold (threshould);
+
+	seg.setInputCloud (cloud);
+	seg.segment (*inliers, *coefficients);
+
+	//for (size_t i = 0; i < inliers->indices.size (); ++i) {
+	//	cloud->points[inliers->indices[i]].r = 255;
+	//	cloud->points[inliers->indices[i]].g = 0;
+	//	cloud->points[inliers->indices[i]].b = 0;
+	//}
+
+	//フィルタリング
+	pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
+	extract.setInputCloud( cloud );
+	extract.setIndices( inliers );
+
+	// true にすると平面を除去、false にすると平面以外を除去
+	extract.setNegative( true );
+	extract.filter( *dst );
+}
+
 void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
 	static double OUT_FILTER_LOWER = FileIO::getConst("OUT_FILTER_LOWER");
@@ -163,13 +204,21 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 
 void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered;
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered, planed, reded, clustered;
+
 	dst = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	downed = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	filtered = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	planed = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	reded = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	clustered = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+
 	mario::downSamplingFilter( cloud, downed );
 	//mario::outlierFilter( downed, dst );
-	mario::redDetection( downed, dst );
+	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // 大きいほど除去する
+	mario::removePlane( downed, planed, SEGMENT_THRESHOULD );
+	//mario::redExtraction( planed, reded );
+	mario::clusterize( planed, clustered );
 }
 
 void mario::downSamplingFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
@@ -254,4 +303,87 @@ void mario::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boos
 			cout<<"unknown exception"<<endl;
 		}
 	}
+}
+
+void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+{
+	// Read in the cloud data
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_f (new pcl::PointCloud<pcl::PointXYZRGBA>);
+
+	// Create the filtering object: downsample the dataset using a leaf size of 1cm
+	pcl::VoxelGrid<pcl::PointXYZRGBA> vg;
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGBA>);
+	vg.setInputCloud (cloud);
+	vg.setLeafSize (0.01f, 0.01f, 0.01f);
+	vg.filter (*cloud_filtered);
+	std::cout << "PointCloud after filtering has: " << cloud_filtered->points.size ()  << " data points." << std::endl; //*
+
+	// Create the segmentation object for the planar model and set all the parameters
+	pcl::SACSegmentation<pcl::PointXYZRGBA> seg;
+	pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+	pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_plane (new pcl::PointCloud<pcl::PointXYZRGBA>());
+	pcl::PCDWriter writer;
+	seg.setOptimizeCoefficients (true);
+	seg.setModelType (pcl::SACMODEL_PLANE);
+	seg.setMethodType (pcl::SAC_RANSAC);
+	seg.setMaxIterations (100);
+	seg.setDistanceThreshold (0.02);
+
+	int i=0, nr_points = (int) cloud_filtered->points.size ();
+	while (cloud_filtered->points.size () > 0.3 * nr_points){
+		// Segment the largest planar component from the remaining cloud
+		seg.setInputCloud (cloud_filtered);
+		seg.segment (*inliers, *coefficients);
+		if (inliers->indices.size () == 0){
+			std::cout << "Could not estimate a planar model for the given dataset." << std::endl;
+			break;
+		}
+
+		// Extract the planar inliers from the input cloud
+		pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
+		extract.setInputCloud (cloud_filtered);
+		extract.setIndices (inliers);
+		extract.setNegative (false);
+
+		// Get the points associated with the planar surface
+		extract.filter (*cloud_plane);
+		std::cout << "PointCloud representing the planar component: " << cloud_plane->points.size () << " data points." << std::endl;
+
+		// Remove the planar inliers, extract the rest
+		extract.setNegative (true);
+		extract.filter (*cloud_f);
+		*cloud_filtered = *cloud_f;
+	}
+
+	// Creating the KdTree object for the search method of the extraction
+	pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
+	tree->setInputCloud (cloud_filtered);
+
+	std::vector<pcl::PointIndices> cluster_indices;
+	pcl::EuclideanClusterExtraction<pcl::PointXYZRGBA> ec;
+	ec.setClusterTolerance (0.02); // 2cm
+	ec.setMinClusterSize (100);
+	ec.setMaxClusterSize (25000);
+	ec.setSearchMethod (tree);
+	ec.setInputCloud (cloud_filtered);
+	ec.extract (cluster_indices);
+
+	int j = 0;
+	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it){
+		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZRGBA>);
+		for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); pit++){
+			cloud_cluster->points.push_back (cloud_filtered->points[*pit]); //*
+		}
+		cloud_cluster->width = cloud_cluster->points.size ();
+		cloud_cluster->height = 1;
+		cloud_cluster->is_dense = true;
+
+		std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+		std::stringstream ss;
+		ss << "cloud_cluster_" << j << ".pcd";
+		writer.write<pcl::PointXYZRGBA> (ss.str (), *cloud_cluster, false); //*
+		j++;
+	}
+	dst = cloud_filtered->makeShared();
 }

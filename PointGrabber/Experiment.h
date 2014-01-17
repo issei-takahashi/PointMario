@@ -10,6 +10,11 @@ namespace mario
 	public:
 		virtual void experimentLoop() = 0;
 	};
+	class Experiment101 : public Experiment
+	{
+	public:
+		void experimentLoop();
+	};
 	class Experiment001 : public Experiment
 	{
 	public:

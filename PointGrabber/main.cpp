@@ -45,6 +45,14 @@ int mario::Main::main()
 
 int main(int argc, char** argv)
 {
-	mario::Main::init();
-	return mario::Main::main();
+	try{
+		mario::Main::init();
+		return mario::Main::main();
+	}
+	catch( std::exception& ex ){
+		cout << ex.what() << endl;
+	}
+	catch( boost::exception & ex ){
+		cout << "boost exception" << endl;
+	}
 }

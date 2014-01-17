@@ -1,7 +1,7 @@
 #pragma once
 
-namespace mario{
-
+namespace mario
+{
 	typedef double typeR;
 	typedef double typeD;
 	typedef double typeM;

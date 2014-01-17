@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Coordinate.h"
+
 namespace mario{
 
 	class MeasureBasement
@@ -9,10 +11,11 @@ namespace mario{
 		~MeasureBasement();
 		void start();
 		void stop();
-		int simpleViewLoop();
 		void oneLoop();
 		void measureLoop();
 		bool quitEvent();
+		bool isCloudEmpty();
+		Coordinate<typeM> getRedCenter();
 	public:
 		struct EventHelper
 		{
@@ -42,6 +45,7 @@ namespace mario{
 
 	private:
 		bool isInitDone;
+		Coordinate<typeM> redCenter;
 	};
 
 };

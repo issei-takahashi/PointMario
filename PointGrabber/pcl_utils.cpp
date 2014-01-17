@@ -2,62 +2,62 @@
 #include "FileIO.h"
 
 pcl::PointIndices::Ptr 
-mario::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
+	mario::segmentate(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, double threshould)
 {
-    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-    pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+	pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
+	pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
 
-    // Create the segmentation object
-    pcl::SACSegmentation<pcl::PointXYZRGBA> seg;
-    // Optional
-    seg.setOptimizeCoefficients (true);
-    // Mandatory
-    seg.setModelType (pcl::SACMODEL_PLANE);
-    seg.setMethodType (pcl::SAC_RANSAC);
-    seg.setDistanceThreshold (threshould);
+	// Create the segmentation object
+	pcl::SACSegmentation<pcl::PointXYZRGBA> seg;
+	// Optional
+	seg.setOptimizeCoefficients (true);
+	// Mandatory
+	seg.setModelType (pcl::SACMODEL_PLANE);
+	seg.setMethodType (pcl::SAC_RANSAC);
+	seg.setDistanceThreshold (threshould);
 
-    seg.setInputCloud (cloud);
-    seg.segment (*inliers, *coefficients);
+	seg.setInputCloud (cloud);
+	seg.segment (*inliers, *coefficients);
 
-    for (size_t i = 0; i < inliers->indices.size (); ++i) {
-        cloud->points[inliers->indices[i]].r = 255;
-        cloud->points[inliers->indices[i]].g = 0;
-        cloud->points[inliers->indices[i]].b = 0;
-    }
+	for (size_t i = 0; i < inliers->indices.size (); ++i) {
+		cloud->points[inliers->indices[i]].r = 255;
+		cloud->points[inliers->indices[i]].g = 0;
+		cloud->points[inliers->indices[i]].b = 0;
+	}
 
-    return inliers;
+	return inliers;
 }
 
 pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
-mario::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
+	mario::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
 {
-    pcl::PointCloud<pcl::PointXYZRGBA>::Ptr result =
-        pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr result =
+		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
 
-    //フィルタリング
-    pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
-    extract.setInputCloud( cloud );
-    extract.setIndices( inliers );
+	//フィルタリング
+	pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
+	extract.setInputCloud( cloud );
+	extract.setIndices( inliers );
 
-    // true にすると平面を除去、false にすると平面以外を除去
-    extract.setNegative( isNegatibe );
-    extract.filter( *result );
+	// true にすると平面を除去、false にすると平面以外を除去
+	extract.setNegative( isNegatibe );
+	extract.filter( *result );
 
-    return result;
+	return result;
 }
 
 bool compare( const pcl::PointXYZRGBA& left, const pcl::PointXYZRGBA& right )
 {
-	 float lx = left.x/left.z;
-	 float ly = left.y/left.z;
-	 float rx = right.x/right.z;
-	 float ry = right.y/right.z;
-	 if( ly == ry ){
-		 return lx < rx;
-	 }
-	 else{
-		 return ly < ry;
-	 }
+	float lx = left.x/left.z;
+	float ly = left.y/left.z;
+	float rx = right.x/right.z;
+	float ry = right.y/right.z;
+	if( ly == ry ){
+		return lx < rx;
+	}
+	else{
+		return ly < ry;
+	}
 }
 
 
@@ -75,30 +75,32 @@ void mario::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
 	};
 }
 
-void mario::redDetection( pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
+mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
 {
-	double x=0,y=0,z=0;
+	dst = cloud->makeShared();
+	long double x=0,y=0,z=0;
 	int rcount=0;
 	static double RED_VAL = FileIO::getConst("RED_VAL");
 	static double RED_RATE = FileIO::getConst("RED_RATE");
-	for(int count=0;count<cloud.points.size();count++){
-		if( cloud.points[count].r > RED_VAL && 
-			cloud.points[count].r > cloud.points[count].g*RED_RATE &&
-			cloud.points[count].r > cloud.points[count].b*RED_RATE ){
-			cloud.points[count].r = 0;
-			cloud.points[count].g = 255;
-			cloud.points[count].b = 0;
+	for(int count=0;count<dst->points.size();count++){
+		if( dst->points[count].r > RED_VAL && 
+			dst->points[count].r > dst->points[count].g*RED_RATE &&
+			dst->points[count].r > dst->points[count].b*RED_RATE ){
+				dst->points[count].r = 0;
+				dst->points[count].g = 255;
+				dst->points[count].b = 0;
 
-			x += cloud.points[count].x;
-			y += cloud.points[count].y;
-			z += cloud.points[count].z;
-			rcount++;
+				x += dst->points[count].x;
+				y += dst->points[count].y;
+				z += dst->points[count].z;
+				rcount++;
 		}
 	}
 	x/=rcount;
 	y/=rcount;
 	z/=rcount;
-	//cout<<x<<" "<<y<<" "<<z<<endl;
+	cout<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
+	return mario::Coordinate<mario::typeM>(x,y,z);
 }
 
 void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
@@ -134,7 +136,7 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 			///pass.setFilterLimitsNegative (true);
 			filterCount++;
 			pass.filter ( *cloudPtrs[filterCount] );
-			
+
 		}
 		// ダウンサンプリングフィルタ
 		if( DOWN_FILTER_LEAF > 0 ){
@@ -154,8 +156,62 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 		// 格納されている順番に赤く着色
 		//mario::redIteration( *cloud_down_filtered );
 		// 赤色を検出して緑色に変換
-		mario:redDetection( *cloudPtrs[filterCount] );
+		//mario::redDetection( *cloudPtrs[filterCount] );
 		dst = cloudPtrs[filterCount]->makeShared();
+	}
+}
+
+void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+{
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered;
+	dst = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	downed = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	filtered = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+	mario::downSamplingFilter( cloud, downed );
+	//mario::outlierFilter( downed, dst );
+	mario::redDetection( downed, dst );
+}
+
+void mario::downSamplingFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+{
+	static double DOWN_FILTER_LEAF = FileIO::getConst("DOWN_FILTER_LEAF"); // 大きいほど除去する
+	static pcl::VoxelGrid< pcl::PointXYZRGBA > sor; // ダウンサンプリングフィルタ
+	static bool isInitDone = false;
+	if( isInitDone == false ){
+		// ダウンサンプリングフィルタの設定
+		if( DOWN_FILTER_LEAF > 0 ){
+			sor.setLeafSize (DOWN_FILTER_LEAF,DOWN_FILTER_LEAF, DOWN_FILTER_LEAF);
+		}
+		isInitDone = true;
+	}
+
+	// ダウンサンプリングフィルタ
+	if( DOWN_FILTER_LEAF > 0 ){
+		sor.setInputCloud ( cloud );
+		sor.filter ( *dst );
+	}
+}
+
+void mario::outlierFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+{
+	static double OUT_FILTER_LOWER = FileIO::getConst("OUT_FILTER_LOWER");
+	static double OUT_FILTER_UPPER = FileIO::getConst("OUT_FILTER_UPPER");
+
+	static pcl::PassThrough<pcl::PointXYZRGBA> pass; // 外れ値除去フィルタ
+	static pcl::VoxelGrid< pcl::PointXYZRGBA > sor; // ダウンサンプリングフィルタ
+	static bool isInitDone = false;
+	if( isInitDone == false ){
+		// 外れ値除去フィルタの設定
+		pass.setFilterFieldName ("z");
+		pass.setFilterLimits (OUT_FILTER_LOWER, OUT_FILTER_UPPER);
+		isInitDone = true;
+	}
+
+	// はずれ値除去フィルタ
+	if( OUT_FILTER_LOWER > 0 && OUT_FILTER_UPPER > 0 ){
+		pass.setInputCloud ( cloud );
+		///pass.setFilterLimitsNegative (true);
+		pass.filter ( *dst );
 	}
 }
 
@@ -184,7 +240,7 @@ void mario::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boos
 				imgColor->imageData = (char*) rgb_data;
 				// iplImageはcvShowImageで表示  
 				cvCvtColor(imgColor,imgColor,CV_BGR2RGB);
-				
+
 				cv::Mat mat(imgColor);
 				cv::namedWindow("cv::Mat");
 				cv::imshow("cv::Mat",mat);

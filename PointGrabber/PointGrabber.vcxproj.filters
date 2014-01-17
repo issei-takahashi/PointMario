@@ -84,6 +84,9 @@
     <ClInclude Include="Experiment.h">
       <Filter>Basement</Filter>
     </ClInclude>
+    <ClInclude Include="SerializableData.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="main">

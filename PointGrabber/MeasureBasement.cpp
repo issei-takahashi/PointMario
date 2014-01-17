@@ -1,5 +1,6 @@
 #include "MeasureBasement.h"
 #include "pcl_utils.h"
+#include "FileIO.h"
 
 static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
@@ -61,10 +62,12 @@ void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::P
 
 	this->aMeasureBasement->cld_mutex.lock ();	
 
-	static pcl::PointCloud<pcl::PointXYZRGBA>::Ptr filtered_cloud;
-	mario::filterA(cloud,filtered_cloud);
-	if( filtered_cloud ){
-		this->aMeasureBasement->spcCloud = filtered_cloud->makeShared();
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
+	mario::filterB( cloud, cloud2 );
+
+	if( cloud2 ){
+		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
+		this->aMeasureBasement->spcCloud = cloud2->makeShared();
 	}
 
 	this->aMeasureBasement->cld_mutex.unlock ();
@@ -83,57 +86,6 @@ void mario::MeasureBasement::EventHelper::image_callback (const boost::shared_pt
 	}
 	this->aMeasureBasement->img_mutex.unlock ();
 }
-
-
-int mario::MeasureBasement::simpleViewLoop ()
-{
-
-	EventHelper event_helper(this);
-	std::string device_id = "";
-	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
-
-	pcl::Grabber* interface = new pcl::OpenNIGrabber (device_id);
-
-	spVisualizer.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
-
-	std::string mouseMsg3D ("Mouse coordinates in PCL Visualizer");
-	std::string keyMsg3D ("Key event for PCL Visualizer");
-	spVisualizer->registerMouseCallback (&mario::MeasureBasement::mouse_callback, (void*)(&mouseMsg3D));    
-	spVisualizer->registerKeyboardCallback(&mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D));
-	boost::function<void(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&) > f = boost::bind (&EventHelper::cloud_cb, &event_helper, _1);
-	boost::signals2::connection c1 = interface->registerCallback (f);
-
-	//img.reset (new pcl::visualization::ImageViewer ("OpenNI Viewer"));
-	//// Register callbacks
-	//std::string keyMsg2D ("Key event for image viewer");
-	//std::string mouseMsg2D ("Mouse coordinates in image viewer");
-	//img->registerMouseCallback (&mouse_callback, (void*)(&mouseMsg2D));
-	//img->registerKeyboardCallback(&keyboard_callback, (void*)(&keyMsg2D));
-	//boost::function<void (const boost::shared_ptr<openni_wrapper::Image>&) > image_cb = boost::bind (&EventHelper::image_callback, &event_helper, _1);
-	//boost::signals2::connection image_connection = interface->registerCallback (image_cb);
-
-	interface->start ();
-
-	// Loop
-	while (!spVisualizer->wasStopped ())
-	{
-		// Render and process events in the two interactors
-		spVisualizer->spinOnce (); // ‚±‚±‚Å‰æ–ÊXV
-		//img->spinOnce ();
-		FPS_CALC ("drawing");
-
-		this->showCloud();
-		//this->showImage();
-
-
-		boost::this_thread::sleep (boost::posix_time::microseconds (100));
-	}
-
-	interface->stop ();
-
-	return 1;
-}
-
 
 void mario::MeasureBasement::oneLoop()
 {
@@ -157,6 +109,25 @@ void mario::MeasureBasement::measureLoop()
 bool mario::MeasureBasement::quitEvent()
 {
 	return this->spVisualizer->wasStopped();
+}
+
+bool mario::MeasureBasement::isCloudEmpty()
+{
+	this->cld_mutex.lock();
+	bool ret = false;
+	if( this->spcCloud ){
+		ret = this->spcCloud->empty();
+	}
+	this->cld_mutex.unlock();
+	return ret;
+}
+
+mario::Coordinate<mario::typeM> mario::MeasureBasement::getRedCenter()
+{
+	this->cld_mutex.lock();
+	auto ret = this->redCenter; 
+	this->cld_mutex.unlock();
+	return ret;
 }
 
 void mario::MeasureBasement::showCloud()

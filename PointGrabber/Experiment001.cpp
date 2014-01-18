@@ -109,9 +109,14 @@ mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vect
 	base.start();
 	static int const RED_CENTER_TIMES = FileIO::getConst("RED_CENTER_TIMES");
 	cout << "赤い場所の重心を"<< RED_CENTER_TIMES <<"回計測します..." << endl;
-	times(i,0,RED_CENTER_TIMES){
+	int measureCount = 0;
+	while( measureCount < RED_CENTER_TIMES ){
 		base.oneLoop();
-		_pDst->push_back( base.getRedCenter() );
+		int mc = base.getMeasureCount();
+		if( mc > measureCount ){
+			measureCount = mc;
+			_pDst->push_back( base.getRedCenter() );
+		}
 	}
 	base.stop();
 	cout << "赤い場所の重心"<< RED_CENTER_TIMES <<"回計測しました．平均値は(" << "," << ret.x << "," << ret.y << "," << ret.z << "です．" << endl;

@@ -6,7 +6,7 @@ static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
 
 mario::MeasureBasement::MeasureBasement()
-	:isInitDone(false),rgb_data(0), rgb_data_size(0)
+	:isInitDone(false),rgb_data(0), rgb_data_size(0), measureCount(0)
 {
 
 }
@@ -68,6 +68,9 @@ void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::P
 	if( cloud2 ){
 		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
 		this->aMeasureBasement->spcCloud = cloud2->makeShared();
+		this->aMeasureBasement->measureCount_mutex.lock();
+		this->aMeasureBasement->measureCount++;
+		this->aMeasureBasement->measureCount_mutex.unlock();
 	}
 
 	this->aMeasureBasement->cld_mutex.unlock ();
@@ -127,6 +130,14 @@ mario::Coordinate<mario::typeM> mario::MeasureBasement::getRedCenter()
 	this->cld_mutex.lock();
 	auto ret = this->redCenter; 
 	this->cld_mutex.unlock();
+	return ret;
+}
+
+int mario::MeasureBasement::getMeasureCount()
+{
+	this->measureCount_mutex.lock();
+	int ret = this->measureCount;
+	this->measureCount_mutex.unlock();
 	return ret;
 }
 

@@ -16,6 +16,7 @@ namespace mario{
 		bool quitEvent();
 		bool isCloudEmpty();
 		Coordinate<typeM> getRedCenter();
+		int getMeasureCount();
 	public:
 		struct EventHelper
 		{
@@ -25,7 +26,7 @@ namespace mario{
 			void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image);
 		};
 	public:
-		boost::mutex cld_mutex, img_mutex;
+		boost::mutex cld_mutex, img_mutex, measureCount_mutex;
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;
 		// Create the PCLVisualizer object
@@ -45,6 +46,7 @@ namespace mario{
 
 	private:
 		bool isInitDone;
+		int measureCount;
 		Coordinate<typeM> redCenter;
 	};
 

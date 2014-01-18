@@ -2,52 +2,6 @@
 #include "FileIO.h"
 
 
-pcl::PointCloud<pcl::PointXYZRGBA>::Ptr
-	mario::filter( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr& cloud, pcl::PointIndices::Ptr inliers, bool isNegatibe )
-{
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr result =
-		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
-
-	//フィルタリング
-	pcl::ExtractIndices<pcl::PointXYZRGBA> extract;
-	extract.setInputCloud( cloud );
-	extract.setIndices( inliers );
-
-	// true にすると平面を除去、false にすると平面以外を除去
-	extract.setNegative( isNegatibe );
-	extract.filter( *result );
-
-	return result;
-}
-
-bool compare( const pcl::PointXYZRGBA& left, const pcl::PointXYZRGBA& right )
-{
-	float lx = left.x/left.z;
-	float ly = left.y/left.z;
-	float rx = right.x/right.z;
-	float ry = right.y/right.z;
-	if( ly == ry ){
-		return lx < rx;
-	}
-	else{
-		return ly < ry;
-	}
-}
-
-
-void mario::redIteration(pcl::PointCloud<pcl::PointXYZRGBA>& cloud )
-{
-	std::sort(cloud.points.begin(),cloud.points.end(),compare);
-	static int count = 0;
-	cloud.points[count].r = 255;
-	cloud.points[count].g = 0;
-	cloud.points[count].b = 0;
-	count = count+1;
-	static float zmax = -1;
-	if( count > cloud.points.size() ){
-		count = 0;
-	};
-}
 
 mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
 {
@@ -77,9 +31,8 @@ mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::
 	return mario::Coordinate<mario::typeM>(x,y,z);
 }
 
-mario::Coordinate<mario::typeM> mario::redExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+void mario::redExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
 {
-	long double x=0,y=0,z=0;
 	int rcount=0;
 	static double RED_VAL = FileIO::getConst("RED_VAL");
 	static double RED_RATE = FileIO::getConst("RED_RATE");
@@ -95,18 +48,10 @@ mario::Coordinate<mario::typeM> mario::redExtraction( const pcl::PointCloud<pcl:
 				pt.x = cloud->points[count].x;
 				pt.y = cloud->points[count].y;
 				pt.z = cloud->points[count].z;
-				x += cloud->points[count].x;
-				y += cloud->points[count].y;
-				z += cloud->points[count].z;
 				dst->push_back( pt );
 				rcount++;
 		}
 	}
-	x/=rcount;
-	y/=rcount;
-	z/=rcount;
-	cout<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
-	return mario::Coordinate<mario::typeM>(x,y,z);
 }
 
 void mario::removePlane( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, double threshould )
@@ -218,7 +163,13 @@ void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // 大きいほど除去する
 	mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
 	mario::redExtraction( planed, reded );
-	mario::clusterize( reded, dst );
+	vector< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > v_clusters;
+	mario::clusterize( reded, dst, v_clusters );
+	cout << "cluster size == " << v_clusters.size() << endl;
+	foreach(it,v_clusters){
+		mario::Coordinate<mario::typeM> ave = mario::getAverage(*it);
+		cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
+	}
 }
 
 void mario::downSamplingFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
@@ -307,7 +258,7 @@ void mario::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boos
 	}
 }
 
-void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, vector<  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& v_dst )
 {
 	dst = cloud->makeShared();
 
@@ -330,7 +281,6 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 
 	int j = 0;
 	float colors[6][3] ={{255, 0, 0}, {0,255,0}, {0,0,255}, {255,255,0}, {0,255,255}, {255,0,255}};  
-	vector<pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > v_cluster;
 	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it){
 		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZRGBA>);
 		for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); pit++){
@@ -342,11 +292,24 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 		cloud_cluster->width = cloud_cluster->points.size ();
 		cloud_cluster->height = 1;
 		cloud_cluster->is_dense = true;
-		v_cluster.push_back( cloud_cluster );
+		v_dst.push_back( cloud_cluster );
 		///std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
 		///std::stringstream ss;
 		///ss << "cloud_cluster_" << j << ".pcd";
 		///writer.write<pcl::PointXYZRGBA> (ss.str (), *cloud_cluster, false); //*
 		j++;
 	}
+}
+
+mario::Coordinate<mario::typeM> mario::getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )
+{
+	mario::Coordinate<mario::typeM> ret(0,0,0);
+	int count = 0;
+	for( count=0; count<cloud->points.size(); count++ ){
+		ret.x += cloud->points[count].x;
+		ret.y += cloud->points[count].y;
+		ret.z += cloud->points[count].z;
+	}
+	ret /= count;
+	return ret;
 }

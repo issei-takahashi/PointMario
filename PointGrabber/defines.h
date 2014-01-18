@@ -4,7 +4,7 @@
 
 
 
-#define MEASURE_FUNCTION_TIME
+//#define MEASURE_FUNCTION_TIME
 //#define SHOW_IMAGE !((VTK_MAJOR_VERSION == 5)&&(VTK_MINOR_VERSION <= 4))
 #define SHOW_IMAGE 1
 

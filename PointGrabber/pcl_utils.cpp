@@ -163,10 +163,10 @@ void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // 大きいほど除去する
 	mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
 	mario::redExtraction( planed, reded );
-	vector< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > v_clusters;
-	mario::clusterize( reded, dst, v_clusters );
-	cout << "cluster size == " << v_clusters.size() << endl;
-	foreach(it,v_clusters){
+	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_clusters;
+	mario::clusterize( reded, dst, l_clusters, 4 );
+	cout << "cluster size == " << l_clusters.size() << endl;
+	foreach(it,l_clusters){
 		mario::Coordinate<mario::typeM> ave = mario::getAverage(*it);
 		cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
 	}
@@ -174,6 +174,10 @@ void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 
 void mario::downSamplingFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
+	if( cloud->empty() ){
+		dst = pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
+		return;
+	}
 	static double DOWN_FILTER_LEAF = FileIO::getConst("DOWN_FILTER_LEAF"); // 大きいほど除去する
 	static pcl::VoxelGrid< pcl::PointXYZRGBA > sor; // ダウンサンプリングフィルタ
 	static bool isInitDone = false;
@@ -194,6 +198,10 @@ void mario::downSamplingFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstP
 
 void mario::outlierFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
 {
+	if( cloud->empty() ){
+		dst = pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
+		return;
+	}
 	static double OUT_FILTER_LOWER = FileIO::getConst("OUT_FILTER_LOWER");
 	static double OUT_FILTER_UPPER = FileIO::getConst("OUT_FILTER_UPPER");
 
@@ -258,9 +266,12 @@ void mario::cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boos
 	}
 }
 
-void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, vector<  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& v_dst )
+void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, int maxNum )
 {
-	dst = cloud->makeShared();
+	if( cloud->empty() ){
+		dst = pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
+		return;
+	}
 
 	// Creating the KdTree object for the search method of the extraction
 	pcl::search::KdTree<pcl::PointXYZRGBA>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGBA>);
@@ -277,28 +288,71 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 	ec.setSearchMethod (tree);
 	//ec.setInputCloud (cloud_filtered);
 	ec.setInputCloud (cloud);
-	ec.extract (cluster_indices);
+	ec.extract(cluster_indices);
 
+	// クラスタをサイズ順にソート
+	{
+		// ソート用ファンクタ
+		struct cluster_compare_by_size
+		{
+			typedef pcl::PointIndices PI;
+			bool operator()(const PI& lhs, const PI& rhs) const {
+				return lhs.indices.size() < rhs.indices.size();
+			}
+		};
+		// サイズ昇順ソート
+		std::sort( cluster_indices.begin(), cluster_indices.end(), cluster_compare_by_size() ); // 1 2 3...
+		int const clusterNum = cluster_indices.size();
+		int count = 0;
+		// 大きい方からmaxNum個だけ残す
+		for( auto it = cluster_indices.begin(); it != cluster_indices.end(); ){
+			it = cluster_indices.erase(it);
+			count++;
+			if( count == clusterNum - maxNum ){
+				break;
+			}
+		}
+	}
+
+	//// クラスタを重心座標順にソート
+	//{
+	//	// ソート用ファンクタ
+	//	struct cluster_compare_by_xyz
+	//	{
+	//		typedef std::vector<pcl::PointIndices> PI;
+	//		bool operator()(const PI& lhs, const PI& rhs) const {
+	//			Coordinate<typeM> avel = mario::getAverage(lhs);
+	//			Coordinate<typeM> aver = mario::getAverage(rhs);
+	//			static Coordinate<typeM> zero;
+	//			return avel.distance(zero) < aver.distance(zero);
+	//		}
+	//	};
+	//	// 重心座標昇順ソート
+	//	std::sort( cluster_indices.begin(), cluster_indices.end(), cluster_compare_by_xyz() ); // 1 2 3...
+	//}
+
+	dst = pcl::PointCloud<pcl::PointXYZRGBA>::Ptr( new pcl::PointCloud<pcl::PointXYZRGBA>() );
 	int j = 0;
-	float colors[6][3] ={{255, 0, 0}, {0,255,0}, {0,0,255}, {255,255,0}, {0,255,255}, {255,0,255}};  
+	static float const colors[6][3] ={{255, 0, 0}, {0,255,0}, {0,0,255}, {255,255,0}, {0,255,255}, {255,0,255}};  
 	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it){
 		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZRGBA>);
+		// dstの着色
+		// 各点をクラスタにプッシュ
 		for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); pit++){
-			cloud_cluster->points.push_back (dst->points[*pit]); //*
-			dst->points[*pit].r = colors[j%6][0];
-			dst->points[*pit].g = colors[j%6][1];
-			dst->points[*pit].b = colors[j%6][2];
+			cloud_cluster->points.push_back (cloud->points[*pit]); //*
+			dst->push_back(cloud->points[*pit]);
+			dst->back().r = colors[j%6][0];
+			dst->back().g = colors[j%6][1];
+			dst->back().b = colors[j%6][2];
 		}
+		// クラスタをリストにプッシュ
 		cloud_cluster->width = cloud_cluster->points.size ();
 		cloud_cluster->height = 1;
 		cloud_cluster->is_dense = true;
-		v_dst.push_back( cloud_cluster );
-		///std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
-		///std::stringstream ss;
-		///ss << "cloud_cluster_" << j << ".pcd";
-		///writer.write<pcl::PointXYZRGBA> (ss.str (), *cloud_cluster, false); //*
+		l_dst.push_back( cloud_cluster );
 		j++;
 	}
+
 }
 
 mario::Coordinate<mario::typeM> mario::getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )

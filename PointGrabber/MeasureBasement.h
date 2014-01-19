@@ -26,7 +26,7 @@ namespace mario{
 			void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image);
 		};
 	public:
-		boost::mutex cld_mutex, img_mutex, measureCount_mutex;
+		boost::mutex cld_mutex, img_mutex, measureCount_mutex, redCenter_mutex;
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;
 		// Create the PCLVisualizer object

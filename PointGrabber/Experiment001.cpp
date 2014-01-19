@@ -3,18 +3,24 @@
 #include "FileIO.h"
 #include "Display.h"
 #include "utils.h"
+#include "ExperimentData.h"
 
 void mario::Experiment001::experimentLoop()
 {
-	string fileNameBase = this->inputFileNameLoop();
+	static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
+	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
+	static int const DISP_Z_mm = FileIO::getConst("DISP_Z_mm");
+	string fileNameBase = string("exdata/") + this->inputFileNameLoop();
 	int count = 1;
-	mario::Experiment001::Experiment001DataList dataList;
+	mario::Experiment001DataList dataList;
+	mario::Coordinate<mario::typeM> beforepM;
+	mario::Coordinate<mario::typeD> beforepD(DISP_X_mm/2,DISP_Y_mm/2,DISP_Z_mm/2);
 	do{
-		mario::Experiment001::Experiment001Data data;
+		mario::Experiment001Data data;
 		cout << count << "回目の計測を開始します．" << endl;
 		data.pR = this->inputRealPositionLoop();
-		data.pM = this->measureRedPointsLoop( &data.v_redPointCenters );
-		data.pD = this->showCrossAndRegisterCrossLoop();
+		data.pM = this->measureRedPointsLoop( &data.v_redPointCenters, beforepM );
+		data.pD = this->showCrossAndRegisterCrossLoop( beforepD );
 		string str = utils::int2string(count);
 		times(i,0,4-str.size()){
 			str = string("0") + str;
@@ -24,11 +30,14 @@ void mario::Experiment001::experimentLoop()
 		cout << filePath << "にデータを保存しました．" << endl;
 		count++;
 		dataList.l_exp001datas.push_back( data );
+		beforepM = data.pM;
+		beforepD = data.pD;
 	}
 	while( this->inputContinueLoop() );
-	string filePath = fileNameBase + ".xml";
-	dataList.write(filePath,dataList);
-	cout << filePath << "にデータを保存しました．" << endl;
+	dataList.write( fileNameBase+".xml", dataList );
+	cout << fileNameBase+".xml" << "にデータを保存しました．" << endl;
+	dataList.writeCsv( fileNameBase+".csv" );
+	cout << fileNameBase+".csv" << "にデータを保存しました．" << endl;
 }
 
 bool mario::Experiment001::inputContinueLoop()
@@ -56,7 +65,7 @@ string mario::Experiment001::inputFileNameLoop()
 	string buf = "";
 	bool okFlag = false;
 	while( okFlag == false ){
-		cout << "ファイル名を入力してください：";
+		cout << "exdata/内に保存するファイル名を入力してください：";
 		cin  >> buf;
 		cout << buf << " でよろしいですか？(y/n)：";
 		string okStr;
@@ -101,40 +110,61 @@ mario::Coordinate<mario::typeR> mario::Experiment001::inputRealPositionLoop()
 	return ret;
 }
 
-mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vector<Coordinate<typeM> > * _pDst )
+mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vector<Coordinate<typeM> > * _pDst, Coordinate<typeM> const & _beforeCenter )
 {
 	mario::Coordinate<mario::typeM> ret;
-	cout << "MeasureBasementの初期化中..." << endl;
-	mario::MeasureBasement base;
-	base.start();
-	static int const RED_CENTER_TIMES = FileIO::getConst("RED_CENTER_TIMES");
-	cout << "赤い場所の重心を"<< RED_CENTER_TIMES <<"回計測します..." << endl;
-	int measureCount = 0;
-	while( measureCount < RED_CENTER_TIMES ){
-		base.oneLoop();
-		int mc = base.getMeasureCount();
-		if( mc > measureCount ){
-			measureCount = mc;
-			_pDst->push_back( base.getRedCenter() );
+	while(1){
+		ret = mario::Coordinate<mario::typeM>(0,0,0);
+		cout << "MeasureBasementの初期化中..." << endl;
+		mario::MeasureBasement base;
+		base.start();
+		static int const RED_CENTER_TIMES = FileIO::getConst("RED_CENTER_TIMES");
+		cout << "赤い場所の重心を"<< RED_CENTER_TIMES <<"回計測します..." << endl;
+		int measureCount = 0;
+		times(i,0,RED_CENTER_TIMES){
+			cout << "-" ;
+		}
+		cout << endl;
+		while( measureCount < RED_CENTER_TIMES ){
+			base.oneLoop();
+			int mc = base.getMeasureCount();
+			if( mc > measureCount ){
+				measureCount = mc;
+				auto thisred = base.getRedCenter();
+				ret += thisred;
+				_pDst->push_back( thisred );
+				cout << "*";
+			}
+		}
+		cout << endl;
+		ret /= RED_CENTER_TIMES;
+		base.stop();
+		cout << RED_CENTER_TIMES <<"回計測しました．平均値は(" << ret.x << "," << ret.y << "," << ret.z << "),移動量は" << _beforeCenter.distance(ret) << "です．" << endl;
+		cout << "やり直しますか？(y/n)：";
+		string againStr;
+		cin  >> againStr;
+		if( againStr == "y" ){
+			continue;
+		}
+		else{
+			break;
 		}
 	}
-	base.stop();
-	cout << "赤い場所の重心"<< RED_CENTER_TIMES <<"回計測しました．平均値は(" << "," << ret.x << "," << ret.y << "," << ret.z << "です．" << endl;
 	return ret;
 }
 
-mario::Coordinate<mario::typeD> mario::Experiment001::showCrossAndRegisterCrossLoop()
+mario::Coordinate<mario::typeD> mario::Experiment001::showCrossAndRegisterCrossLoop( mario::Coordinate<mario::typeD> const & _beforepD )
 {
 	static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
 	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
 	static int const DISP_Z_mm = FileIO::getConst("DISP_Z_mm");
 	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
-	cout << "計測した位置に+マークを出します．ずれていたら方向キーで+を移動して合わせてください．" << endl;
+	cout << "+マークを合わせてください" << endl;
 	mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
 	disp.start();
 	disp.changeScreenMode();
-	disp.set_crossPos( Coordinate<typeD>(DISP_X_mm/2,DISP_Y_mm/2,DISP_Z_mm/2) );
+	disp.set_crossPos( _beforepD );
 	bool endFlag = false;
 	bool keyUpdateFlag = false;
 	while( endFlag == false ){

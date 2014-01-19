@@ -94,6 +94,7 @@
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Experiment.h" />
+    <ClInclude Include="ExperimentData.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="ifLine.h" />
     <ClInclude Include="Image.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="Experiment001.cpp" />
     <ClCompile Include="Experiment002.cpp" />
     <ClCompile Include="Experiment101.cpp" />
+    <ClCompile Include="ExperimentData.cpp" />
     <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="MeasureBasement.cpp" />

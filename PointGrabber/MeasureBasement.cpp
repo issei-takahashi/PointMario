@@ -60,12 +60,13 @@ void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::P
 {
 	FPS_CALC ("callback");
 
-	this->aMeasureBasement->cld_mutex.lock ();	
+	this->aMeasureBasement->cld_mutex.lock ();
+	this->aMeasureBasement->redCenter_mutex.lock();
 
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
-	mario::filterB( cloud, cloud2 );
+	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_cluster ;
 
-	if( cloud2 ){
+	if( mario::filterB( cloud, cloud2, l_cluster, this->aMeasureBasement->redCenter ) ){
 		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
 		this->aMeasureBasement->spcCloud = cloud2->makeShared();
 		this->aMeasureBasement->measureCount_mutex.lock();
@@ -73,6 +74,7 @@ void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::P
 		this->aMeasureBasement->measureCount_mutex.unlock();
 	}
 
+	this->aMeasureBasement->redCenter_mutex.unlock();
 	this->aMeasureBasement->cld_mutex.unlock ();
 
 }
@@ -127,9 +129,9 @@ bool mario::MeasureBasement::isCloudEmpty()
 
 mario::Coordinate<mario::typeM> mario::MeasureBasement::getRedCenter()
 {
-	this->cld_mutex.lock();
+	this->redCenter_mutex.lock();
 	auto ret = this->redCenter; 
-	this->cld_mutex.unlock();
+	this->redCenter_mutex.unlock();
 	return ret;
 }
 

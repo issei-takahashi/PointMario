@@ -43,6 +43,9 @@
     <ClCompile Include="Experiment101.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="ExperimentData.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -88,6 +91,9 @@
       <Filter>Basement</Filter>
     </ClInclude>
     <ClInclude Include="SerializableData.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="ExperimentData.h">
       <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>

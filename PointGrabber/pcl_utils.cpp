@@ -147,7 +147,7 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	}
 }
 
-void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst)
+bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, Coordinate<typeM> & redCenter )
 {
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered, planed, reded, clustered;
 
@@ -163,12 +163,21 @@ void mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // ëÂÇ´Ç¢ÇŸÇ«èúãéÇ∑ÇÈ
 	mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
 	mario::redExtraction( planed, reded );
-	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_clusters;
-	mario::clusterize( reded, dst, l_clusters, 4 );
-	cout << "cluster size == " << l_clusters.size() << endl;
-	foreach(it,l_clusters){
-		mario::Coordinate<mario::typeM> ave = mario::getAverage(*it);
-		cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
+
+	mario::clusterize( reded, dst, l_dst, 4 );
+	//cout << "cluster size == " << l_dst.size() << endl;
+	if( l_dst.size() == 4 ){
+		mario::Coordinate<mario::typeM> ave;
+		foreach(it,l_dst){
+			ave += mario::getAverage(*it);
+			//cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
+		}
+		ave /= l_dst.size();
+		redCenter = ave;
+		return true;
+	}
+	else{
+		return false;
 	}
 }
 

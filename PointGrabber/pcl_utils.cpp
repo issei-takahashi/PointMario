@@ -305,11 +305,13 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 		int const clusterNum = cluster_indices.size();
 		int count = 0;
 		// ‘å‚«‚¢•û‚©‚çmaxNumŒÂ‚¾‚¯Žc‚·
-		for( auto it = cluster_indices.begin(); it != cluster_indices.end(); ){
-			it = cluster_indices.erase(it);
-			count++;
-			if( count == clusterNum - maxNum ){
-				break;
+		if( clusterNum > maxNum ){
+			for( auto it = cluster_indices.begin(); it != cluster_indices.end(); ){
+				it = cluster_indices.erase(it);
+				count++;
+				if( count == clusterNum - maxNum ){
+					break;
+				}
 			}
 		}
 	}

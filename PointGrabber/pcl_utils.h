@@ -15,5 +15,4 @@ namespace mario{
 	void clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, int maxNum );
 
 	Coordinate<typeM> getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud );
-	Coordinate<typeM> getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud );
 }

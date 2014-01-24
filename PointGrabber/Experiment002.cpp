@@ -99,7 +99,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 		S_PY /= Np;
 	}
 	/*  */
-
+	return boost::shared_ptr<Eigen::MatrixXd>();
 }
 
 void mario::Experiment002::experimentLoop()

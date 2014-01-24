@@ -25,11 +25,13 @@ namespace mario
 		Coordinate<typeD> showCrossAndRegisterCrossLoop( Coordinate<typeD> const & _beforepD );
 	};
 	
-	/* 実験2 */
+	/* 実験2(実験1データから変換行列を計算する) */
 	class Experiment002 : public Experiment
 	{
 	public:
 		void experimentLoop();
+	private:
+		string inputFileNameLoop();
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */

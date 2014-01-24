@@ -161,8 +161,8 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	mario::downSamplingFilter( cloud, downed );
 	mario::outlierFilter( downed, filtered );
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // ëÂÇ´Ç¢ÇŸÇ«èúãéÇ∑ÇÈ
-	mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
-	mario::redExtraction( planed, reded );
+	//mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
+	mario::redExtraction( filtered, reded );
 
 	mario::clusterize( reded, dst, l_dst, 4 );
 	//cout << "cluster size == " << l_dst.size() << endl;

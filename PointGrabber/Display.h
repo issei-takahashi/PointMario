@@ -15,6 +15,7 @@ namespace mario
 		void displayLoop();
 		void drawCross( Coordinate<typeD> _pd, bool _printStringFLag );
 		void changeScreenMode();
+		void setScreenMode( bool _fullScreenFlag );
 		bool quitEvent() const;
 		bool keyInputEvent1();
 		void wait( int _ms );

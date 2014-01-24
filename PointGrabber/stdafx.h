@@ -145,3 +145,7 @@
 #pragma comment(lib, "SDL_image.lib")
 #include <SDL_ttf.h>
 #pragma comment(lib, "SDL_ttf.lib")
+
+/* Eigen */
+#include <Eigen/Core>
+///#include <Eigen/Sparse>

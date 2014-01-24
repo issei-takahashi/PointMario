@@ -13,7 +13,7 @@ namespace mario
 			boost::archive::xml_oarchive oa(ofs);
 			oa << boost::serialization::make_nvp("Root", instance );
 		}
-		void read( string const & _filePath, T const & instance )
+		void read( string const & _filePath, T & instance )
 		{
 			std::ifstream ifs( _filePath );
 			boost::archive::xml_iarchive ia(ifs);

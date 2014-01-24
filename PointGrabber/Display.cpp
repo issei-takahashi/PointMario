@@ -37,7 +37,8 @@ void mario::Display::start()
 		}
 		static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 		static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
-		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+		//this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+		this->setScreenMode(true);
 		SDL_WM_SetCaption("Main Window",NULL);
 		// フォント初期化
 		this->pFont = TTF_OpenFont("font/azuki.ttf", 24); 
@@ -50,6 +51,7 @@ void mario::Display::stop()
 		this->isActive = false;
 		if( this->pMainWindow ){
 			SDL_FreeSurface( this->pMainWindow );
+			this->pMainWindow = NULL;
 		}
 		if( this->pFont ){
 			TTF_CloseFont( this->pFont );
@@ -131,16 +133,34 @@ void mario::Display::drawCross( Coordinate<typeD> _pd, bool _printStringFLag )
 
 void mario::Display::changeScreenMode()
 {
+	this->isFullScreen = !this->isFullScreen;
 	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
-	SDL_FreeSurface( this->pMainWindow );
-	if( this->isFullScreen ){
-		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+	if( this->pMainWindow ){
+		SDL_FreeSurface( this->pMainWindow );
 	}
-	else{
+	if( this->isFullScreen ){
 		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE | SDL_FULLSCREEN );
 	}
-	this->isFullScreen = !this->isFullScreen;
+	else{
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+	}
+}
+
+void mario::Display::setScreenMode( bool _isFullScreen )
+{
+	this->isFullScreen = _isFullScreen;
+	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
+	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
+	if( this->pMainWindow ){
+		SDL_FreeSurface( this->pMainWindow );
+	}
+	if( this->isFullScreen ){
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE | SDL_FULLSCREEN );
+	}
+	else{
+		this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
+	}
 }
 
 bool mario::Display::quitEvent() const
@@ -203,9 +223,9 @@ bool mario::Display::keyInputEvent1()
 
 	// 上下キー
 	if       ( getKeys[SDLK_RSHIFT]    == SDL_PRESSED ){
-		this->crossPos.z -= 1.0 * this->crossSpeed * speedBias;
-	} else if( getKeys[SDLK_RCTRL]  == SDL_PRESSED ){ 
 		this->crossPos.z += 1.0 * this->crossSpeed * speedBias;
+	} else if( getKeys[SDLK_RCTRL]  == SDL_PRESSED ){ 
+		this->crossPos.z -= 1.0 * this->crossSpeed * speedBias;
 	}	
 
 	// Enterキー

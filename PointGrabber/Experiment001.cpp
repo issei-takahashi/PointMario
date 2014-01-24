@@ -14,7 +14,7 @@ void mario::Experiment001::experimentLoop()
 	int count = 1;
 	mario::Experiment001DataList dataList;
 	mario::Coordinate<mario::typeM> beforepM;
-	mario::Coordinate<mario::typeD> beforepD(DISP_X_mm/2,DISP_Y_mm/2,DISP_Z_mm/2);
+	mario::Coordinate<mario::typeD> beforepD(DISP_X_mm/2,DISP_Y_mm/2,0.0);
 	do{
 		mario::Experiment001Data data;
 		cout << count << "回目の計測を開始します．" << endl;
@@ -161,9 +161,9 @@ mario::Coordinate<mario::typeD> mario::Experiment001::showCrossAndRegisterCrossL
 	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
 	cout << "+マークを合わせてください" << endl;
-	mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
+	static mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
 	disp.start();
-	disp.changeScreenMode();
+	disp.setScreenMode( true );
 	disp.set_crossPos( _beforepD );
 	bool endFlag = false;
 	bool keyUpdateFlag = false;

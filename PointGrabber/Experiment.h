@@ -32,6 +32,7 @@ namespace mario
 		void experimentLoop();
 	private:
 		string inputFileNameLoop();
+		char inputCoordinateTypeLoop( string const & _message );
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */

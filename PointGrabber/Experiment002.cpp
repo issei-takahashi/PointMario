@@ -2,8 +2,8 @@
 #include "ExperimentData.h"
 
 // 点群P->点群Y への幾何変換を求める
-template<class T1, class T2>
-boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataList const & _dataList )
+pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
+	getTranslateMatrix( char _type1, char _type2, mario::Experiment001DataList const & _dataList )
 {
 	int const Np = _dataList.l_exp001datas.size();
 	using namespace Eigen;
@@ -18,7 +18,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 	/* 点群を初期化して，ついでに重心算出 */
 	{
 		// P
-		if( typeid(T1) == typeid(mario::typeR) ){
+		if( _type1 == 'R' ){
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pR.x;
@@ -30,7 +30,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 				mu_P(2) += tmp(2);
 			}
 			mu_P /= Np;
-		} else if( typeid(T1) == typeid(mario::typeM) ) {
+		} else if( _type1 == 'M' ) {
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pM.x;
@@ -42,7 +42,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 				mu_P(2) += tmp(2);
 			}
 			mu_P /= Np;
-		} else if( typeid(T1) == typeid(mario::typeD) ) {
+		} else if( _type1 == 'D' ) {
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pD.x;
@@ -57,7 +57,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 		}
 
 		// Y
-		if( typeid(T2) == typeid(mario::typeR) ) {
+		if( _type2 == 'R' ) {
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pR.x;
@@ -69,7 +69,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 				mu_Y(2) += tmp(2);
 			}
 			mu_Y /= Np;
-		} else if( typeid(T2) == typeid(mario::typeM) ){
+		} else if( _type2 == 'M' ){
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pM.x;
@@ -81,7 +81,7 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 				mu_Y(2) += tmp(2);
 			}
 			mu_Y /= Np;
-		} else if( typeid(T2) == typeid(mario::typeD) ) {
+		} else if( _type2 == 'D' ) {
 			foreach(it,_dataList.l_exp001datas){
 				Vector3d tmp;
 				tmp(0) = it->pD.x;
@@ -104,7 +104,8 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 		S_PY /= Np;
 	}
 	S_PY_inv = S_PY.transpose();
-	/* Qをつくる */
+	
+	/* q_Rをつくる */
 	{
 		MatrixXd A(3,3);
 		times(i,0,3){
@@ -160,7 +161,21 @@ boost::shared_ptr<Eigen::MatrixXd> getTranslateMatrix( mario::Experiment001DataL
 		}
 	}
 
-	return boost::shared_ptr<Eigen::MatrixXd>();
+	/* 回転行列R(q_R)と並進ベクトルq_Tを作る */
+	boost::shared_ptr<Matrix3d> R( new Matrix3d() );
+	boost::shared_ptr<Vector3d> q_T( new Vector3d() );
+	{
+		double q0,q1,q2,q3;
+		q0 = q_R(0);
+		q1 = q_R(1);
+		q2 = q_R(2);
+		q3 = q_R(3);
+		(*R)(0,0) = q0*q0 +q1*q1 -q2*q2 -q3*q3;  (*R)(0,1) = 2*(q1*q2 -q0*q3);               (*R)(0,2) = 2*(q1*q3 +q0*q2);
+		(*R)(1,0) = 2*(q1*q2 +q0*q3);            (*R)(1,1) = q0*q0 -q1*q1 +q2*q2 -q3*q3;     (*R)(1,2) = 2*(q2*q3 -q0*q1);
+		(*R)(2,0) = 2*(q1*q3 -q0*q2);            (*R)(2,1) = 2*(q2*q3 +q0*q1);               (*R)(2,2) = q0*q0 -q1*q1 -q2*q2 +q3*q3;
+	}
+	*q_T = mu_Y - (*R)*mu_P;
+	return make_pair(R,q_T);
 }
 
 void mario::Experiment002::experimentLoop()
@@ -178,8 +193,14 @@ void mario::Experiment002::experimentLoop()
 			continue;
 		}
 	}
-	::getTranslateMatrix<typeR,typeD>( datas );
-
+	char type1 = this->inputCoordinateTypeLoop( "変換元(RorMorD)を入力してください：" );
+	char type2 = this->inputCoordinateTypeLoop( "変換先(RorMorD)を入力してください：" );
+	auto pai = ::getTranslateMatrix( type1, type2, datas );
+	cout << "----------" << endl;
+	cout << *pai.first << endl;
+	cout << "----------" << endl;
+	cout << *pai.second << endl;
+	cout << "----------" << endl;
 }
 
 string mario::Experiment002::inputFileNameLoop()
@@ -197,5 +218,19 @@ string mario::Experiment002::inputFileNameLoop()
 		}
 	}
 	return buf;
+}
+
+char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
+{
+	string buf = "";
+	bool okFlag = false;
+	while( okFlag == false ){
+		cout << _message;
+		cin  >> buf;
+		if( buf == "R" || buf == "M" || buf == "D" ){
+			okFlag = true;
+		}
+	}
+	return buf.at(0);
 }
 

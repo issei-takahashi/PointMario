@@ -31,14 +31,28 @@ namespace mario
 	public:
 		void experimentLoop();
 	private:
-		string inputFileNameLoop();
+		string inputFileNameLoop( string const & _message );
 		char inputCoordinateTypeLoop( string const & _message );
+		void writeCalculatedValues(
+			string const & _filePath,
+			char type1, char type2,
+			boost::shared_ptr<Eigen::Matrix3d> const& R,
+			boost::shared_ptr<Eigen::Vector3d> const& q_T,
+			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */
 	class Experiment101 : public Experiment
 	{
 	public:
+		void experimentLoop();
+	};
+
+	/* 実験1001(データ修正モード) */
+	class Experiment1001 : public Experiment
+	{
+	public:
+		string inputFileNameLoop();
 		void experimentLoop();
 	};
 };

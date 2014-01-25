@@ -40,6 +40,13 @@ namespace mario
 	public:
 		list<Experiment001Data> l_exp001datas;
 		void writeCsv( string const & _filePath );
+		void getPoints_R( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst );
+		void getPoints_M( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst );
+		void getPoints_D( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst );
+	private:
+		vector<boost::shared_ptr<Eigen::Vector3d> > points_R;
+		vector<boost::shared_ptr<Eigen::Vector3d> > points_M;
+		vector<boost::shared_ptr<Eigen::Vector3d> > points_D;
 	private:
 		template<class Archive>
 		void serialize( Archive& ar, unsigned int ver )

@@ -2,17 +2,21 @@
 #include "ExperimentData.h"
 
 // 点群P->点群Y への幾何変換を求める
-pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
-	getTranslateMatrix( char _type1, char _type2, mario::Experiment001DataList const & _dataList )
+
+void getTranslateMatrix( char _type1, char _type2, mario::Experiment001DataList const & _dataList,
+	boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
+	boost::shared_ptr<Eigen::Vector3d>& _transDst,
+	vector< boost::shared_ptr<Eigen::Vector3d> >& _errDst )
 {
 	int const Np = _dataList.l_exp001datas.size();
 	using namespace Eigen;
 	vector<Vector3d> P; // 3次元点群P
 	vector<Vector3d> Y; // 3次元点群Y
+	vector< boost::shared_ptr<Vector3d> > Err; // Y-Y'
 	Vector3d mu_P = Vector3d::Zero(); // Pの重心
 	Vector3d mu_Y = Vector3d::Zero(); // Yの重心
 	Matrix3d S_PY = Matrix3d::Zero(); // PとYの共分散行列
-	Matrix3d S_PY_inv = Matrix3d::Zero(); // S_PYの転置
+	Matrix3d S_PY_trans = Matrix3d::Zero(); // S_PYの転置
 	Vector4d q_R = Vector4d::Zero();
 
 	/* 点群を初期化して，ついでに重心算出 */
@@ -103,14 +107,14 @@ pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
 		}
 		S_PY /= Np;
 	}
-	S_PY_inv = S_PY.transpose();
-	
+	S_PY_trans = S_PY.transpose();
+
 	/* q_Rをつくる */
 	{
 		MatrixXd A(3,3);
 		times(i,0,3){
 			times(j,0,3){
-				A(i,j) = S_PY(i,j) - S_PY_inv(i,j);
+				A(i,j) = S_PY(i,j) - S_PY_trans(i,j);
 			}
 		}
 		MatrixXd Delta(3,1);
@@ -120,8 +124,8 @@ pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
 		Delta(2) = A(1-1,2-1);
 		Delta_trans = Delta.transpose();
 		double trace = S_PY.trace();
-		
-		Matrix3d Q_rd = S_PY + S_PY_inv - trace * MatrixXd::Identity(3,3);
+
+		Matrix3d Q_rd = S_PY + S_PY_trans - trace * MatrixXd::Identity(3,3);
 		// Qをつくる
 		Matrix4d Q;
 		Q(0,0) = trace;
@@ -148,7 +152,7 @@ pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
 			int maxi = -1;
 			double maxval = DBL_MIN;
 			times(i,0,4){
-				double val = es.eigenvalues()(i);
+				double val = es.eigenvalues()(i,0);
 				if( val > maxval ){
 					maxval = val;
 					maxi = i;
@@ -175,40 +179,71 @@ pair<boost::shared_ptr<Eigen::Matrix3d>, boost::shared_ptr<Eigen::Vector3d> >
 		(*R)(2,0) = 2*(q1*q3 -q0*q2);            (*R)(2,1) = 2*(q2*q3 +q0*q1);               (*R)(2,2) = q0*q0 -q1*q1 -q2*q2 +q3*q3;
 	}
 	*q_T = mu_Y - (*R)*mu_P;
-	return make_pair(R,q_T);
+	auto itP = P.begin();
+	int i = 0;
+	foreach(itY,Y){
+		Vector3d tmp = (*R)*(*itP) + *q_T;
+		boost::shared_ptr<Vector3d> err( new Vector3d() );
+		(*err)(0) = (*itY)(0) - tmp(0);
+		(*err)(1) = (*itY)(1) - tmp(1);
+		(*err)(2) = (*itY)(2) - tmp(2);
+		Err.push_back(err);
+		itP++;
+		i++;
+	}
+	_rotDst = R;
+	_transDst = q_T;
+	_errDst = Err;
 }
 
 void mario::Experiment002::experimentLoop()
 {
-	Experiment001DataList datas;
 	while(1){
-		string filePath = string("exdata/") + this->inputFileNameLoop() + ".xml";
-		try{
-			datas.read( filePath, datas );
-			cout << filePath+"を読み込みました．" << endl;
-			break;
+		Experiment001DataList datas;
+		while(1){
+			string filePath = string("exdata/") + this->inputFileNameLoop("exdata/内から読み込むxmlファイル名(拡張子抜き)を入力してください：") + ".xml";
+			try{
+				datas.read( filePath, datas );
+				cout << filePath+"を読み込みました．" << endl;
+				break;
+			}
+			catch(...){
+				cout << filePath+"が読み込めませんでした．ファイル名を確認して下さい．" << endl;
+				continue;
+			}
 		}
-		catch(...){
-			cout << filePath+"が読み込めませんでした．ファイル名を確認して下さい．" << endl;
-			continue;
+		while(1){
+			char type1 = this->inputCoordinateTypeLoop( "変換元(RorMorD)を入力してください：" );
+			char type2 = this->inputCoordinateTypeLoop( "変換先(RorMorD)を入力してください：" );
+			boost::shared_ptr<Eigen::Matrix3d> R;
+			boost::shared_ptr<Eigen::Vector3d> q_T;
+			vector< boost::shared_ptr<Eigen::Vector3d> > Err;
+			::getTranslateMatrix( type1, type2, datas, R, q_T, Err );
+			cout << "-----回転成分R-----" << endl;
+			cout << *R << endl;
+			cout << "-----並進成分q_T-----" << endl;
+			cout << *q_T << endl;
+			cout << "------------------" << endl;
+			string saveFileName;
+			saveFileName = this->inputFileNameLoop("変換Rおよびq_Tと誤差情報を記録するファイル名を入力してください：");
+			this->writeCalculatedValues(saveFileName+".csv",type1,type2,R,q_T,Err);
+			cout << saveFileName << ".csvに保存しました．" << endl;
+			cout << "終了しますか？(y/n)：";
+			string okStr;
+			cin  >> okStr;
+			if( okStr == "y" ){
+				break;
+			}
 		}
 	}
-	char type1 = this->inputCoordinateTypeLoop( "変換元(RorMorD)を入力してください：" );
-	char type2 = this->inputCoordinateTypeLoop( "変換先(RorMorD)を入力してください：" );
-	auto pai = ::getTranslateMatrix( type1, type2, datas );
-	cout << "----------" << endl;
-	cout << *pai.first << endl;
-	cout << "----------" << endl;
-	cout << *pai.second << endl;
-	cout << "----------" << endl;
 }
 
-string mario::Experiment002::inputFileNameLoop()
+string mario::Experiment002::inputFileNameLoop( string const & _message )
 {
 	string buf = "";
 	bool okFlag = false;
 	while( okFlag == false ){
-		cout << "exdata/内から読み込むxmlファイル名(拡張子抜き)を入力してください：";
+		cout << _message;
 		cin  >> buf;
 		cout << buf << " でよろしいですか？(y/n)：";
 		string okStr;
@@ -234,3 +269,42 @@ char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
 	return buf.at(0);
 }
 
+void mario::Experiment002::writeCalculatedValues(
+	string const & _filePath,
+	char type1, char type2,
+	boost::shared_ptr<Eigen::Matrix3d> const& R,
+	boost::shared_ptr<Eigen::Vector3d> const& q_T,
+	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
+{
+	ofstream ofs( _filePath, std::ios::out | std::ios::trunc );
+	ofs << type1 << "->" << type2 << "の座標変換" << endl;
+	ofs << "//回転" << endl;
+	times(i,0,3){
+		times(j,0,3){
+			ofs << (*R)(i,j);
+			if( j == 2 ){
+				ofs << endl;
+			} else {
+				ofs << ",";
+			}
+		}
+	}
+	ofs << "//並進" << endl;
+	times(i,0,3){
+		ofs << (*q_T)(i);
+		if( i == 2 ){
+			ofs << endl;
+		} else {
+			ofs << ",";
+		}
+	}
+	ofs << "//誤差" << endl;
+	int i = 1;
+	foreach(it,Err){
+		ofs << i << ",";
+		ofs << (*(*it))(0) << ",";
+		ofs << (*(*it))(1) << ",";
+		ofs << (*(*it))(2) << "," << endl;
+		i++;
+	}
+}

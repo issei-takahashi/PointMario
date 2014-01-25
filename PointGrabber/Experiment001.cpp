@@ -84,19 +84,19 @@ mario::Coordinate<mario::typeR> mario::Experiment001::inputRealPositionLoop()
 	while( is_pR_ok == false ){
 		string buf = "";
 		while( utils::isNumber(buf) == false ){
-			cout << "ret.x(mm)を入力してください：";
+			cout << "pR.x(m)を入力してください：";
 			cin  >> buf;
 		}
 		ret.x = utils::string2int(buf);
 		buf = "";
 		while( utils::isNumber(buf) == false ){
-			cout << "ret.y(mm)を入力してください：";
+			cout << "pR.y(m)を入力してください：";
 			cin  >> buf;
 		}
 		ret.y = utils::string2int(buf);
 		buf = "";
 		while( utils::isNumber(buf) == false ){
-			cout << "ret.z(mm)を入力してください：";
+			cout << "pR.z(m)を入力してください：";
 			cin  >> buf;
 		}
 		ret.z = utils::string2int(buf);

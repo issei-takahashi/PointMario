@@ -30,9 +30,19 @@ namespace mario
 	{
 	public:
 		void experimentLoop();
+		class DataSet
+		{
+		public:
+			DataSet( char _type )
+				:type(_type),average( Eigen::Vector3d::Zero() ){}
+			char type;
+			vector< Eigen::Vector3d > points;
+			Eigen::Vector3d average;
+		};
 	private:
 		string inputFileNameLoop( string const & _message );
 		char inputCoordinateTypeLoop( string const & _message );
+		void makeDataSet( class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y );
 		void writeCalculatedValues(
 			string const & _filePath,
 			char type1, char type2,

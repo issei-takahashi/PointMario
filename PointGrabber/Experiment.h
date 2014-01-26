@@ -42,13 +42,28 @@ namespace mario
 	private:
 		string inputFileNameLoop( string const & _message );
 		char inputCoordinateTypeLoop( string const & _message );
-		void makeDataSet( class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y );
+		void makeDataSet( class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y, bool _allFlag );
 		void writeCalculatedValues(
 			string const & _filePath,
 			char type1, char type2,
+			mario::Experiment002::DataSet const & P,
+			mario::Experiment002::DataSet const & Y,
+			mario::Experiment002::DataSet const & P_all,
+			mario::Experiment002::DataSet const & Y_all,
 			boost::shared_ptr<Eigen::Matrix3d> const& R,
 			boost::shared_ptr<Eigen::Vector3d> const& q_T,
 			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
+		void getTranslateMatrix( 
+			mario::Experiment002::DataSet const & P,
+			mario::Experiment002::DataSet const & Y,
+			boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
+			boost::shared_ptr<Eigen::Vector3d>& _transDst );
+		void getErrors( 
+			mario::Experiment002::DataSet const & P,
+			mario::Experiment002::DataSet const & Y,
+			boost::shared_ptr<Eigen::Matrix3d> const& R,
+			boost::shared_ptr<Eigen::Vector3d> const& q_T,
+			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */

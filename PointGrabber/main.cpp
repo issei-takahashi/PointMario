@@ -38,6 +38,12 @@ int mario::Main::main()
 				exp002.experimentLoop();
 				break;
 			}
+		case 3:
+			{
+				mario::Experiment003 exp003;
+				exp003.experimentLoop();
+				break;
+			}
 		case 101:
 			{
 				mario::Experiment101 exp101;

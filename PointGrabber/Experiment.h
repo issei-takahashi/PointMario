@@ -42,7 +42,7 @@ namespace mario
 	private:
 		string inputFileNameLoop( string const & _message );
 		char inputCoordinateTypeLoop( string const & _message );
-		void makeDataSet( class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y, bool _allFlag );
+		void makeDataSetFromCsv( string const & _filePath, class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y );
 		void writeCalculatedValues(
 			string const & _filePath,
 			char type1, char type2,
@@ -64,6 +64,12 @@ namespace mario
 			boost::shared_ptr<Eigen::Matrix3d> const& R,
 			boost::shared_ptr<Eigen::Vector3d> const& q_T,
 			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
+	};
+	/* 実験003(実験002で計算したM->Dの変換を使って認識した位置にマーカー表示) */
+	class Experiment003 : public Experiment
+	{
+	public:
+		void experimentLoop();
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */

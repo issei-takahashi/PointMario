@@ -130,7 +130,7 @@ bool mario::MeasureBasement::isCloudEmpty()
 mario::Coordinate<mario::typeM> mario::MeasureBasement::getRedCenter()
 {
 	this->redCenter_mutex.lock();
-	auto ret = this->redCenter; 
+	auto ret = this->redCenter * 1000; 
 	this->redCenter_mutex.unlock();
 	return ret;
 }

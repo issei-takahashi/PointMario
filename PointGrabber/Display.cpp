@@ -38,7 +38,7 @@ void mario::Display::start()
 		static int const DISP_X_px = FileIO::getConst("DISP_X_px");
 		static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
 		//this->pMainWindow = SDL_SetVideoMode( DISP_X_px, DISP_Y_px, 32, SDL_HWSURFACE );
-		this->setScreenMode(true);
+		//this->setScreenMode(true);
 		SDL_WM_SetCaption("Main Window",NULL);
 		// フォント初期化
 		this->pFont = TTF_OpenFont("font/azuki.ttf", 24); 
@@ -123,7 +123,7 @@ void mario::Display::drawCross( Coordinate<typeD> _pd, bool _printStringFLag )
 
 	/* アクチュエータ(z) */
 	{
-		this->upActuator->moveTo( _pd.z );
+		this->upActuator->moveTo( 300-_pd.z );
 	}
 
 	/* サーフェスフリップ */

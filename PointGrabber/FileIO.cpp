@@ -66,6 +66,38 @@ void mario::FileIO::loadConst( string const & _path )
 	mario::FileIO::io_mutex.unlock();
 }
 
+// 変換データ読み込み
+// 定数データ読み込み
+void mario::FileIO::loadTranslation( string const & _path, Eigen::Matrix3d & _dstR, Eigen::Vector3d & _dstq )
+{
+	mario::FileIO::io_mutex.lock();
+	ifstream ifs( _path );
+	//1行分のバッファ
+	string line;
+	//最初の１行は捨てる
+	getline( ifs, line );
+	// 回転成分
+	times(i,0,3){
+		getline( ifs, line );
+		vector<string> cells;
+		utils::cutLine( line, cells );
+		times(j,0,3){
+			_dstR(i,j) = utils::string2double( cells.at(j) );
+		}
+	}
+	// 2行捨てる
+	getline( ifs, line );
+	getline( ifs, line );
+	// 並進成分
+	getline( ifs, line );
+	vector<string> cells;
+	utils::cutLine( line, cells );
+	times(i,0,3){
+		_dstq(i) = utils::string2double( cells.at(i) );
+	}
+	mario::FileIO::io_mutex.unlock();
+}
+
 void mario::FileIO::write( string const & _path, mario::FileIO::CoordinatesData::ConstPtr & _pData )
 {
 	ifstream ifs( _path );

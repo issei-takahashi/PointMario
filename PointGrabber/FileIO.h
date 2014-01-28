@@ -12,7 +12,7 @@ namespace mario{
 	public:
 		static void loadAllData();
 		static double getConst( string const & _name );
-
+		static void loadTranslation( string const & _path, Eigen::Matrix3d & _dstR, Eigen::Vector3d & _dstq );
 	public: 
 		class CoordinatesData{
 			friend class boost::serialization::access;

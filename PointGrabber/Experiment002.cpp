@@ -18,47 +18,46 @@ void mario::Experiment002::experimentLoop()
 				continue;
 			}
 		}
-		while(1){
-			char ptype = this->inputCoordinateTypeLoop( "変換元(RorMorD)を入力してください：" );
-			char ytype = this->inputCoordinateTypeLoop( "変換先(RorMorD)を入力してください：" );
-			DataSet P(ptype),Y(ytype);
-			boost::shared_ptr<Eigen::Matrix3d> R;
-			boost::shared_ptr<Eigen::Vector3d> q_T;
-			{
-				cout << "全ての点を使いますか？(y/n)：";
-				string str;
-				cin >> str;
-				if( str == "y" ){
-					this->makeDataSet( datas, P, Y, true );
-				} else {
-					this->makeDataSet( datas, P, Y, false );
-				}	
+		vector<string> files;
+		{
+			ifstream ifs( "data/calibset/file_names.csv" );
+			string line;
+			vector<string> vline;
+			while( ifs && getline( ifs, line ) ){
+				utils::cutLine( line, vline );
+				files.push_back( vline.at(0) );
 			}
-			this->getTranslateMatrix( P, Y, R, q_T );
-			vector< boost::shared_ptr<Eigen::Vector3d> > Err;
-			DataSet P_all(ptype),Y_all(ytype);
-			this->makeDataSet( datas, P_all, Y_all, true );
-			this->getErrors( P_all, Y_all, R, q_T, Err );
-			cout << "-----回転成分R-----" << endl;
-			cout << *R << endl;
-			cout << "-----並進成分q_T-----" << endl;
-			cout << *q_T << endl;
-			cout << "------------------" << endl;
-			cout << "やり直しますか？(y/n)：";
-			string againStr;
-			cin >> againStr;
-			if( againStr == "y" ){
-				continue;
-			}
-			string saveFileName;
-			saveFileName = this->inputFileNameLoop("calcdata/内に保存するファイル名を入力してください：");
-			this->writeCalculatedValues(string("calcdata/")+saveFileName+".csv",P.type,Y.type,P,Y,P_all,Y_all,R,q_T,Err);
-			cout << saveFileName << ".csvに保存しました．" << endl;
-			cout << "終了しますか？(y/n)：";
-			string okStr;
-			cin  >> okStr;
-			if( okStr == "y" ){
-				break;
+		}
+		times(i,0,files.size()){
+			char types[3] = {'R','M','D'};
+			times(j,0,3){
+				times(k,0,3){
+					if( j != k ){
+						char ptype = types[j]; 
+						char ytype = types[k];
+						DataSet P(ptype),Y(ytype);
+						boost::shared_ptr<Eigen::Matrix3d> R;
+						boost::shared_ptr<Eigen::Vector3d> q_T;
+						this->makeDataSetFromCsv( string("data/calibset/")+files[i]+".csv", datas, P, Y );	
+						this->getTranslateMatrix( P, Y, R, q_T );
+						vector< boost::shared_ptr<Eigen::Vector3d> > Err;
+						DataSet P_all(ptype),Y_all(ytype);
+						this->makeDataSetFromCsv( "data/calibset/all.csv", datas, P_all, Y_all );
+						this->getErrors( P_all, Y_all, R, q_T, Err );
+						cout << "-----回転成分R-----" << endl;
+						cout << *R << endl;
+						cout << "-----並進成分q_T-----" << endl;
+						cout << *q_T << endl;
+						cout << "------------------" << endl;
+						//cout << "やり直しますか？(y/n)：";
+						//string againStr;
+						//cin >> againStr;
+						//if( againStr == "y" ){
+						//	continue;
+						//}
+						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, R, q_T, Err );
+					}
+				}
 			}
 		}
 	}
@@ -96,7 +95,7 @@ char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
 }
 
 void mario::Experiment002::writeCalculatedValues(
-	string const & _filePath,
+	string const & _fileName,
 	char type1, char type2,
 	mario::Experiment002::DataSet const & P,
 	mario::Experiment002::DataSet const & Y,
@@ -106,9 +105,10 @@ void mario::Experiment002::writeCalculatedValues(
 	boost::shared_ptr<Eigen::Vector3d> const& q_T,
 	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
 {
+	string filePath = string("calcdata/") + _fileName + "_" + type1 + type2 + ".csv";
 	assert(P.points.size()==Y.points.size());
 	assert(P_all.points.size()==Y_all.points.size());
-	ofstream ofs( _filePath, std::ios::out | std::ios::trunc );
+	ofstream ofs( filePath, std::ios::out | std::ios::trunc );
 	ofs << "//" << type1 << "->" << type2 << "の座標変換" << endl;
 	ofs << "//" << type1 << "のうち使った点" << endl;
 	ofs << "x,y,z" << endl;
@@ -144,7 +144,11 @@ void mario::Experiment002::writeCalculatedValues(
 	ofs << "//誤差" << endl;
 	ofs <<type1<<"x,"<<type1<<"y,"<<type1<<"z,"<<type2<<"x,"<<type2<<"y,"<<type2<<"z,誤差x,誤差y,誤差z" << endl;
 	int i = 1;
-	double totalErr = 0;
+	double totalSquareErr = 0;
+	double totalScalarErr = 0;
+	double totalErrX = 0;
+	double totalErrY = 0;
+	double totalErrZ = 0;
 	auto itP_all = P_all.points.begin();
 	auto itY_all = Y_all.points.begin();
 	foreach(it,Err){
@@ -160,88 +164,126 @@ void mario::Experiment002::writeCalculatedValues(
 		ofs << (*(*it))(0) << ",";
 		ofs << (*(*it))(1) << ",";
 		ofs << (*(*it))(2) << "," << endl;
-		totalErr += (*it)->squaredNorm();
+		totalErrX += (*(*it))(0);
+		totalErrY += (*(*it))(1);
+		totalErrZ += (*(*it))(2);
+		totalSquareErr += (*it)->squaredNorm();
+		totalScalarErr += (*it)->norm();
 		i++;
 		itP_all++;
 		itY_all++;
 	}
-	totalErr /= Err.size();
-	ofs << "//最小化された2乗誤差" << endl;
-	ofs << totalErr << endl;
+	totalErrX /= Err.size();
+	totalErrY /= Err.size();
+	totalErrZ /= Err.size();
+	totalSquareErr /= Err.size();
+	totalScalarErr /= Err.size();
+	ofs << "//誤差ベクトルのノルムの平均値" << endl;
+	ofs << totalScalarErr << endl;
+	ofs << "//誤差ベクトルの2乗の平均値" << endl;
+	ofs << totalSquareErr << endl;
+	ofs << "//x y zの各方向の誤差の平均値" << endl;
+	ofs << totalErrX << "," << totalErrY << "," << totalErrZ << "," << endl;
+
+	/* 各軸方向の誤差をスカラープロット形式に */
+	times(j,0,3){
+		static char xyz[3] = {'x','y','z'};
+		string plotFilePath = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + ".csv";
+		ofstream tmpofs( plotFilePath, std::ios::out | std::ios::trunc );
+		tmpofs << "データ形式,3" << endl;
+		tmpofs << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofs << xyz[j] << "方向の誤差です．" << endl;
+		auto itY_all = Y_all.points.begin();
+		foreach(it,Err){
+			// ->Y
+			tmpofs << (*itY_all)(0) << ",";
+			tmpofs << (*itY_all)(1) << ",";
+			tmpofs << (*itY_all)(2) << ",";
+			// P->Yの誤差(j=0(x),1(y),2(z))
+			tmpofs << (*(*it))(j) << endl;
+			itY_all++;
+		}
+	}
+	/* 全軸方向の誤差をベクトル場プロット形式に */
+	{
+		string plotFilePath = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + ".csv";
+		ofstream tmpofs( plotFilePath, std::ios::out | std::ios::trunc );
+		tmpofs << "データ形式,5" << endl;
+		tmpofs << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofs << "xyz全" << "方向の誤差です．" << endl;
+		auto itY_all = Y_all.points.begin();
+		foreach(it,Err){
+			// ->Y
+			tmpofs << (*itY_all)(0) << ",";
+			tmpofs << (*itY_all)(1) << ",";
+			tmpofs << (*itY_all)(2) << ",";
+			// P->Yの誤差(j=0(x),1(y),2(z))
+			tmpofs << (*(*it))(0) << ",";
+			tmpofs << (*(*it))(1) << ",";
+			tmpofs << (*(*it))(2) << endl;
+			itY_all++;
+		}
+	}
 }
 
 
-void mario::Experiment002::makeDataSet( mario::Experiment001DataList const & _dataList, DataSet & P, DataSet & Y, bool _allFlag )
+void mario::Experiment002::makeDataSetFromCsv( string const & _filePath, mario::Experiment001DataList const & _dataList, DataSet & P, DataSet & Y )
 {
 	using namespace Eigen;
 	/* 使う点を選ぶ */
 	map<int,int> indexes;
-	if( _allFlag ){
-		times(i,0,_dataList.l_exp001datas.size()){
-			indexes.insert( make_pair(i,i) );
-		}
+	vector<Vector3d> points;
+	int count = 0;
+	ifstream ifs( _filePath );
+	//1行分のバッファ
+	string line;
+	vector<string> vline;
+
+	// csvから読み込み
+	while( ifs && getline( ifs, line ) ){
+		utils::cutLine( line, vline );
+		int x=-1,y=-1,z=-1;
 		
-	} else {
-		vector<Vector3d> points;
-		int count = 0;
-		while(1){
-			int x=-1,y=-1,z=-1;
-			int thisIndex=-1;
-			while(1){
-				string line;
-				vector<string> vline;
-				cout << "計算に使う点のR座標(mm)を入力してください：";
-				cin >> line;
-				utils::cutLine(line,vline);
-				if( vline.size()==3 && utils::isNumber(vline.at(0)) && utils::isNumber(vline.at(1)) && utils::isNumber(vline.at(2)) ){
-					x = utils::string2int(vline.at(0));
-					y = utils::string2int(vline.at(1));
-					z = utils::string2int(vline.at(2));
-					if( x%50==0 && 0<=x && x<=200 &&
-						y%50==0 && 0<=y && y<=200 &&
-						z%50==0 && 0<=z && z<=200  ){
-							int tmpIndex = 5*(x/50) + 25*(y/50) + (z/50);
-							if( indexes.find(tmpIndex) == indexes.end() ){
-								thisIndex = tmpIndex;
-								break;
-							}
-							else{
-								cout <<"("<<x<<","<<y<<","<<z<<")は既に登録されています．" << endl;
-							}
+		if( vline.size() == 0 ){
+			continue;
+		} else if( vline.at(0) == "all" ){
+			times(i,0,_dataList.l_exp001datas.size()){
+				indexes.insert( make_pair(i,i) );
+			}
+		} else if ( vline.size()>=3 && utils::isNumber(vline.at(0)) && utils::isNumber(vline.at(1)) && utils::isNumber(vline.at(2)) ){
+			x = utils::string2int(vline.at(0));
+			y = utils::string2int(vline.at(1));
+			z = utils::string2int(vline.at(2));
+			if( x%50==0 && 0<=x && x<=200 &&
+				y%50==0 && 0<=y && y<=200 &&
+				z%50==0 && 0<=z && z<=200  ){
+					int tmpIndex = 5*(x/50) + 25*(y/50) + (z/50);
+					if( indexes.find(tmpIndex) == indexes.end() ){
+						Vector3d tmp;
+						tmp(0)=x; tmp(1)=y; tmp(2)=z;
+						count++;
+						points.push_back( tmp );
+						indexes.insert( make_pair(tmpIndex,tmpIndex) );
 					}
 					else{
-						cout << "50の倍数かつ0～200の値で入力してください．" << endl;
+						cout <<"("<<x<<","<<y<<","<<z<<")は既に登録されています．" << endl;
 					}
-				}
-			}
-			Vector3d tmp;
-			tmp(0)=x; tmp(1)=y; tmp(2)=z;
-			count++;
-			points.push_back( tmp );
-			indexes.insert( make_pair(thisIndex,thisIndex) );
-			// ソート用ファンクタ
-			struct point_compare
-			{
-				bool operator()(const Vector3d& lhs, const Vector3d& rhs) const {
-					return 5*(lhs(0)/50)+25*(lhs(1)/50)+(lhs(2)/50) < 5*(rhs(0)/50)+25*(rhs(1)/50)+(rhs(2)/50);
-				}
-			};
-			std::sort(points.begin(),points.end(),point_compare());
-			cout << "現在" << count << "点" << endl;  
-			foreach(it,points){
-				cout << "(" << (*it)(0) << "," << (*it)(1) << "," << (*it)(2) << ") ";
-			}
-			cout << endl;
-			cout << "これらで確定しますか？(y/n)：";
-			string okStr;
-			cin >> okStr;
-			if( okStr == "y" ){
-				break;
 			}
 			else{
-				continue;
+				cout << "50の倍数かつ0～200の値で入力してください．" << endl;
 			}
 		}
+	}
+	// ソート
+	{
+		// ソート用ファンクタ
+		struct point_compare
+		{
+			bool operator()(const Vector3d& lhs, const Vector3d& rhs) const {
+				return 5*(lhs(0)/50)+25*(lhs(1)/50)+(lhs(2)/50) < 5*(rhs(0)/50)+25*(rhs(1)/50)+(rhs(2)/50);
+			}
+		};
+		std::sort(points.begin(),points.end(),point_compare());
 	}
 	/* 点群を初期化して，ついでに重心算出 */
 	// P

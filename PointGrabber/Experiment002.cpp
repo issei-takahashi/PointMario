@@ -130,6 +130,9 @@ void mario::Experiment002::writeCalculatedValues(
 	double totalErrX = 0;
 	double totalErrY = 0;
 	double totalErrZ = 0;
+	double totalScalarErrX = 0;
+	double totalScalarErrY = 0;
+	double totalScalarErrZ = 0;
 	auto itP_all = P_all.points.begin();
 	auto itY_all = Y_all.points.begin();
 	foreach(it,Err){
@@ -148,6 +151,9 @@ void mario::Experiment002::writeCalculatedValues(
 		totalErrX += (*(*it))(0);
 		totalErrY += (*(*it))(1);
 		totalErrZ += (*(*it))(2);
+		totalScalarErrX += abs( (*(*it))(0) );
+		totalScalarErrY += abs( (*(*it))(1) );
+		totalScalarErrZ += abs( (*(*it))(2) );
 		totalSquareErr += (*it)->squaredNorm();
 		totalScalarErr += (*it)->norm();
 		i++;
@@ -157,35 +163,67 @@ void mario::Experiment002::writeCalculatedValues(
 	totalErrX /= Err.size();
 	totalErrY /= Err.size();
 	totalErrZ /= Err.size();
+	totalScalarErrX /= Err.size();
+	totalScalarErrY /= Err.size();
+	totalScalarErrZ /= Err.size();
 	totalSquareErr /= Err.size();
 	totalScalarErr /= Err.size();
 	ofs << "//誤差ベクトルのノルムの平均値" << endl;
 	ofs << totalScalarErr << endl;
 	ofs << "//誤差ベクトルの2乗の平均値" << endl;
 	ofs << totalSquareErr << endl;
-	ofs << "//x y zの各方向の誤差の平均値" << endl;
+	ofs << "//x y zの各方向の誤差（符号あり）の平均値" << endl;
 	ofs << totalErrX << "," << totalErrY << "," << totalErrZ << "," << endl;
+	ofs << "//x y zの各方向の誤差のノルムの平均値" << endl;
+	ofs << totalScalarErrX << "," << totalScalarErrY << "," << totalScalarErrZ << "," << endl;
 
-	/* 各軸方向の誤差をスカラープロット形式に */
+	/* 各軸方向の誤差をベクトルプロットとスカラープロット形式に */
 	times(j,0,3){
 		static char xyz[3] = {'x','y','z'};
-		string plotFilePath = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + ".csv";
-		ofstream tmpofs( plotFilePath, std::ios::out | std::ios::trunc );
-		tmpofs << "データ形式,3" << endl;
-		tmpofs << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofs << xyz[j] << "方向の誤差です．" << endl;
+
+		string plotFilePathS = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + "_scalar" + ".csv";
+		ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
+		tmpofsS << "データ形式,3" << endl;
+		tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofsS << xyz[j] << "方向の誤差の大きさです．" << endl;
+		
+		string plotFilePathV = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + "_vector" + ".csv";
+		ofstream tmpofsV( plotFilePathV, std::ios::out | std::ios::trunc );
+		tmpofsV << "データ形式,5" << endl;
+		tmpofsV << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofsV << xyz[j] << "方向の誤差のベクトルです．" << endl;
+
 		auto itY_all = Y_all.points.begin();
 		foreach(it,Err){
+			/* Scalar */
 			// ->Y
-			tmpofs << (*itY_all)(0) << ",";
-			tmpofs << (*itY_all)(1) << ",";
-			tmpofs << (*itY_all)(2) << ",";
+			tmpofsS << (*itY_all)(0) << ",";
+			tmpofsS << (*itY_all)(1) << ",";
+			tmpofsS << (*itY_all)(2) << ",";
 			// P->Yの誤差(j=0(x),1(y),2(z))
-			tmpofs << (*(*it))(j) << endl;
+			tmpofsS << abs((*(*it))(j)) << endl;
+			/* Vector */
+			// ->Y
+			tmpofsV << (*itY_all)(0) << ",";
+			tmpofsV << (*itY_all)(1) << ",";
+			tmpofsV << (*itY_all)(2) << ",";
+			// P->Yの誤差(j=0(x),1(y),2(z))
+			times(k,0,3){
+				if( k == j ){
+					tmpofsV << (*(*it))(j) ;
+				} else {
+					tmpofsV << "0" ;
+				}
+				if( k == 2 ){
+					tmpofsV << endl;
+				} else {
+					tmpofsV << ",";
+				}
+			}
 			itY_all++;
 		}
 	}
-	/* 全軸方向の誤差をベクトル場プロット形式に */
+	/* 全軸方向の誤差をベクトルプロット形式に */
 	{
 		string plotFilePath = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + ".csv";
 		ofstream tmpofs( plotFilePath, std::ios::out | std::ios::trunc );
@@ -549,9 +587,9 @@ void mario::Experiment002::getErrors(
 	foreach(itY,Y.points){
 		Vector3d tmp = (*R)*(*itP) + *q_T;
 		boost::shared_ptr<Vector3d> err( new Vector3d() );
-		(*err)(0) = (*itY)(0) - tmp(0);
-		(*err)(1) = (*itY)(1) - tmp(1);
-		(*err)(2) = (*itY)(2) - tmp(2);
+		(*err)(0) = tmp(0) - (*itY)(0);
+		(*err)(1) = tmp(1) - (*itY)(1);
+		(*err)(2) = tmp(2) - (*itY)(2);
 		Err.push_back(err);
 		itP++;
 		i++;
@@ -577,9 +615,9 @@ void mario::Experiment002::getErrors(
 		tmpv(3) = 1.0;
 		Vector4d tmp = (*Affine) * tmpv;
 		boost::shared_ptr<Vector3d> err( new Vector3d() );
-		(*err)(0) = (*itY)(0) - tmp(0);
-		(*err)(1) = (*itY)(1) - tmp(1);
-		(*err)(2) = (*itY)(2) - tmp(2);
+		(*err)(0) = tmp(0) - (*itY)(0);
+		(*err)(1) = tmp(1) - (*itY)(1);
+		(*err)(2) = tmp(2) - (*itY)(2);
 		Err.push_back(err);
 		itP++;
 		i++;

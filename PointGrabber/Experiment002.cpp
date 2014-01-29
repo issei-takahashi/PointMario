@@ -36,26 +36,17 @@ void mario::Experiment002::experimentLoop()
 						char ptype = types[j]; 
 						char ytype = types[k];
 						DataSet P(ptype),Y(ytype);
-						boost::shared_ptr<Eigen::Matrix3d> R;
-						boost::shared_ptr<Eigen::Vector3d> q_T;
+						boost::shared_ptr<Eigen::Matrix4d> Affine;
 						this->makeDataSetFromCsv( string("data/calibset/")+files[i]+".csv", datas, P, Y );	
-						this->getTranslateMatrix( P, Y, R, q_T );
+						this->getAffineTransformation( P, Y, Affine );
 						vector< boost::shared_ptr<Eigen::Vector3d> > Err;
 						DataSet P_all(ptype),Y_all(ytype);
 						this->makeDataSetFromCsv( "data/calibset/all.csv", datas, P_all, Y_all );
-						this->getErrors( P_all, Y_all, R, q_T, Err );
-						cout << "-----回転成分R-----" << endl;
-						cout << *R << endl;
-						cout << "-----並進成分q_T-----" << endl;
-						cout << *q_T << endl;
+						this->getErrors( P_all, Y_all, Affine, Err );
+						cout << "-----アフィン変換A-----" << endl;
+						cout << *Affine << endl;
 						cout << "------------------" << endl;
-						//cout << "やり直しますか？(y/n)：";
-						//string againStr;
-						//cin >> againStr;
-						//if( againStr == "y" ){
-						//	continue;
-						//}
-						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, R, q_T, Err );
+						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err );
 					}
 				}
 			}
@@ -94,6 +85,7 @@ char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
 	return buf.at(0);
 }
 
+
 void mario::Experiment002::writeCalculatedValues(
 	string const & _fileName,
 	char type1, char type2,
@@ -101,8 +93,7 @@ void mario::Experiment002::writeCalculatedValues(
 	mario::Experiment002::DataSet const & Y,
 	mario::Experiment002::DataSet const & P_all,
 	mario::Experiment002::DataSet const & Y_all,
-	boost::shared_ptr<Eigen::Matrix3d> const& R,
-	boost::shared_ptr<Eigen::Vector3d> const& q_T,
+	boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
 {
 	string filePath = string("calcdata/") + _fileName + "_" + type1 + type2 + ".csv";
@@ -120,25 +111,15 @@ void mario::Experiment002::writeCalculatedValues(
 	foreach(it,Y.points){
 		ofs << (*it)(0) << "," << (*it)(1) << "," << (*it)(2) << endl;
 	}	
-	ofs << "//回転R" << endl;
-	times(i,0,3){
-		times(j,0,3){
-			ofs << (*R)(i,j);
-			if( j == 2 ){
+	ofs << "//アフィン変換A" << endl;
+	times(i,0,4){
+		times(j,0,4){
+			ofs << (*Affine)(i,j);
+			if( j == 3 ){
 				ofs << endl;
 			} else {
 				ofs << ",";
 			}
-		}
-	}
-	ofs << "//並進q_T" << endl;
-	ofs << "x,y,z" << endl;
-	times(i,0,3){
-		ofs << (*q_T)(i);
-		if( i == 2 ){
-			ofs << endl;
-		} else {
-			ofs << ",";
 		}
 	}
 	ofs << "//誤差" << endl;
@@ -383,9 +364,10 @@ void mario::Experiment002::makeDataSetFromCsv( string const & _filePath, mario::
 	}
 }
 
-// 点群P->点群Y への幾何変換を求める
+// 点群P->点群Y への剛体運動変換を求める
 void mario::Experiment002::getTranslateMatrix( 
-	mario::Experiment002::DataSet const & P, mario::Experiment002::DataSet const & Y,
+	mario::Experiment002::DataSet const & P,
+	mario::Experiment002::DataSet const & Y,
 	boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
 	boost::shared_ptr<Eigen::Vector3d>& _transDst )
 {
@@ -483,6 +465,76 @@ void mario::Experiment002::getTranslateMatrix(
 	_transDst = q_T;
 }
 
+// 点群P->点群Y へのアフィン変換を求める
+void mario::Experiment002::getAffineTransformation( 
+	mario::Experiment002::DataSet const & P,
+	mario::Experiment002::DataSet const & Y,
+	boost::shared_ptr<Eigen::Matrix4d>& _affineDst )
+{
+	using namespace Eigen;
+	assert( P.points.size() == Y.points.size() );
+	int const N = P.points.size();
+	/*
+
+	xi' = [ a d g tx ] [xi]
+	yi' = [ b e h ty ] [yi]
+	zi' = [ c f j tz ] [zi]
+	1  =  [ 0 0 0  1 ] [1]
+	(i=1,2,...,N)
+
+	[ x1    y1     z1    1     ] [a ]   [x1']
+	[   x1    y1     z1    1   ] [b ]   [y1']
+	[     x1    y1     z1    1 ] [c ]   [z1']
+	[ x2    y2     z2    1     ] [d ]   [x2']
+	[   x2    y2     z2    1   ] [e ]   [y2']
+	[     x2    y2     z2    1 ] [f ] = [z2']
+	             .               [g ]   [.  ]
+				 .               [h ]   [.  ]
+				 .               [i ]   [.  ]
+	[ xN    yN     zN    1     ] [tx]   [xN']
+	[   xN    yN     zN    1   ] [ty]   [yN']
+	[     xN    yN     zN    1 ] [tz]   [zN']
+	
+	*/
+	MatrixXd A = MatrixXd::Zero(N*3,12);
+	VectorXd V    = VectorXd::Zero(N*3);
+	times(i,0,N){
+		V(i*3+0)     = Y.points.at(i)(0); // xi' 
+		V(i*3+1)     = Y.points.at(i)(1); // yi'
+		V(i*3+2)     = Y.points.at(i)(2); // zi'
+		
+		times(k,0,3){
+			A(i*3+k,0+k) = P.points.at(i)(0); // xi
+			A(i*3+k,3+k) = P.points.at(i)(1); // yi
+			A(i*3+k,6+k) = P.points.at(i)(2); // zi
+			A(i*3+k,9+k) = 1;
+		}
+	}
+
+	//cout << "Its singular values are:" << endl << svd.singularValues() << endl;
+	//cout << "Its left singular vectors are the columns of the thin U matrix:" << endl << svd.matrixU() << endl;
+	//cout << "Its right singular vectors are the columns of the thin V matrix:" << endl << svd.matrixV() << endl;
+	//cout << "Now consider this rhs vector:" << endl << V << endl;
+	//cout << ":" << endl << svd.solve(V) << endl;
+
+	cout << "SVD法でアフィン変換を計算中…" << endl;
+	//JacobiSVD<MatrixXd> svd( A, ComputeThinU | ComputeThinV );
+	//cout << svd.solve(V) << endl;
+	//cout << solved << endl;
+
+	VectorXd solved(12);
+	A.jacobiSvd(ComputeThinU | ComputeThinV).solve(V).evalTo(solved); 
+
+	_affineDst = (boost::shared_ptr<Matrix4d>)( new Matrix4d() );
+	(*_affineDst)(0,0) = solved(0);  (*_affineDst)(0,1) = solved(3);  (*_affineDst)(0,2) = solved(6);  (*_affineDst)(0,3) = solved(9);
+	(*_affineDst)(1,0) = solved(1);  (*_affineDst)(1,1) = solved(4);  (*_affineDst)(1,2) = solved(7);  (*_affineDst)(1,3) = solved(10);
+	(*_affineDst)(2,0) = solved(2);  (*_affineDst)(2,1) = solved(5);  (*_affineDst)(2,2) = solved(8);  (*_affineDst)(2,3) = solved(11);
+	(*_affineDst)(3,0) = 0;          (*_affineDst)(3,1) = 0;          (*_affineDst)(3,2) = 0;          (*_affineDst)(3,3) = 1;
+
+}
+
+
+
 void mario::Experiment002::getErrors( 
 	mario::Experiment002::DataSet const & P,
 	mario::Experiment002::DataSet const & Y,
@@ -496,6 +548,34 @@ void mario::Experiment002::getErrors(
 	int i = 0;
 	foreach(itY,Y.points){
 		Vector3d tmp = (*R)*(*itP) + *q_T;
+		boost::shared_ptr<Vector3d> err( new Vector3d() );
+		(*err)(0) = (*itY)(0) - tmp(0);
+		(*err)(1) = (*itY)(1) - tmp(1);
+		(*err)(2) = (*itY)(2) - tmp(2);
+		Err.push_back(err);
+		itP++;
+		i++;
+	}
+	_errDst = Err;
+}
+
+void mario::Experiment002::getErrors( 
+	mario::Experiment002::DataSet const & P,
+	mario::Experiment002::DataSet const & Y,
+	boost::shared_ptr<Eigen::Matrix4d> const& Affine,
+	vector< boost::shared_ptr<Eigen::Vector3d> > & _errDst )
+{
+	using namespace Eigen;
+	vector< boost::shared_ptr<Vector3d> > Err; // Y-Y'
+	auto itP = P.points.begin();
+	int i = 0;
+	foreach(itY,Y.points){
+		Vector4d tmpv;
+		tmpv(0) = (*itP)(0);
+		tmpv(1) = (*itP)(1);
+		tmpv(2) = (*itP)(2);
+		tmpv(3) = 1.0;
+		Vector4d tmp = (*Affine) * tmpv;
 		boost::shared_ptr<Vector3d> err( new Vector3d() );
 		(*err)(0) = (*itY)(0) - tmp(0);
 		(*err)(1) = (*itY)(1) - tmp(1);

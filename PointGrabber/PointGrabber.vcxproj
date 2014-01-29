@@ -105,6 +105,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Translation.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="WinRS.h" />
   </ItemGroup>
@@ -112,6 +113,8 @@
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="Experiment001.cpp" />
     <ClCompile Include="Experiment002.cpp" />
+    <ClCompile Include="Experiment003.cpp" />
+    <ClCompile Include="Experiment1001.cpp" />
     <ClCompile Include="Experiment101.cpp" />
     <ClCompile Include="ExperimentData.cpp" />
     <ClCompile Include="FileIO.cpp" />

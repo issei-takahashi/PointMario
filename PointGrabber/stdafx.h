@@ -148,4 +148,5 @@
 
 /* Eigen */
 #include <Eigen/Core>
+#include <Eigen/Dense>
 ///#include <Eigen/Sparse>

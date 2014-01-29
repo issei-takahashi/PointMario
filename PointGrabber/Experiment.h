@@ -50,19 +50,27 @@ namespace mario
 			mario::Experiment002::DataSet const & Y,
 			mario::Experiment002::DataSet const & P_all,
 			mario::Experiment002::DataSet const & Y_all,
-			boost::shared_ptr<Eigen::Matrix3d> const& R,
-			boost::shared_ptr<Eigen::Vector3d> const& q_T,
+			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
 		void getTranslateMatrix( 
 			mario::Experiment002::DataSet const & P,
 			mario::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
 			boost::shared_ptr<Eigen::Vector3d>& _transDst );
+		void getAffineTransformation( 
+			mario::Experiment002::DataSet const & P,
+			mario::Experiment002::DataSet const & Y,
+			boost::shared_ptr<Eigen::Matrix4d>& _affineDst );
 		void getErrors( 
 			mario::Experiment002::DataSet const & P,
 			mario::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix3d> const& R,
 			boost::shared_ptr<Eigen::Vector3d> const& q_T,
+			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
+		void getErrors( 
+			mario::Experiment002::DataSet const & P,
+			mario::Experiment002::DataSet const & Y,
+			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
 	};
 	/* 実験003(実験002で計算したM->Dの変換を使って認識した位置にマーカー表示) */

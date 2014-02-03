@@ -17,6 +17,7 @@ namespace mario{
 		bool isCloudEmpty();
 		Coordinate<typeM> getRedCenter();
 		int getMeasureCount();
+		void captureForExperiment1002();
 	public:
 		struct EventHelper
 		{

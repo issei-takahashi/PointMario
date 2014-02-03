@@ -143,6 +143,11 @@ int mario::MeasureBasement::getMeasureCount()
 	return ret;
 }
 
+void mario::MeasureBasement::captureForExperiment1002()
+{
+
+}
+
 void mario::MeasureBasement::showCloud()
 {
 	// Add the cloud

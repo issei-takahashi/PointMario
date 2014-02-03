@@ -115,6 +115,7 @@
     <ClCompile Include="Experiment002.cpp" />
     <ClCompile Include="Experiment003.cpp" />
     <ClCompile Include="Experiment1001.cpp" />
+    <ClCompile Include="Experiment1002.cpp" />
     <ClCompile Include="Experiment101.cpp" />
     <ClCompile Include="ExperimentData.cpp" />
     <ClCompile Include="FileIO.cpp" />

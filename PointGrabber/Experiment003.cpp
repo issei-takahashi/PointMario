@@ -19,20 +19,20 @@ void mario::Experiment003::experimentLoop()
 	static mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
 	disp.start();
 	disp.setScreenMode( true );
-	Eigen::Matrix3d R;
-	Eigen::Vector3d q_T;
-	FileIO::loadTranslation( "data/MtoD.csv", R, q_T );
+	Eigen::Matrix4d A;
+	FileIO::loadTranslation( "data/MtoD.csv", A );
 	bool endFlag = false;
 	while( endFlag == false ){
 		auto ms1 = mario::DisplayTimer::getTime();
 		//base.oneLoop();
 		auto thisRed = base.getRedCenter();
 		//thisRed *= 1000;
-		Eigen::Vector3d tmpv;
+		Eigen::Vector4d tmpv;
 		tmpv(0) = thisRed.x;
 		tmpv(1) = thisRed.y;
 		tmpv(2) = thisRed.z;
-		tmpv = R*tmpv + q_T;
+		tmpv(3) = 1.0;
+		tmpv = A*tmpv;
 		Coordinate<typeD> pD(tmpv(0),tmpv(1),tmpv(2));
 		cout << pD.x << "," << pD.y << "," << pD.z << endl;
 		disp.drawCross( pD, true );

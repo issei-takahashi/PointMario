@@ -51,7 +51,8 @@ namespace mario
 			mario::Experiment002::DataSet const & P_all,
 			mario::Experiment002::DataSet const & Y_all,
 			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
-			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
+			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err,
+			ofstream & tex_ofs );
 		void getTranslateMatrix( 
 			mario::Experiment002::DataSet const & P,
 			mario::Experiment002::DataSet const & Y,
@@ -92,6 +93,12 @@ namespace mario
 	{
 	public:
 		string inputFileNameLoop();
+		void experimentLoop();
+	};
+	/* 実験1002(点群データキャプチャモード) */
+	class Experiment1002 : public Experiment
+	{
+	public:
 		void experimentLoop();
 	};
 };

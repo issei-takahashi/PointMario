@@ -52,6 +52,9 @@
     <ClCompile Include="Experiment003.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="Experiment1002.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

@@ -56,6 +56,12 @@ int mario::Main::main()
 				exp1001.experimentLoop();
 				break;
 			}
+		case 1002:
+			{
+				mario::Experiment1002 exp1002;
+				exp1002.experimentLoop();
+				break;
+			}
 		}
 	}
 	return 0;

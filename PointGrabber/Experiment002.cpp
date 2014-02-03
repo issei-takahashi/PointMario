@@ -28,13 +28,25 @@ void mario::Experiment002::experimentLoop()
 				files.push_back( vline.at(0) );
 			}
 		}
-		times(i,0,files.size()){
-			char types[3] = {'R','M','D'};
-			times(j,0,3){
-				times(k,0,3){
-					if( j != k ){
-						char ptype = types[j]; 
-						char ytype = types[k];
+		char types[3] = {'R','M','D'};
+		times(j,0,3){
+			times(k,0,3){
+				if( j != k ){
+					char ptype = types[j]; 
+					char ytype = types[k];
+					string texPath = string("calcdata/tex_") + ptype + ytype + ".txt";
+					ofstream tex_ofs( texPath, std::ios::out | std::ios::app | std::ios::ate );
+					tex_ofs << "名前 & ずれベクトルのノルムの平均値 & " ;
+					//tex_ofs << "ずれベクトルのノルムの中央値 & " ;
+					tex_ofs << "ずれベクトルのノルムの最大値 & ";
+					//tex_ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差） & " ;
+					tex_ofs << "x y zの各方向のずれ（符号あり）の平均値 & ";
+					//tex_ofs << "x y zの各方向のずれ（符号あり）の中央値 & ";
+					tex_ofs << "x y zの各方向のずれのノルムの平均値 & ";
+					//tex_ofs << "x y zの各方向のずれのノルムの中央値 & ";
+					tex_ofs << "x y zの各方向のずれのノルムの最大値";
+					tex_ofs << "\\\\  \\hline" << endl;
+					times(i,0,files.size()){
 						DataSet P(ptype),Y(ytype);
 						boost::shared_ptr<Eigen::Matrix4d> Affine;
 						this->makeDataSetFromCsv( string("data/calibset/")+files[i]+".csv", datas, P, Y );	
@@ -46,7 +58,7 @@ void mario::Experiment002::experimentLoop()
 						cout << "-----アフィン変換A-----" << endl;
 						cout << *Affine << endl;
 						cout << "------------------" << endl;
-						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err );
+						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err, tex_ofs );
 					}
 				}
 			}
@@ -94,7 +106,8 @@ void mario::Experiment002::writeCalculatedValues(
 	mario::Experiment002::DataSet const & P_all,
 	mario::Experiment002::DataSet const & Y_all,
 	boost::shared_ptr<Eigen::Matrix4d> const& Affine,
-	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
+	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err,
+	ofstream & tex_ofs )
 {
 	string filePath = string("calcdata/") + _fileName + "_" + type1 + type2 + ".csv";
 	assert(P.points.size()==Y.points.size());
@@ -126,13 +139,24 @@ void mario::Experiment002::writeCalculatedValues(
 	ofs <<type1<<"x,"<<type1<<"y,"<<type1<<"z,"<<type2<<"x,"<<type2<<"y,"<<type2<<"z,誤差x,誤差y,誤差z" << endl;
 	int i = 1;
 	double totalSquareErr = 0;
-	double totalScalarErr = 0;
 	double totalErrX = 0;
 	double totalErrY = 0;
 	double totalErrZ = 0;
+	vector<double> errXVector;
+	vector<double> errYVector;
+	vector<double> errZVector;
+	double totalScalarErr = 0;
 	double totalScalarErrX = 0;
 	double totalScalarErrY = 0;
 	double totalScalarErrZ = 0;
+	vector<double> scalarErrVector;
+	vector<double> scalarErrXVector;
+	vector<double> scalarErrYVector;
+	vector<double> scalarErrZVector;
+	double maxScalarErr  = -99999;
+	double maxScalarErrX = -99999;
+	double maxScalarErrY = -99999;
+	double maxScalarErrZ = -99999;
 	auto itP_all = P_all.points.begin();
 	auto itY_all = Y_all.points.begin();
 	foreach(it,Err){
@@ -148,14 +172,37 @@ void mario::Experiment002::writeCalculatedValues(
 		ofs << (*(*it))(0) << ",";
 		ofs << (*(*it))(1) << ",";
 		ofs << (*(*it))(2) << "," << endl;
-		totalErrX += (*(*it))(0);
-		totalErrY += (*(*it))(1);
-		totalErrZ += (*(*it))(2);
-		totalScalarErrX += abs( (*(*it))(0) );
-		totalScalarErrY += abs( (*(*it))(1) );
-		totalScalarErrZ += abs( (*(*it))(2) );
+		double tmpErrX = (*(*it))(0);
+		double tmpErrY = (*(*it))(1);
+		double tmpErrZ = (*(*it))(2);
+		if( abs(tmpErrX) > maxScalarErrX ){
+			maxScalarErrX = abs(tmpErrX);
+		}
+		if( abs(tmpErrY) > maxScalarErrY ){
+			maxScalarErrY = abs(tmpErrY);
+		}
+		if( abs(tmpErrZ) > maxScalarErrZ ){
+			maxScalarErrZ = abs(tmpErrZ);
+		}
+		totalErrX += tmpErrX;
+		totalErrY += tmpErrY;
+		totalErrZ += tmpErrZ;
+		totalScalarErrX += abs( tmpErrX );
+		totalScalarErrY += abs( tmpErrY );
+		totalScalarErrZ += abs( tmpErrZ );
 		totalSquareErr += (*it)->squaredNorm();
-		totalScalarErr += (*it)->norm();
+		double norm =  (*it)->norm();
+		totalScalarErr += norm;
+		if( norm > maxScalarErr ){
+			maxScalarErr = norm;
+		}
+		errXVector.push_back(tmpErrX);
+		errYVector.push_back(tmpErrY);
+		errZVector.push_back(tmpErrZ);
+		scalarErrVector.push_back(norm);
+		scalarErrXVector.push_back(abs(tmpErrX));
+		scalarErrYVector.push_back(abs(tmpErrY));
+		scalarErrZVector.push_back(abs(tmpErrZ));
 		i++;
 		itP_all++;
 		itY_all++;
@@ -168,15 +215,47 @@ void mario::Experiment002::writeCalculatedValues(
 	totalScalarErrZ /= Err.size();
 	totalSquareErr /= Err.size();
 	totalScalarErr /= Err.size();
-	ofs << "//誤差ベクトルのノルムの平均値" << endl;
-	ofs << totalScalarErr << endl;
-	ofs << "//誤差ベクトルの2乗の平均値" << endl;
-	ofs << totalSquareErr << endl;
-	ofs << "//x y zの各方向の誤差（符号あり）の平均値" << endl;
-	ofs << totalErrX << "," << totalErrY << "," << totalErrZ << "," << endl;
-	ofs << "//x y zの各方向の誤差のノルムの平均値" << endl;
-	ofs << totalScalarErrX << "," << totalScalarErrY << "," << totalScalarErrZ << "," << endl;
+	
+	std::sort(errXVector.begin(),errXVector.end());
+	std::sort(errYVector.begin(),errYVector.end());
+	std::sort(errZVector.begin(),errZVector.end());
+	std::sort(scalarErrVector.begin(),scalarErrVector.end());
+	std::sort(scalarErrXVector.begin(),scalarErrXVector.end());
+	std::sort(scalarErrYVector.begin(),scalarErrYVector.end());
+	std::sort(scalarErrZVector.begin(),scalarErrZVector.end());
 
+	tex_ofs << "\\shortstack{ " << _fileName << "\\\\ 図 } &";
+	/* xyz全成分について */
+	ofs << "ずれベクトルのノルムの平均値," ;
+	ofs << totalScalarErr << endl;
+	tex_ofs << totalScalarErr << " & ";
+	ofs << "ずれベクトルのノルムの中央値," ;
+	ofs << scalarErrVector.at( scalarErrVector.size()/2 ) << endl;
+	//tex_ofs << scalarErrVector.at( scalarErrVector.size()/2 ) << " & ";
+	ofs << "ずれベクトルのノルムの最大値,";
+	ofs << maxScalarErr << endl;
+	tex_ofs << maxScalarErr << " & ";
+	ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差）," ;
+	ofs << totalSquareErr << endl;
+	//tex_ofs << totalSquareErr << " & ";
+
+	/* x,y,z各成分について */
+	ofs << "x y zの各方向のずれ（符号あり）の平均値,";
+	ofs << totalErrX << "," << totalErrY << "," << totalErrZ << "," << endl;
+	tex_ofs << "\\shortstack{ x :  " << totalErrX << "\\\\y : " << totalErrY << "\\\\ z : " << totalErrZ << "} & " ;
+	ofs << "x y zの各方向のずれ（符号あり）の中央値,";
+	ofs << errXVector.at( errXVector.size()/2 ) << "," << errYVector.at( errYVector.size()/2 ) << "," << errZVector.at( errZVector.size()/2 ) << "," << endl;
+	//tex_ofs << "\\shortstack{ x :  " << errXVector.at( errXVector.size()/2 ) << "\\\\y : " << errYVector.at( errYVector.size()/2 ) << "\\\\ z : " << errZVector.at( errZVector.size()/2 ) << "} & ";
+	ofs << "x y zの各方向のずれのノルムの平均値,";
+	ofs << totalScalarErrX << "," << totalScalarErrY << "," << totalScalarErrZ << "," << endl;
+	tex_ofs << "\\shortstack{ x :  " << totalScalarErrX << "\\\\y : " << totalScalarErrY << "\\\\z : " << totalScalarErrZ << "} & ";
+	ofs << "x y zの各方向のずれのノルムの中央値,";
+	ofs << scalarErrXVector.at( scalarErrXVector.size()/2 ) << "," << scalarErrYVector.at( scalarErrYVector.size()/2 ) << "," << scalarErrZVector.at( scalarErrZVector.size()/2 ) << "," << endl;
+	//tex_ofs << "\\shortstack{ x :  " << scalarErrXVector.at( scalarErrXVector.size()/2 ) << "\\\\y : " << scalarErrYVector.at( scalarErrYVector.size()/2 ) << "\\\\ z : " << scalarErrZVector.at( scalarErrZVector.size()/2 ) << "} & ";
+	ofs << "x y zの各方向のずれのノルムの最大値,";
+	ofs << maxScalarErrX << "," << maxScalarErrY << "," << maxScalarErrZ << "," << endl;
+	tex_ofs << "\\shortstack{ x :  " << maxScalarErrX << "\\\\y : " << maxScalarErrY << "\\\\ z : " << maxScalarErrZ << "} " ;
+	tex_ofs << "\\\\  \\hline" << endl;
 	/* 各軸方向の誤差をベクトルプロットとスカラープロット形式に */
 	times(j,0,3){
 		static char xyz[3] = {'x','y','z'};
@@ -223,23 +302,38 @@ void mario::Experiment002::writeCalculatedValues(
 			itY_all++;
 		}
 	}
-	/* 全軸方向の誤差をベクトルプロット形式に */
+	/* 全軸方向の誤差をベクトルプロットとスカラープロット形式に */
 	{
-		string plotFilePath = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + ".csv";
-		ofstream tmpofs( plotFilePath, std::ios::out | std::ios::trunc );
-		tmpofs << "データ形式,5" << endl;
-		tmpofs << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofs << "xyz全" << "方向の誤差です．" << endl;
+		string plotFilePathS = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + "_scalar" + ".csv";
+		ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
+		tmpofsS << "データ形式,3" << endl;
+		tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofsS << "誤差の大きさです．" << endl;
+		
+		string plotFilePathV = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + "_vector" + ".csv";
+		ofstream tmpofsV( plotFilePathV, std::ios::out | std::ios::trunc );
+		tmpofsV << "データ形式,5" << endl;
+		tmpofsV << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		tmpofsV << "誤差のベクトルです．" << endl;
+
 		auto itY_all = Y_all.points.begin();
 		foreach(it,Err){
+			/* Scalar */
 			// ->Y
-			tmpofs << (*itY_all)(0) << ",";
-			tmpofs << (*itY_all)(1) << ",";
-			tmpofs << (*itY_all)(2) << ",";
+			tmpofsS << (*itY_all)(0) << ",";
+			tmpofsS << (*itY_all)(1) << ",";
+			tmpofsS << (*itY_all)(2) << ",";
 			// P->Yの誤差(j=0(x),1(y),2(z))
-			tmpofs << (*(*it))(0) << ",";
-			tmpofs << (*(*it))(1) << ",";
-			tmpofs << (*(*it))(2) << endl;
+			tmpofsS << (*(*it)).norm() << endl;
+			/* Vector */
+			// ->Y
+			tmpofsV << (*itY_all)(0) << ",";
+			tmpofsV << (*itY_all)(1) << ",";
+			tmpofsV << (*itY_all)(2) << ",";
+			// P->Yの誤差(j=0(x),1(y),2(z))
+			tmpofsV << (*(*it))(0) << ",";
+			tmpofsV << (*(*it))(1) << ",";
+			tmpofsV << (*(*it))(2) << endl;
 			itY_all++;
 		}
 	}

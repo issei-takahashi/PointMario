@@ -34,31 +34,36 @@ void mario::Experiment002::experimentLoop()
 				if( j != k ){
 					char ptype = types[j]; 
 					char ytype = types[k];
-					string texPath = string("calcdata/tex_") + ptype + ytype + ".txt";
-					ofstream tex_ofs( texPath, std::ios::out | std::ios::app | std::ios::ate );
-					tex_ofs << "名前 & ずれベクトルのノルムの平均値 & " ;
-					//tex_ofs << "ずれベクトルのノルムの中央値 & " ;
-					tex_ofs << "ずれベクトルのノルムの最大値 & ";
-					//tex_ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差） & " ;
-					tex_ofs << "x y zの各方向のずれ（符号あり）の平均値 & ";
-					//tex_ofs << "x y zの各方向のずれ（符号あり）の中央値 & ";
-					tex_ofs << "x y zの各方向のずれのノルムの平均値 & ";
-					//tex_ofs << "x y zの各方向のずれのノルムの中央値 & ";
-					tex_ofs << "x y zの各方向のずれのノルムの最大値";
-					tex_ofs << "\\\\  \\hline" << endl;
-					times(i,0,files.size()){
-						DataSet P(ptype),Y(ytype);
-						boost::shared_ptr<Eigen::Matrix4d> Affine;
-						this->makeDataSetFromCsv( string("data/calibset/")+files[i]+".csv", datas, P, Y );	
-						this->getAffineTransformation( P, Y, Affine );
-						vector< boost::shared_ptr<Eigen::Vector3d> > Err;
-						DataSet P_all(ptype),Y_all(ytype);
-						this->makeDataSetFromCsv( "data/calibset/all.csv", datas, P_all, Y_all );
-						this->getErrors( P_all, Y_all, Affine, Err );
-						cout << "-----アフィン変換A-----" << endl;
-						cout << *Affine << endl;
-						cout << "------------------" << endl;
-						this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err, tex_ofs );
+					if( ( ptype == 'M' && ytype == 'D' ) ||
+						( ptype == 'D' && ytype == 'R' ) ||
+						( ptype == 'M' && ytype == 'R' ) ){
+						string texPath = string("calcdata/tex_") + ptype + ytype + ".txt";
+						ofstream tex_ofs( texPath, std::ios::out | std::ios::app | std::ios::ate );
+						tex_ofs << "名前 & ずれベクトルのノルムの平均値 & " ;
+						//tex_ofs << "ずれベクトルのノルムの中央値 & " ;
+						tex_ofs << "ずれベクトルのノルムの最大値 & ";
+						//tex_ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差） & " ;
+						tex_ofs << "x y zの各方向のずれ（符号あり）の平均値 & ";
+						//tex_ofs << "x y zの各方向のずれ（符号あり）の中央値 & ";
+						tex_ofs << "x y zの各方向のずれのノルムの平均値 & ";
+						//tex_ofs << "x y zの各方向のずれのノルムの中央値 & ";
+						tex_ofs << "x y zの各方向のずれのノルムの最大値";
+						tex_ofs << "\\\\  \\hline" << endl;
+						times(i,0,files.size()){
+							DataSet P(ptype),Y(ytype);
+							boost::shared_ptr<Eigen::Matrix4d> Affine;
+							this->makeDataSetFromCsv( string("data/calibset/")+files[i]+".csv", datas, P, Y );	
+							this->getAffineTransformation( P, Y, Affine );
+							vector< boost::shared_ptr<Eigen::Vector3d> > Err;
+							DataSet P_all(ptype),Y_all(ytype);
+							this->makeDataSetFromCsv( "data/calibset/all.csv", datas, P_all, Y_all );
+							this->getErrors( P_all, Y_all, Affine, Err );
+							cout << "-----アフィン変換A-----" << endl;
+							cout << *Affine << endl;
+							cout << "------------------" << endl;
+							this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err, tex_ofs );
+							//this->writeGraphWithGL( "", Y_all, Err );
+						}
 					}
 				}
 			}
@@ -215,7 +220,7 @@ void mario::Experiment002::writeCalculatedValues(
 	totalScalarErrZ /= Err.size();
 	totalSquareErr /= Err.size();
 	totalScalarErr /= Err.size();
-	
+
 	std::sort(errXVector.begin(),errXVector.end());
 	std::sort(errYVector.begin(),errYVector.end());
 	std::sort(errZVector.begin(),errZVector.end());
@@ -260,27 +265,27 @@ void mario::Experiment002::writeCalculatedValues(
 	times(j,0,3){
 		static char xyz[3] = {'x','y','z'};
 
-		string plotFilePathS = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + "_scalar" + ".csv";
-		ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
-		tmpofsS << "データ形式,3" << endl;
-		tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofsS << xyz[j] << "方向の誤差の大きさです．" << endl;
-		
-		string plotFilePathV = string("plotdata/") + _fileName + "_" + type1 + type2 + xyz[j] + "_vector" + ".csv";
+		//string plotFilePathS = string("plotdata/") + type1 + type2 + _fileName + xyz[j] + "_s" + ".csv";
+		//ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
+		//tmpofsS << "データ形式,3" << endl;
+		//tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		//tmpofsS << xyz[j] << "方向の誤差の大きさです．" << endl;
+
+		string plotFilePathV = string("plotdata/") + type1 + type2 + _fileName + xyz[j] + ".csv";
 		ofstream tmpofsV( plotFilePathV, std::ios::out | std::ios::trunc );
 		tmpofsV << "データ形式,5" << endl;
 		tmpofsV << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofsV << xyz[j] << "方向の誤差のベクトルです．" << endl;
+		tmpofsV << xyz[j] << "方向のずれベクトルです．" << endl;
 
 		auto itY_all = Y_all.points.begin();
 		foreach(it,Err){
-			/* Scalar */
-			// ->Y
-			tmpofsS << (*itY_all)(0) << ",";
-			tmpofsS << (*itY_all)(1) << ",";
-			tmpofsS << (*itY_all)(2) << ",";
-			// P->Yの誤差(j=0(x),1(y),2(z))
-			tmpofsS << abs((*(*it))(j)) << endl;
+			///* Scalar */
+			//// ->Y
+			//tmpofsS << (*itY_all)(0) << ",";
+			//tmpofsS << (*itY_all)(1) << ",";
+			//tmpofsS << (*itY_all)(2) << ",";
+			//// P->Yの誤差(j=0(x),1(y),2(z))
+			//tmpofsS << abs((*(*it))(j)) << endl;
 			/* Vector */
 			// ->Y
 			tmpofsV << (*itY_all)(0) << ",";
@@ -304,27 +309,27 @@ void mario::Experiment002::writeCalculatedValues(
 	}
 	/* 全軸方向の誤差をベクトルプロットとスカラープロット形式に */
 	{
-		string plotFilePathS = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + "_scalar" + ".csv";
-		ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
-		tmpofsS << "データ形式,3" << endl;
-		tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofsS << "誤差の大きさです．" << endl;
-		
-		string plotFilePathV = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + "_vector" + ".csv";
+		//string plotFilePathS = string("plotdata/") + _fileName + "_" + type1 + type2 + "xyz" + "_scalar" + ".csv";
+		//ofstream tmpofsS( plotFilePathS, std::ios::out | std::ios::trunc );
+		//tmpofsS << "データ形式,3" << endl;
+		//tmpofsS << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
+		//tmpofsS << "誤差の大きさです．" << endl;
+
+		string plotFilePathV = string("plotdata/") + type1 + type2 + _fileName + ".csv";
 		ofstream tmpofsV( plotFilePathV, std::ios::out | std::ios::trunc );
 		tmpofsV << "データ形式,5" << endl;
 		tmpofsV << type1 << "から" << type2 << "の変換で，" << type2 << "内の125点における" << endl;
-		tmpofsV << "誤差のベクトルです．" << endl;
+		tmpofsV << "ずれのベクトルです．" << endl;
 
 		auto itY_all = Y_all.points.begin();
 		foreach(it,Err){
-			/* Scalar */
-			// ->Y
-			tmpofsS << (*itY_all)(0) << ",";
-			tmpofsS << (*itY_all)(1) << ",";
-			tmpofsS << (*itY_all)(2) << ",";
-			// P->Yの誤差(j=0(x),1(y),2(z))
-			tmpofsS << (*(*it)).norm() << endl;
+			///* Scalar */
+			//// ->Y
+			//tmpofsS << (*itY_all)(0) << ",";
+			//tmpofsS << (*itY_all)(1) << ",";
+			//tmpofsS << (*itY_all)(2) << ",";
+			//// P->Yの誤差(j=0(x),1(y),2(z))
+			//tmpofsS << (*(*it)).norm() << endl;
 			/* Vector */
 			// ->Y
 			tmpofsV << (*itY_all)(0) << ",";
@@ -337,6 +342,76 @@ void mario::Experiment002::writeCalculatedValues(
 			itY_all++;
 		}
 	}
+}
+
+#include  <glut.h>
+void reshape(int width, int height)
+{
+	static GLfloat lightPosition[4] = {0.25f, 1.0f, 0.25f, 0.0f};
+	static GLfloat lightDiffuse[3] = {1.0f, 1.0f, 1.0f};
+	static GLfloat lightAmbient[3] = {0.25f, 0.25f, 0.25f};
+	static GLfloat lightSpecular[3] = {1.0f, 1.0f, 1.0f};
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	glShadeModel(GL_SMOOTH);
+
+	glViewport(0, 0, width, height);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0, (double)width / (double)height, 0.1, 100.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(0.5, 1.5, 2.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+}
+
+
+void display()
+{
+	static GLfloat diffuse[3] = {1.0f, 0.0f, 0.0f};
+	static GLfloat ambient[3] = {0.25f, 0.25f, 0.25f};
+	static GLfloat specular[3] = {1.0f, 1.0f, 1.0f};
+	static GLfloat shininess[1] = {32.0f};
+
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glutSolidTeapot(0.5);
+
+	glutSwapBuffers();
+}
+
+void mario::Experiment002::writeGraphWithGL( 
+	string const & _fileName, 
+	mario::Experiment002::DataSet const & Y_all,
+	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
+{
+	int argc = 1;
+	char* argv[] = {"filename"};
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(640, 480);
+	glutCreateWindow("Solid Teapot");
+	glutReshapeFunc(reshape);
+	glutDisplayFunc(display);
+	glutMainLoop();
 }
 
 
@@ -356,7 +431,7 @@ void mario::Experiment002::makeDataSetFromCsv( string const & _filePath, mario::
 	while( ifs && getline( ifs, line ) ){
 		utils::cutLine( line, vline );
 		int x=-1,y=-1,z=-1;
-		
+
 		if( vline.size() == 0 ){
 			continue;
 		} else if( vline.at(0) == "all" ){
@@ -620,13 +695,13 @@ void mario::Experiment002::getAffineTransformation(
 	[ x2    y2     z2    1     ] [d ]   [x2']
 	[   x2    y2     z2    1   ] [e ]   [y2']
 	[     x2    y2     z2    1 ] [f ] = [z2']
-	             .               [g ]   [.  ]
-				 .               [h ]   [.  ]
-				 .               [i ]   [.  ]
+	.               [g ]   [.  ]
+	.               [h ]   [.  ]
+	.               [i ]   [.  ]
 	[ xN    yN     zN    1     ] [tx]   [xN']
 	[   xN    yN     zN    1   ] [ty]   [yN']
 	[     xN    yN     zN    1 ] [tz]   [zN']
-	
+
 	*/
 	MatrixXd A = MatrixXd::Zero(N*3,12);
 	VectorXd V    = VectorXd::Zero(N*3);
@@ -634,7 +709,7 @@ void mario::Experiment002::getAffineTransformation(
 		V(i*3+0)     = Y.points.at(i)(0); // xi' 
 		V(i*3+1)     = Y.points.at(i)(1); // yi'
 		V(i*3+2)     = Y.points.at(i)(2); // zi'
-		
+
 		times(k,0,3){
 			A(i*3+k,0+k) = P.points.at(i)(0); // xi
 			A(i*3+k,3+k) = P.points.at(i)(1); // yi

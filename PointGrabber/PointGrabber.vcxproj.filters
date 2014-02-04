@@ -55,6 +55,9 @@
     <ClCompile Include="Experiment1002.cpp">
       <Filter>Basement</Filter>
     </ClCompile>
+    <ClCompile Include="gl_sample.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -106,6 +109,9 @@
       <Filter>Basement</Filter>
     </ClInclude>
     <ClInclude Include="Translation.h">
+      <Filter>Basement</Filter>
+    </ClInclude>
+    <ClInclude Include="RedClusterDetecter.h">
       <Filter>Basement</Filter>
     </ClInclude>
   </ItemGroup>

@@ -101,6 +101,7 @@
     <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
+    <ClInclude Include="RedClusterDetecter.h" />
     <ClInclude Include="SerializableData.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="Experiment101.cpp" />
     <ClCompile Include="ExperimentData.cpp" />
     <ClCompile Include="FileIO.cpp" />
+    <ClCompile Include="gl_sample.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="MeasureBasement.cpp" />
     <ClCompile Include="main.cpp" />

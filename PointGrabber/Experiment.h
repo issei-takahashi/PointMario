@@ -53,6 +53,10 @@ namespace mario
 			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err,
 			ofstream & tex_ofs );
+		void writeGraphWithGL( 
+			string const & _fileName, 
+			mario::Experiment002::DataSet const & Y_all,
+			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
 		void getTranslateMatrix( 
 			mario::Experiment002::DataSet const & P,
 			mario::Experiment002::DataSet const & Y,

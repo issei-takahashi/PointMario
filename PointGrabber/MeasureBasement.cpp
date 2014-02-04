@@ -18,7 +18,7 @@ mario::MeasureBasement::~MeasureBasement()
 
 void mario::MeasureBasement::start()
 {
-	this->upEventHelper = ( unique_ptr<EventHelper> )( new EventHelper(this) );
+	this->setEventHelper();
 	std::string device_id = "";
 	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
 
@@ -26,8 +26,7 @@ void mario::MeasureBasement::start()
 
 	this->spVisualizer.reset (new pcl::visualization::PCLVisualizer ("OpenNI Viewer"));
 
-	this->spVisualizer->registerMouseCallback   ( &mario::MeasureBasement::mouse_callback   , (void*)(&mouseMsg3D) );    
-	this->spVisualizer->registerKeyboardCallback( &mario::MeasureBasement::keyboard_callback, (void*)(&keyMsg3D) );
+	this->setCallBackFunctions();
 	
 	// boostのスレッド関連
 	this->bindedFunction = boost::bind( &EventHelper::cloud_cb, this->upEventHelper.get(), _1);
@@ -56,42 +55,6 @@ mario::MeasureBasement::EventHelper::EventHelper( mario::MeasureBasement* _aMeas
 
 }
 
-void mario::MeasureBasement::EventHelper::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
-{
-	FPS_CALC ("callback");
-
-	this->aMeasureBasement->cld_mutex.lock ();
-	this->aMeasureBasement->redCenter_mutex.lock();
-
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
-	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_cluster ;
-
-	if( mario::filterB( cloud, cloud2, l_cluster, this->aMeasureBasement->redCenter ) ){
-		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
-		this->aMeasureBasement->spcCloud = cloud2->makeShared();
-		this->aMeasureBasement->measureCount_mutex.lock();
-		this->aMeasureBasement->measureCount++;
-		this->aMeasureBasement->measureCount_mutex.unlock();
-	}
-
-	this->aMeasureBasement->redCenter_mutex.unlock();
-	this->aMeasureBasement->cld_mutex.unlock ();
-
-}
-
-void mario::MeasureBasement::EventHelper::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
-{
-	FPS_CALC ("image callback");
-
-	this->aMeasureBasement->img_mutex.lock ();
-	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-	mario::cvt2Mat(image,filtered_image);
-	if( filtered_image ){
-		this->aMeasureBasement->spImage = image;
-	}
-	this->aMeasureBasement->img_mutex.unlock ();
-}
-
 void mario::MeasureBasement::oneLoop()
 {
 	// Render and process events in the two interactors
@@ -101,14 +64,6 @@ void mario::MeasureBasement::oneLoop()
 	this->showCloud();
 	//this->showImage();
 	boost::this_thread::sleep (boost::posix_time::microseconds (100));
-}
-
-void mario::MeasureBasement::measureLoop()
-{
-	// Loop
-	while ( !this->spVisualizer->wasStopped() ){
-		this->oneLoop();
-	}
 }
 
 bool mario::MeasureBasement::quitEvent()
@@ -124,14 +79,6 @@ bool mario::MeasureBasement::isCloudEmpty()
 		ret = this->spcCloud->empty();
 	}
 	this->cld_mutex.unlock();
-	return ret;
-}
-
-mario::Coordinate<mario::typeM> mario::MeasureBasement::getRedCenter()
-{
-	this->redCenter_mutex.lock();
-	auto ret = this->redCenter * 1000; 
-	this->redCenter_mutex.unlock();
 	return ret;
 }
 
@@ -229,4 +176,69 @@ void mario::MeasureBasement::mouse_callback( const pcl::visualization::MouseEven
 		///cout << (*message) << " :: " << mouse_event.getX () << " , " << mouse_event.getY () << endl;
 		
 	}
+}
+
+void mario::RedClusterDetecter::setEventHelper()
+{
+	this->upEventHelper = ( unique_ptr<MeasureBasement::EventHelper> )( new RedClusterDetectEventer(this) );
+}
+
+void mario::RedClusterDetecter::cloud_cb( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )
+{
+
+}
+
+void mario::RedClusterDetcter::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
+{
+
+}
+
+mario::Coordinate<mario::typeM> mario::RedClusterDetcter::getRedCenter()
+{
+	this->redCenter_mutex.lock();
+	auto ret = this->redCenter * 1000; 
+	this->redCenter_mutex.unlock();
+	return ret;
+}
+
+/* Eventer */
+
+mario::RedClusterDetecter::RedClusterDetectEventer::RedClusterDetectEventer( MeasureBasement* _aMeasureBasement )
+	:EventHelper(_aMeasureBasement)
+{}
+
+void mario::MeasureBasement::RedClusterDetectEventer::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
+{
+	FPS_CALC ("callback");
+
+	this->aMeasureBasement->cld_mutex.lock ();
+	this->aMeasureBasement->redCenter_mutex.lock();
+
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
+	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_cluster ;
+
+	if( mario::filterB( cloud, cloud2, l_cluster, this->aMeasureBasement->redCenter ) ){
+		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
+		this->aMeasureBasement->spcCloud = cloud2->makeShared();
+		this->aMeasureBasement->measureCount_mutex.lock();
+		this->aMeasureBasement->measureCount++;
+		this->aMeasureBasement->measureCount_mutex.unlock();
+	}
+
+	this->aMeasureBasement->redCenter_mutex.unlock();
+	this->aMeasureBasement->cld_mutex.unlock ();
+
+}
+
+void mario::MeasureBasement::RedClusterDetectEventer::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
+{
+	FPS_CALC ("image callback");
+
+	this->aMeasureBasement->img_mutex.lock ();
+	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
+	mario::cvt2Mat(image,filtered_image);
+	if( filtered_image ){
+		this->aMeasureBasement->spImage = image;
+	}
+	this->aMeasureBasement->img_mutex.unlock ();
 }

@@ -14,14 +14,12 @@ namespace mario{
 		void oneLoop();
 		bool quitEvent();
 		bool isCloudEmpty();
-		int getMeasureCount();
-		void captureForExperiment1002();
 	public:
-			virtual void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud) = 0;
-			virtual void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image) = 0;
+		virtual void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud) = 0;
+		virtual void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image) = 0;
 		
 	public:
-		boost::mutex cld_mutex, img_mutex, measureCount_mutex;
+		boost::mutex cld_mutex, img_mutex;
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;
 		// Create the PCLVisualizer object
@@ -39,7 +37,6 @@ namespace mario{
 		virtual void setCallBackFunctions() = 0;
 	protected:
 		bool isInitDone;
-		int measureCount;
 	};
 
 };

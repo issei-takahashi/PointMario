@@ -2,6 +2,10 @@
 #include "pcl_utils.h"
 #include "FileIO.h"
 
+mario::RedClusterDetecter::RedClusterDetecter()
+ :MeasureBasement(), measureCount(0)
+{}
+
 // Simple callbacks.
 void mario::RedClusterDetecter::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
 {
@@ -80,6 +84,14 @@ mario::Coordinate<mario::typeM> mario::RedClusterDetecter::getRedCenter()
 	this->redCenter_mutex.lock();
 	auto ret = this->redCenter * 1000; 
 	this->redCenter_mutex.unlock();
+	return ret;
+}
+
+int mario::RedClusterDetecter::getMeasureCount()
+{
+	this->measureCount_mutex.lock();
+	int ret = this->measureCount;
+	this->measureCount_mutex.unlock();
 	return ret;
 }
 

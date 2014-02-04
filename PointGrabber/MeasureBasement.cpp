@@ -6,7 +6,7 @@ static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
 
 mario::MeasureBasement::MeasureBasement()
-	:isInitDone(false),rgb_data(0), rgb_data_size(0), measureCount(0)
+	:isInitDone(false),rgb_data(0), rgb_data_size(0)
 {
 
 }
@@ -73,19 +73,6 @@ bool mario::MeasureBasement::isCloudEmpty()
 	}
 	this->cld_mutex.unlock();
 	return ret;
-}
-
-int mario::MeasureBasement::getMeasureCount()
-{
-	this->measureCount_mutex.lock();
-	int ret = this->measureCount;
-	this->measureCount_mutex.unlock();
-	return ret;
-}
-
-void mario::MeasureBasement::captureForExperiment1002()
-{
-
 }
 
 void mario::MeasureBasement::showCloud()

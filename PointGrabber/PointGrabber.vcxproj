@@ -101,6 +101,7 @@
     <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
+    <ClInclude Include="PointCapture.h" />
     <ClInclude Include="RedClusterDetecter.h" />
     <ClInclude Include="SerializableData.h" />
     <ClInclude Include="stdafx.h" />
@@ -126,6 +127,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="openni_viewer_main.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
+    <ClCompile Include="PointCapture.cpp" />
     <ClCompile Include="RedClusterDetecter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

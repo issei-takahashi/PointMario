@@ -18,7 +18,6 @@ mario::MeasureBasement::~MeasureBasement()
 
 void mario::MeasureBasement::start()
 {
-	this->setEventHelper();
 	std::string device_id = "";
 	//pcl::console::parse_argument (argc, argv, "-dev", device_id);
 
@@ -29,7 +28,7 @@ void mario::MeasureBasement::start()
 	this->setCallBackFunctions();
 	
 	// boostのスレッド関連
-	this->bindedFunction = boost::bind( &EventHelper::cloud_cb, this->upEventHelper.get(), _1);
+	this->bindedFunction = boost::bind( &MeasureBasement::cloud_cb, this, _1);
 	this->signals2Connection = this->upGrabberInterface->registerCallback( this->bindedFunction );
 
 	this->upGrabberInterface->start();
@@ -42,18 +41,12 @@ void mario::MeasureBasement::stop()
 	this->bindedFunction.clear();
 	this->cld_mutex.unlock();
 
-	this->upEventHelper.reset();
 	this->spVisualizer->close();
 	this->spVisualizer.reset();
 	this->upGrabberInterface->stop();
 	this->upGrabberInterface.release();
 }
 
-mario::MeasureBasement::EventHelper::EventHelper( mario::MeasureBasement* _aMeasureBasement )
-	:aMeasureBasement(_aMeasureBasement)
-{
-
-}
 
 void mario::MeasureBasement::oneLoop()
 {
@@ -139,106 +132,4 @@ void mario::MeasureBasement::showImage()
 		}
 		img_mutex.unlock ();
 	}
-}
-
-// Simple callbacks.
-void mario::MeasureBasement::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
-{
-	//std::string* message = (std::string*)cookie;
-	//cout << (*message) << " :: ";
-	//if (_evt.getKeyCode()){
-	//	switch(_evt.getKeyCode()){
-	//	case 'r': // 録画開始
-	//		{
-	//			cout << "rec start" << endl;
-	//			break;
-	//		}
-	//	}
-	//}
-	//else{
-	//	cout << "the special key \'" << _evt.getKeySym() << "\' was";
-	//}
-	//if (_evt.keyDown()){
-	//	cout << " pressed" << endl;
-	//}
-	//else{
-	//	cout << " released" << endl;
-	//}
-}
-
-void mario::MeasureBasement::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
-{
-	std::string* message = (std::string*) cookie;
-	// 左クリック
-	if (mouse_event.getType() == pcl::visualization::MouseEvent::MouseButtonPress &&
-		mouse_event.getButton() == pcl::visualization::MouseEvent::LeftButton)
-	{
-		///cout << (*message) << " :: " << mouse_event.getX () << " , " << mouse_event.getY () << endl;
-		
-	}
-}
-
-void mario::RedClusterDetecter::setEventHelper()
-{
-	this->upEventHelper = ( unique_ptr<MeasureBasement::EventHelper> )( new RedClusterDetectEventer(this) );
-}
-
-void mario::RedClusterDetecter::cloud_cb( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )
-{
-
-}
-
-void mario::RedClusterDetcter::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
-{
-
-}
-
-mario::Coordinate<mario::typeM> mario::RedClusterDetcter::getRedCenter()
-{
-	this->redCenter_mutex.lock();
-	auto ret = this->redCenter * 1000; 
-	this->redCenter_mutex.unlock();
-	return ret;
-}
-
-/* Eventer */
-
-mario::RedClusterDetecter::RedClusterDetectEventer::RedClusterDetectEventer( MeasureBasement* _aMeasureBasement )
-	:EventHelper(_aMeasureBasement)
-{}
-
-void mario::MeasureBasement::RedClusterDetectEventer::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
-{
-	FPS_CALC ("callback");
-
-	this->aMeasureBasement->cld_mutex.lock ();
-	this->aMeasureBasement->redCenter_mutex.lock();
-
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
-	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_cluster ;
-
-	if( mario::filterB( cloud, cloud2, l_cluster, this->aMeasureBasement->redCenter ) ){
-		//this->aMeasureBasement->redCenter = mario::redDetection(*cloud2);
-		this->aMeasureBasement->spcCloud = cloud2->makeShared();
-		this->aMeasureBasement->measureCount_mutex.lock();
-		this->aMeasureBasement->measureCount++;
-		this->aMeasureBasement->measureCount_mutex.unlock();
-	}
-
-	this->aMeasureBasement->redCenter_mutex.unlock();
-	this->aMeasureBasement->cld_mutex.unlock ();
-
-}
-
-void mario::MeasureBasement::RedClusterDetectEventer::image_callback (const boost::shared_ptr<openni_wrapper::Image>& image)
-{
-	FPS_CALC ("image callback");
-
-	this->aMeasureBasement->img_mutex.lock ();
-	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-	mario::cvt2Mat(image,filtered_image);
-	if( filtered_image ){
-		this->aMeasureBasement->spImage = image;
-	}
-	this->aMeasureBasement->img_mutex.unlock ();
 }

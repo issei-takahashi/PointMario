@@ -1,10 +1,10 @@
 #include "Experiment.h"
 #include "ExperimentData.h"
-#include "MeasureBasement.h"
+#include "RedClusterDetecter.h"
 
 void mario::Experiment1002::experimentLoop()
 {
-	mario::MeasureBasement base;
+	mario::RedClusterDetecter base;
 	base.start();
 	base.captureForExperiment1002();
 	base.stop();

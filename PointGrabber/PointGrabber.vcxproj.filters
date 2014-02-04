@@ -58,6 +58,9 @@
     <ClCompile Include="gl_sample.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="RedClusterDetecter.cpp">
+      <Filter>Basement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

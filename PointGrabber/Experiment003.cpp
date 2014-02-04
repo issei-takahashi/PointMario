@@ -1,5 +1,5 @@
 #include "Experiment.h"
-#include "MeasureBasement.h"
+#include "RedClusterDetecter.h"
 #include "FileIO.h"
 #include "Display.h"
 #include "utils.h"
@@ -9,7 +9,7 @@ void mario::Experiment003::experimentLoop()
 {
 	mario::Coordinate<mario::typeM> ret;
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
-	mario::MeasureBasement base;
+	mario::RedClusterDetecter base;
 	base.start();
 	static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
 	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");

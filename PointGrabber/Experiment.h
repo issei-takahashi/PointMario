@@ -3,7 +3,7 @@
 #include "Coordinate.h"
 #include "SerializableData.h"
 
-namespace mario
+namespace issei
 {
 	/* 実験の抽象クラス */
 	class Experiment
@@ -20,9 +20,9 @@ namespace mario
 	private:
 		bool inputContinueLoop();
 		string inputFileNameLoop();
-		Coordinate<typeR> inputRealPositionLoop();
-		Coordinate<typeM> measureRedPointsLoop( vector<Coordinate<typeM> > * _pDst, Coordinate<typeM> const & _beforepM );
-		Coordinate<typeD> showCrossAndRegisterCrossLoop( Coordinate<typeD> const & _beforepD );
+		mario::Coordinate<mario::typeR> inputRealPositionLoop();
+		mario::Coordinate<mario::typeM> measureRedPointsLoop( vector<mario::Coordinate<mario::typeM> > * _pDst, mario::Coordinate<mario::typeM> const & _beforepM );
+		mario::Coordinate<mario::typeD> showCrossAndRegisterCrossLoop( mario::Coordinate<mario::typeD> const & _beforepD );
 	};
 	
 	/* 実験2(実験1データから変換行列を計算する) */
@@ -46,35 +46,35 @@ namespace mario
 		void writeCalculatedValues(
 			string const & _filePath,
 			char type1, char type2,
-			mario::Experiment002::DataSet const & P,
-			mario::Experiment002::DataSet const & Y,
-			mario::Experiment002::DataSet const & P_all,
-			mario::Experiment002::DataSet const & Y_all,
+			issei::Experiment002::DataSet const & P,
+			issei::Experiment002::DataSet const & Y,
+			issei::Experiment002::DataSet const & P_all,
+			issei::Experiment002::DataSet const & Y_all,
 			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err,
 			ofstream & tex_ofs );
 		void writeGraphWithGL( 
 			string const & _fileName, 
-			mario::Experiment002::DataSet const & Y_all,
+			issei::Experiment002::DataSet const & Y_all,
 			vector< boost::shared_ptr<Eigen::Vector3d> > const& Err );
 		void getTranslateMatrix( 
-			mario::Experiment002::DataSet const & P,
-			mario::Experiment002::DataSet const & Y,
+			issei::Experiment002::DataSet const & P,
+			issei::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
 			boost::shared_ptr<Eigen::Vector3d>& _transDst );
 		void getAffineTransformation( 
-			mario::Experiment002::DataSet const & P,
-			mario::Experiment002::DataSet const & Y,
+			issei::Experiment002::DataSet const & P,
+			issei::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix4d>& _affineDst );
 		void getErrors( 
-			mario::Experiment002::DataSet const & P,
-			mario::Experiment002::DataSet const & Y,
+			issei::Experiment002::DataSet const & P,
+			issei::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix3d> const& R,
 			boost::shared_ptr<Eigen::Vector3d> const& q_T,
 			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
 		void getErrors( 
-			mario::Experiment002::DataSet const & P,
-			mario::Experiment002::DataSet const & Y,
+			issei::Experiment002::DataSet const & P,
+			issei::Experiment002::DataSet const & Y,
 			boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 			vector< boost::shared_ptr<Eigen::Vector3d> > & Err );
 	};

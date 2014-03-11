@@ -3,7 +3,7 @@
 #include "Coordinate.h"
 #include "SerializableData.h"
 
-namespace mario
+namespace issei
 {
 	/* 実験データの抽象クラス */
 	class ExperimentData
@@ -13,14 +13,14 @@ namespace mario
 	};
 
 	/* 実験1の計測1回分のデータ */
-	class Experiment001Data : public ExperimentData, public SerializableData<Experiment001Data>
+	class Experiment001Data : public ExperimentData, public issei::SerializableData<Experiment001Data>
 	{
 		friend class boost::serialization::access;
 	public:
-		Coordinate<typeR> pR;
-		vector<Coordinate<typeM> > v_redPointCenters;
-		Coordinate<typeM> pM;
-		Coordinate<typeD> pD;
+		mario::Coordinate<mario::typeR> pR;
+		vector<mario::Coordinate<mario::typeM> > v_redPointCenters;
+		mario::Coordinate<mario::typeM> pM;
+		mario::Coordinate<mario::typeD> pD;
 		void writeCsv( string const & _filePath );
 	private:
 		template<class Archive>
@@ -34,7 +34,7 @@ namespace mario
 	};
 
 	/* 実験1の全ての計測(60回を予定)のデータ */
-	class Experiment001DataList : public ExperimentData, public SerializableData<Experiment001DataList>
+	class Experiment001DataList : public ExperimentData, public issei::SerializableData<Experiment001DataList>
 	{
 		friend class boost::serialization::access;
 	public:

@@ -1,11 +1,11 @@
 #include "ExperimentData.h"
 
-void mario::Experiment001Data::writeCsv( string const & _filePath )
+void issei::Experiment001Data::writeCsv( string const & _filePath )
 {
 
 }
 
-void mario::Experiment001DataList::writeCsv( string const & _filePath )
+void issei::Experiment001DataList::writeCsv( string const & _filePath )
 {
 	ofstream ofs( _filePath, std::ios::out | std::ios::trunc );
 	ofs <<"pM.x"<<","<<"pM.y"<<","<<"pM.z"<<",";
@@ -28,7 +28,7 @@ void mario::Experiment001DataList::writeCsv( string const & _filePath )
 }
 
 
-void mario::Experiment001DataList::getPoints_R( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
+void issei::Experiment001DataList::getPoints_R( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
 {
 	using namespace Eigen;
 	if( this->points_R.empty() ){
@@ -43,7 +43,7 @@ void mario::Experiment001DataList::getPoints_R( vector<boost::shared_ptr<Eigen::
 	_dst = &this->points_R;
 }
 
-void mario::Experiment001DataList::getPoints_M( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
+void issei::Experiment001DataList::getPoints_M( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
 {
 	using namespace Eigen;
 	if( this->points_M.empty() ){
@@ -58,7 +58,7 @@ void mario::Experiment001DataList::getPoints_M( vector<boost::shared_ptr<Eigen::
 	_dst = &this->points_M;
 }
 
-void mario::Experiment001DataList::getPoints_D( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
+void issei::Experiment001DataList::getPoints_D( vector<boost::shared_ptr<Eigen::Vector3d> > * _dst )
 {
 	using namespace Eigen;
 	if( this->points_D.empty() ){

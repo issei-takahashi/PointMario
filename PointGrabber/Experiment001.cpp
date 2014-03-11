@@ -5,18 +5,18 @@
 #include "utils.h"
 #include "ExperimentData.h"
 
-void mario::Experiment001::experimentLoop()
+void issei::Experiment001::experimentLoop()
 {
-	static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
-	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
-	static int const DISP_Z_mm = FileIO::getConst("DISP_Z_mm");
+	static int const DISP_X_mm = mario::FileIO::getConst("DISP_X_mm");
+	static int const DISP_Y_mm = mario::FileIO::getConst("DISP_Y_mm");
+	static int const DISP_Z_mm = mario::FileIO::getConst("DISP_Z_mm");
 	string fileNameBase = string("exdata/") + this->inputFileNameLoop();
 	int count = 1;
-	mario::Experiment001DataList dataList;
+	issei::Experiment001DataList dataList;
 	mario::Coordinate<mario::typeM> beforepM;
 	mario::Coordinate<mario::typeD> beforepD(DISP_X_mm/2,DISP_Y_mm/2,0.0);
 	do{
-		mario::Experiment001Data data;
+		issei::Experiment001Data data;
 		cout << count << "回目の計測を開始します．" << endl;
 		data.pR = this->inputRealPositionLoop();
 		data.pM = this->measureRedPointsLoop( &data.v_redPointCenters, beforepM );
@@ -40,7 +40,7 @@ void mario::Experiment001::experimentLoop()
 	cout << fileNameBase+".csv" << "にデータを保存しました．" << endl;
 }
 
-bool mario::Experiment001::inputContinueLoop()
+bool issei::Experiment001::inputContinueLoop()
 {
 	cout << "計測を終えますか？(y/n)：";
 	string okStr;
@@ -60,7 +60,7 @@ bool mario::Experiment001::inputContinueLoop()
 	}
 }
 
-string mario::Experiment001::inputFileNameLoop()
+string issei::Experiment001::inputFileNameLoop()
 {
 	string buf = "";
 	bool okFlag = false;
@@ -77,9 +77,9 @@ string mario::Experiment001::inputFileNameLoop()
 	return buf;
 }
 
-mario::Coordinate<mario::typeR> mario::Experiment001::inputRealPositionLoop()
+mario::Coordinate<mario::typeR> issei::Experiment001::inputRealPositionLoop()
 {
-	mario::Coordinate<typeR> ret;
+	mario::Coordinate<mario::typeR> ret;
 	bool is_pR_ok = false;
 	while( is_pR_ok == false ){
 		string buf = "";
@@ -110,7 +110,7 @@ mario::Coordinate<mario::typeR> mario::Experiment001::inputRealPositionLoop()
 	return ret;
 }
 
-mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vector<Coordinate<typeM> > * _pDst, Coordinate<typeM> const & _beforeCenter )
+mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vector<mario::Coordinate<mario::typeM> > * _pDst, mario::Coordinate<mario::typeM> const & _beforeCenter )
 {
 	mario::Coordinate<mario::typeM> ret;
 	while(1){
@@ -118,7 +118,7 @@ mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vect
 		cout << "MeasureBasementの初期化中..." << endl;
 		mario::RedClusterDetecter base;
 		base.start();
-		static int const RED_CENTER_TIMES = FileIO::getConst("RED_CENTER_TIMES");
+		static int const RED_CENTER_TIMES = mario::FileIO::getConst("RED_CENTER_TIMES");
 		cout << "赤い場所の重心を"<< RED_CENTER_TIMES <<"回計測します..." << endl;
 		int measureCount = 0;
 		times(i,0,RED_CENTER_TIMES){
@@ -153,13 +153,13 @@ mario::Coordinate<mario::typeM> mario::Experiment001::measureRedPointsLoop( vect
 	return ret;
 }
 
-mario::Coordinate<mario::typeD> mario::Experiment001::showCrossAndRegisterCrossLoop( mario::Coordinate<mario::typeD> const & _beforepD )
+mario::Coordinate<mario::typeD> issei::Experiment001::showCrossAndRegisterCrossLoop( mario::Coordinate<mario::typeD> const & _beforepD )
 {
-	static int const DISP_X_mm = FileIO::getConst("DISP_X_mm");
-	static int const DISP_Y_mm = FileIO::getConst("DISP_Y_mm");
-	static int const DISP_Z_mm = FileIO::getConst("DISP_Z_mm");
-	static int const DISP_X_px = FileIO::getConst("DISP_X_px");
-	static int const DISP_Y_px = FileIO::getConst("DISP_Y_px");
+	static int const DISP_X_mm = mario::FileIO::getConst("DISP_X_mm");
+	static int const DISP_Y_mm = mario::FileIO::getConst("DISP_Y_mm");
+	static int const DISP_Z_mm = mario::FileIO::getConst("DISP_Z_mm");
+	static int const DISP_X_px = mario::FileIO::getConst("DISP_X_px");
+	static int const DISP_Y_px = mario::FileIO::getConst("DISP_Y_px");
 	cout << "+マークを合わせてください" << endl;
 	static mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
 	disp.start();
@@ -176,7 +176,7 @@ mario::Coordinate<mario::typeD> mario::Experiment001::showCrossAndRegisterCrossL
 		disp.drawCross( disp.get_crossPos(), true );
 		disp.quitEvent();
 		auto ms2 = mario::DisplayTimer::getTime();
-		static int const FPS = FileIO::getConst("FPS");
+		static int const FPS = mario::FileIO::getConst("FPS");
 		if( ms2 - ms1 < 1000.0/FPS ){
 			disp.wait( 1000.0/FPS - ( ms2 - ms1 ) );
 		}

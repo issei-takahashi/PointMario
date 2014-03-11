@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mario
+namespace issei
 {
 	template<class T>
 	class SerializableData

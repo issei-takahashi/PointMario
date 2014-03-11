@@ -2,7 +2,7 @@
 #include "ExperimentData.h"
 #include "PointCapture.h"
 
-void mario::Experiment1002::experimentLoop()
+void issei::Experiment1002::experimentLoop()
 {
 	string fileName;
 	cout << "pcdファイル名を入力してください：";

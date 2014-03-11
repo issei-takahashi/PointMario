@@ -1,147 +1,156 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>main</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>others</Filter>
-    </ClCompile>
     <ClCompile Include="pcl_utils.cpp">
-      <Filter>others</Filter>
+      <Filter>MARIO_Engine\others</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>devices</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.cpp">
-      <Filter>others</Filter>
-    </ClCompile>
-    <ClCompile Include="MeasureBasement.cpp">
-      <Filter>Basement</Filter>
-    </ClCompile>
-    <ClCompile Include="FileIO.cpp">
-      <Filter>devices</Filter>
-    </ClCompile>
-    <ClCompile Include="openni_viewer_main.cpp">
-      <Filter>sample</Filter>
-    </ClCompile>
-    <ClCompile Include="Display.cpp">
-      <Filter>Basement</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Basement</Filter>
-    </ClCompile>
-    <ClCompile Include="WinRS.cpp">
-      <Filter>Basement</Filter>
-    </ClCompile>
-    <ClCompile Include="Experiment001.cpp">
-      <Filter>Basement</Filter>
-    </ClCompile>
-    <ClCompile Include="Experiment002.cpp">
-      <Filter>Basement</Filter>
+      <Filter>MARIO_Engine\Timer</Filter>
     </ClCompile>
     <ClCompile Include="Experiment101.cpp">
-      <Filter>Basement</Filter>
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
-    <ClCompile Include="ExperimentData.cpp">
-      <Filter>Basement</Filter>
+    <ClCompile Include="Experiment001.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
-    <ClCompile Include="Experiment1001.cpp">
-      <Filter>Basement</Filter>
+    <ClCompile Include="Experiment002.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
     <ClCompile Include="Experiment003.cpp">
-      <Filter>Basement</Filter>
+      <Filter>Program\Issei_Grad_thesis</Filter>
+    </ClCompile>
+    <ClCompile Include="Experiment1001.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
     <ClCompile Include="Experiment1002.cpp">
-      <Filter>Basement</Filter>
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
-    <ClCompile Include="gl_sample.cpp">
-      <Filter>main</Filter>
+    <ClCompile Include="ExperimentData.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
-    <ClCompile Include="RedClusterDetecter.cpp">
-      <Filter>Basement</Filter>
+    <ClCompile Include="FileIO.cpp">
+      <Filter>MARIO_Engine\FileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="issei_grad_main.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="WinRS.cpp">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="MeasureBasement.cpp">
+      <Filter>MARIO_Engine\Measure</Filter>
     </ClCompile>
     <ClCompile Include="PointCapture.cpp">
-      <Filter>Basement</Filter>
+      <Filter>MARIO_Engine\Measure</Filter>
+    </ClCompile>
+    <ClCompile Include="RedClusterDetecter.cpp">
+      <Filter>MARIO_Engine\Measure</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Others</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Others</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>MARIO_Engine\MarioMain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="targetver.h">
-      <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="defines.h">
-      <Filter>others</Filter>
-    </ClInclude>
     <ClInclude Include="pcl_utils.h">
-      <Filter>others</Filter>
+      <Filter>MARIO_Engine\others</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>devices</Filter>
-    </ClInclude>
-    <ClInclude Include="utils.h">
-      <Filter>others</Filter>
-    </ClInclude>
-    <ClInclude Include="MeasureBasement.h">
-      <Filter>Basement</Filter>
-    </ClInclude>
-    <ClInclude Include="FileIO.h">
-      <Filter>devices</Filter>
+      <Filter>MARIO_Engine\Timer</Filter>
     </ClInclude>
     <ClInclude Include="Coordinate.h">
-      <Filter>Coordinate</Filter>
-    </ClInclude>
-    <ClInclude Include="Display.h">
-      <Filter>Basement</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Basement</Filter>
-    </ClInclude>
-    <ClInclude Include="WinRS.h">
-      <Filter>Basement</Filter>
-    </ClInclude>
-    <ClInclude Include="ifLine.h">
-      <Filter>Basement</Filter>
+      <Filter>MARIO_Engine\Coordinate</Filter>
     </ClInclude>
     <ClInclude Include="Experiment.h">
-      <Filter>Basement</Filter>
-    </ClInclude>
-    <ClInclude Include="SerializableData.h">
-      <Filter>Basement</Filter>
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClInclude>
     <ClInclude Include="ExperimentData.h">
-      <Filter>Basement</Filter>
+      <Filter>Program\Issei_Grad_thesis</Filter>
     </ClInclude>
-    <ClInclude Include="Translation.h">
-      <Filter>Basement</Filter>
+    <ClInclude Include="FileIO.h">
+      <Filter>MARIO_Engine\FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializableData.h">
+      <Filter>Program\Issei_Grad_thesis</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="ifLine.h">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="WinRS.h">
+      <Filter>MARIO_Engine\Display</Filter>
     </ClInclude>
     <ClInclude Include="RedClusterDetecter.h">
-      <Filter>Basement</Filter>
+      <Filter>MARIO_Engine\Measure</Filter>
+    </ClInclude>
+    <ClInclude Include="MeasureBasement.h">
+      <Filter>MARIO_Engine\Measure</Filter>
     </ClInclude>
     <ClInclude Include="PointCapture.h">
-      <Filter>Basement</Filter>
+      <Filter>MARIO_Engine\Measure</Filter>
+    </ClInclude>
+    <ClInclude Include="defines.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="main">
-      <UniqueIdentifier>{db50c03f-3156-479c-a77f-541af8c6fb1a}</UniqueIdentifier>
+    <Filter Include="Program">
+      <UniqueIdentifier>{b9c61441-4ad9-4e94-92bc-5345869863f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="others">
-      <UniqueIdentifier>{a821fc87-d5cc-4818-ba25-d0a04981aacc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="devices">
-      <UniqueIdentifier>{523524d8-f0db-4a30-86a9-fb3a34254a9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Coordinate">
-      <UniqueIdentifier>{0cda7b52-af35-4dac-accf-8c3ba1924776}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Basement">
+    <Filter Include="MARIO_Engine">
       <UniqueIdentifier>{62fbf6d9-24b5-4a31-9821-288c0ff803d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sample">
-      <UniqueIdentifier>{475bfb21-fab3-4091-8ebe-34ff4e54ea44}</UniqueIdentifier>
+    <Filter Include="MARIO_Engine\Coordinate">
+      <UniqueIdentifier>{0cda7b52-af35-4dac-accf-8c3ba1924776}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\others">
+      <UniqueIdentifier>{a821fc87-d5cc-4818-ba25-d0a04981aacc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Issei_Grad_thesis">
+      <UniqueIdentifier>{a448e68b-7f2e-41ce-9a1c-c811d7f7baa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\FileIO">
+      <UniqueIdentifier>{cb3a3e9b-7ac5-4d40-b809-b5725138f5d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Timer">
+      <UniqueIdentifier>{523524d8-f0db-4a30-86a9-fb3a34254a9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\MarioMain">
+      <UniqueIdentifier>{db50c03f-3156-479c-a77f-541af8c6fb1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Display">
+      <UniqueIdentifier>{2ae9a9d8-8636-47c0-b5cf-7da6c7dfd131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Measure">
+      <UniqueIdentifier>{90b260a3-209b-4863-8c67-2d52a8d6cf9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Others">
+      <UniqueIdentifier>{0f8f2965-d65a-43f4-aaff-dea32f60322a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

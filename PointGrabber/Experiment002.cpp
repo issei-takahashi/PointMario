@@ -2,7 +2,7 @@
 #include "ExperimentData.h"
 #include "utils.h"
 
-void mario::Experiment002::experimentLoop()
+void issei::Experiment002::experimentLoop()
 {
 	while(1){
 		Experiment001DataList datas;
@@ -39,15 +39,18 @@ void mario::Experiment002::experimentLoop()
 						( ptype == 'M' && ytype == 'R' ) ){
 						string texPath = string("calcdata/tex_") + ptype + ytype + ".txt";
 						ofstream tex_ofs( texPath, std::ios::out | std::ios::app | std::ios::ate );
-						tex_ofs << "名前 & ずれベクトルのノルムの平均値 & " ;
-						//tex_ofs << "ずれベクトルのノルムの中央値 & " ;
-						tex_ofs << "ずれベクトルのノルムの最大値 & ";
-						//tex_ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差） & " ;
-						tex_ofs << "x y zの各方向のずれ（符号あり）の平均値 & ";
+						tex_ofs.setf(ios_base::fixed, ios_base::floatfield);
+						tex_ofs.precision(2); // 小数点以下の出力桁を2桁に指定
+						tex_ofs << "名前 & ずれベクトルの大きさの平均値 & " ;
+						//tex_ofs << "ずれベクトルの大きさの中央値 & " ;
+						tex_ofs << "ずれベクトルの大きさの最大値 & ";
+						tex_ofs << "中心付近27点におけるずれベクトルの大きさの平均値 & ";
+						//tex_ofs << "ずれベクトルの大きさの2乗の平均値（最小化された二乗誤差） & " ;
+						//tex_ofs << "x y zの各方向のずれ（符号あり）の平均値 & ";
 						//tex_ofs << "x y zの各方向のずれ（符号あり）の中央値 & ";
-						tex_ofs << "x y zの各方向のずれのノルムの平均値 & ";
-						//tex_ofs << "x y zの各方向のずれのノルムの中央値 & ";
-						tex_ofs << "x y zの各方向のずれのノルムの最大値";
+						tex_ofs << "x y zの各方向のずれの大きさの平均値";
+						//tex_ofs << "x y zの各方向のずれの大きさの中央値 & ";
+						//tex_ofs << "x y zの各方向のずれの大きさの最大値";
 						tex_ofs << "\\\\  \\hline" << endl;
 						times(i,0,files.size()){
 							DataSet P(ptype),Y(ytype);
@@ -71,7 +74,7 @@ void mario::Experiment002::experimentLoop()
 	}
 }
 
-string mario::Experiment002::inputFileNameLoop( string const & _message )
+string issei::Experiment002::inputFileNameLoop( string const & _message )
 {
 	string buf = "";
 	bool okFlag = false;
@@ -88,7 +91,7 @@ string mario::Experiment002::inputFileNameLoop( string const & _message )
 	return buf;
 }
 
-char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
+char issei::Experiment002::inputCoordinateTypeLoop( string const & _message )
 {
 	string buf = "";
 	bool okFlag = false;
@@ -103,13 +106,13 @@ char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
 }
 
 
-void mario::Experiment002::writeCalculatedValues(
+void issei::Experiment002::writeCalculatedValues(
 	string const & _fileName,
 	char type1, char type2,
-	mario::Experiment002::DataSet const & P,
-	mario::Experiment002::DataSet const & Y,
-	mario::Experiment002::DataSet const & P_all,
-	mario::Experiment002::DataSet const & Y_all,
+	issei::Experiment002::DataSet const & P,
+	issei::Experiment002::DataSet const & Y,
+	issei::Experiment002::DataSet const & P_all,
+	issei::Experiment002::DataSet const & Y_all,
 	boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err,
 	ofstream & tex_ofs )
@@ -142,7 +145,6 @@ void mario::Experiment002::writeCalculatedValues(
 	}
 	ofs << "//誤差" << endl;
 	ofs <<type1<<"x,"<<type1<<"y,"<<type1<<"z,"<<type2<<"x,"<<type2<<"y,"<<type2<<"z,誤差x,誤差y,誤差z" << endl;
-	int i = 1;
 	double totalSquareErr = 0;
 	double totalErrX = 0;
 	double totalErrY = 0;
@@ -154,6 +156,7 @@ void mario::Experiment002::writeCalculatedValues(
 	double totalScalarErrX = 0;
 	double totalScalarErrY = 0;
 	double totalScalarErrZ = 0;
+	double totalScalarErrCenter = 0;
 	vector<double> scalarErrVector;
 	vector<double> scalarErrXVector;
 	vector<double> scalarErrYVector;
@@ -164,6 +167,7 @@ void mario::Experiment002::writeCalculatedValues(
 	double maxScalarErrZ = -99999;
 	auto itP_all = P_all.points.begin();
 	auto itY_all = Y_all.points.begin();
+	int i = 1;
 	foreach(it,Err){
 		// P->
 		ofs << (*itP_all)(0) << ",";
@@ -208,6 +212,18 @@ void mario::Experiment002::writeCalculatedValues(
 		scalarErrXVector.push_back(abs(tmpErrX));
 		scalarErrYVector.push_back(abs(tmpErrY));
 		scalarErrZVector.push_back(abs(tmpErrZ));
+		// 中心付近の点
+		int centerArr[27] = {32,33,34, 37,38,39, 42,43,44};
+		times(ii,1,3){
+			times(iii,0,9){
+				centerArr[9*ii+iii] = centerArr[iii]+25*ii;
+			}
+		}
+		for(int j=0;j<27;j++){
+			if( centerArr[j] == i ){
+				totalScalarErrCenter += norm;
+			}
+		}
 		i++;
 		itP_all++;
 		itY_all++;
@@ -218,6 +234,7 @@ void mario::Experiment002::writeCalculatedValues(
 	totalScalarErrX /= Err.size();
 	totalScalarErrY /= Err.size();
 	totalScalarErrZ /= Err.size();
+	totalScalarErrCenter /= 27;
 	totalSquareErr /= Err.size();
 	totalScalarErr /= Err.size();
 
@@ -231,35 +248,39 @@ void mario::Experiment002::writeCalculatedValues(
 
 	tex_ofs << "\\shortstack{ " << _fileName << "\\\\ 図 } &";
 	/* xyz全成分について */
-	ofs << "ずれベクトルのノルムの平均値," ;
+	ofs << "ずれベクトルの大きさの平均値," ;
 	ofs << totalScalarErr << endl;
 	tex_ofs << totalScalarErr << " & ";
-	ofs << "ずれベクトルのノルムの中央値," ;
+	ofs << "ずれベクトルの大きさの中央値," ;
 	ofs << scalarErrVector.at( scalarErrVector.size()/2 ) << endl;
 	//tex_ofs << scalarErrVector.at( scalarErrVector.size()/2 ) << " & ";
-	ofs << "ずれベクトルのノルムの最大値,";
+	ofs << "ずれベクトルの大きさの最大値,";
 	ofs << maxScalarErr << endl;
 	tex_ofs << maxScalarErr << " & ";
-	ofs << "ずれベクトルのノルムの2乗の平均値（最小化された二乗誤差）," ;
+	ofs << "ずれベクトルの大きさの2乗の平均値（最小化された二乗誤差）," ;
 	ofs << totalSquareErr << endl;
 	//tex_ofs << totalSquareErr << " & ";
+	ofs << "中心付近27点におけるずれベクトルの大きさの平均値,";
+	ofs << totalScalarErrCenter << endl;
+	tex_ofs << totalScalarErrCenter << " & ";
 
 	/* x,y,z各成分について */
 	ofs << "x y zの各方向のずれ（符号あり）の平均値,";
 	ofs << totalErrX << "," << totalErrY << "," << totalErrZ << "," << endl;
-	tex_ofs << "\\shortstack{ x :  " << totalErrX << "\\\\y : " << totalErrY << "\\\\ z : " << totalErrZ << "} & " ;
+	//tex_ofs << "\\shortstack{ x :  " << totalErrX << "\\\\y : " << totalErrY << "\\\\ z : " << totalErrZ << "} & " ;
 	ofs << "x y zの各方向のずれ（符号あり）の中央値,";
 	ofs << errXVector.at( errXVector.size()/2 ) << "," << errYVector.at( errYVector.size()/2 ) << "," << errZVector.at( errZVector.size()/2 ) << "," << endl;
 	//tex_ofs << "\\shortstack{ x :  " << errXVector.at( errXVector.size()/2 ) << "\\\\y : " << errYVector.at( errYVector.size()/2 ) << "\\\\ z : " << errZVector.at( errZVector.size()/2 ) << "} & ";
-	ofs << "x y zの各方向のずれのノルムの平均値,";
+	ofs << "x y zの各方向のずれの大きさの平均値,";
 	ofs << totalScalarErrX << "," << totalScalarErrY << "," << totalScalarErrZ << "," << endl;
-	tex_ofs << "\\shortstack{ x :  " << totalScalarErrX << "\\\\y : " << totalScalarErrY << "\\\\z : " << totalScalarErrZ << "} & ";
-	ofs << "x y zの各方向のずれのノルムの中央値,";
+	tex_ofs << "\\shortstack{ x :  " << totalScalarErrX << "\\\\y : " << totalScalarErrY << "\\\\z : " << totalScalarErrZ << "} ";
+	ofs << "x y zの各方向のずれの大きさの中央値,";
 	ofs << scalarErrXVector.at( scalarErrXVector.size()/2 ) << "," << scalarErrYVector.at( scalarErrYVector.size()/2 ) << "," << scalarErrZVector.at( scalarErrZVector.size()/2 ) << "," << endl;
 	//tex_ofs << "\\shortstack{ x :  " << scalarErrXVector.at( scalarErrXVector.size()/2 ) << "\\\\y : " << scalarErrYVector.at( scalarErrYVector.size()/2 ) << "\\\\ z : " << scalarErrZVector.at( scalarErrZVector.size()/2 ) << "} & ";
-	ofs << "x y zの各方向のずれのノルムの最大値,";
+	ofs << "x y zの各方向のずれの大きさの最大値,";
 	ofs << maxScalarErrX << "," << maxScalarErrY << "," << maxScalarErrZ << "," << endl;
-	tex_ofs << "\\shortstack{ x :  " << maxScalarErrX << "\\\\y : " << maxScalarErrY << "\\\\ z : " << maxScalarErrZ << "} " ;
+	//tex_ofs << "\\shortstack{ x :  " << maxScalarErrX << "\\\\y : " << maxScalarErrY << "\\\\ z : " << maxScalarErrZ << "} " ;
+	
 	tex_ofs << "\\\\  \\hline" << endl;
 	/* 各軸方向の誤差をベクトルプロットとスカラープロット形式に */
 	times(j,0,3){
@@ -397,9 +418,9 @@ void display()
 	glutSwapBuffers();
 }
 
-void mario::Experiment002::writeGraphWithGL( 
+void issei::Experiment002::writeGraphWithGL( 
 	string const & _fileName, 
-	mario::Experiment002::DataSet const & Y_all,
+	issei::Experiment002::DataSet const & Y_all,
 	vector< boost::shared_ptr<Eigen::Vector3d> > const& Err )
 {
 	int argc = 1;
@@ -415,7 +436,7 @@ void mario::Experiment002::writeGraphWithGL(
 }
 
 
-void mario::Experiment002::makeDataSetFromCsv( string const & _filePath, mario::Experiment001DataList const & _dataList, DataSet & P, DataSet & Y )
+void issei::Experiment002::makeDataSetFromCsv( string const & _filePath, issei::Experiment001DataList const & _dataList, DataSet & P, DataSet & Y )
 {
 	using namespace Eigen;
 	/* 使う点を選ぶ */
@@ -572,9 +593,9 @@ void mario::Experiment002::makeDataSetFromCsv( string const & _filePath, mario::
 }
 
 // 点群P->点群Y への剛体運動変換を求める
-void mario::Experiment002::getTranslateMatrix( 
-	mario::Experiment002::DataSet const & P,
-	mario::Experiment002::DataSet const & Y,
+void issei::Experiment002::getTranslateMatrix( 
+	issei::Experiment002::DataSet const & P,
+	issei::Experiment002::DataSet const & Y,
 	boost::shared_ptr<Eigen::Matrix3d>& _rotDst,
 	boost::shared_ptr<Eigen::Vector3d>& _transDst )
 {
@@ -673,9 +694,9 @@ void mario::Experiment002::getTranslateMatrix(
 }
 
 // 点群P->点群Y へのアフィン変換を求める
-void mario::Experiment002::getAffineTransformation( 
-	mario::Experiment002::DataSet const & P,
-	mario::Experiment002::DataSet const & Y,
+void issei::Experiment002::getAffineTransformation( 
+	issei::Experiment002::DataSet const & P,
+	issei::Experiment002::DataSet const & Y,
 	boost::shared_ptr<Eigen::Matrix4d>& _affineDst )
 {
 	using namespace Eigen;
@@ -742,9 +763,9 @@ void mario::Experiment002::getAffineTransformation(
 
 
 
-void mario::Experiment002::getErrors( 
-	mario::Experiment002::DataSet const & P,
-	mario::Experiment002::DataSet const & Y,
+void issei::Experiment002::getErrors( 
+	issei::Experiment002::DataSet const & P,
+	issei::Experiment002::DataSet const & Y,
 	boost::shared_ptr<Eigen::Matrix3d> const& R,
 	boost::shared_ptr<Eigen::Vector3d> const& q_T,
 	vector< boost::shared_ptr<Eigen::Vector3d> > & _errDst )
@@ -766,9 +787,9 @@ void mario::Experiment002::getErrors(
 	_errDst = Err;
 }
 
-void mario::Experiment002::getErrors( 
-	mario::Experiment002::DataSet const & P,
-	mario::Experiment002::DataSet const & Y,
+void issei::Experiment002::getErrors( 
+	issei::Experiment002::DataSet const & P,
+	issei::Experiment002::DataSet const & Y,
 	boost::shared_ptr<Eigen::Matrix4d> const& Affine,
 	vector< boost::shared_ptr<Eigen::Vector3d> > & _errDst )
 {

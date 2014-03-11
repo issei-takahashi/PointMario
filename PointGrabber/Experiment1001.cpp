@@ -2,7 +2,7 @@
 #include "ExperimentData.h"
 
 
-void mario::Experiment1001::experimentLoop()
+void issei::Experiment1001::experimentLoop()
 {
 	Experiment001DataList datas;
 	while(1){
@@ -34,7 +34,7 @@ void mario::Experiment1001::experimentLoop()
 	datas.write(string("exdata/")+newFilePath+".xml",datas);
 }
 
-string mario::Experiment1001::inputFileNameLoop()
+string issei::Experiment1001::inputFileNameLoop()
 {
 	string buf = "";
 	bool okFlag = false;

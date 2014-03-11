@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "Timer.h"
 
-void mario::Experiment101::experimentLoop()
+void issei::Experiment101::experimentLoop()
 {
 	mario::Coordinate<mario::typeM> ret;
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;

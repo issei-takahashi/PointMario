@@ -137,15 +137,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-/* SDL */
-#include <SDL.h>
-#pragma comment(lib, "SDL.lib")
-#pragma comment(lib, "SDLmain.lib")
-#include <SDL_image.h>
-#pragma comment(lib, "SDL_image.lib")
-#include <SDL_ttf.h>
-#pragma comment(lib, "SDL_ttf.lib")
-
 /* Eigen */
 #include <Eigen/Core>
 #include <Eigen/Dense>

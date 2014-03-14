@@ -37,9 +37,6 @@
     <ClCompile Include="Display.cpp">
       <Filter>MARIO_Engine\Display</Filter>
     </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>MARIO_Engine\Display</Filter>
-    </ClCompile>
     <ClCompile Include="WinRS.cpp">
       <Filter>MARIO_Engine\Display</Filter>
     </ClCompile>
@@ -60,6 +57,24 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>MARIO_Engine\MarioMain</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="LibBase.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayDrawer.cpp">
+      <Filter>Program\Issei_Grad_thesis</Filter>
+    </ClCompile>
+    <ClCompile Include="Eventer.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,9 +100,6 @@
       <Filter>Program\Issei_Grad_thesis</Filter>
     </ClInclude>
     <ClInclude Include="Display.h">
-      <Filter>MARIO_Engine\Display</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
       <Filter>MARIO_Engine\Display</Filter>
     </ClInclude>
     <ClInclude Include="ifLine.h">
@@ -116,6 +128,33 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="LibBase.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayDrawer.h">
+      <Filter>Program\Issei_Grad_thesis</Filter>
+    </ClInclude>
+    <ClInclude Include="Eventer.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyTypes.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Displayed.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +190,9 @@
     </Filter>
     <Filter Include="Others">
       <UniqueIdentifier>{0f8f2965-d65a-43f4-aaff-dea32f60322a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\DrawLibWrapper">
+      <UniqueIdentifier>{e82e5ffb-8513-4ec2-8c70-d1d2fb1aa4c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

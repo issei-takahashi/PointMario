@@ -1,7 +1,13 @@
 #pragma once 
 #define foreach(it,con) for(auto it=con.begin();it!=con.end();it++)
+#define rforeach(it,con) for(auto it=con.rbegin();it!=con.rend();it++)
 #define times(__i__,BEGIN,END) for(int __i__=BEGIN;__i__<END;__i__++)
 
+/* if version of C++ is greater than C++11 */
+#ifdef CPP_11
+#else
+#define final
+#endif
 
 
 //#define MEASURE_FUNCTION_TIME

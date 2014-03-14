@@ -93,11 +93,18 @@
   <ItemGroup>
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="DisplayDrawer.h" />
+    <ClInclude Include="Displayed.h" />
+    <ClInclude Include="Eventer.h" />
     <ClInclude Include="Experiment.h" />
     <ClInclude Include="ExperimentData.h" />
     <ClInclude Include="FileIO.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="ifLine.h" />
-    <ClInclude Include="Image.h" />
+    <ClInclude Include="KeyTypes.h" />
+    <ClInclude Include="LibBase.h" />
+    <ClInclude Include="Shared.h" />
+    <ClInclude Include="Surface.h" />
     <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
@@ -108,10 +115,13 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="Window.h" />
     <ClInclude Include="WinRS.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Display.cpp" />
+    <ClCompile Include="DisplayDrawer.cpp" />
+    <ClCompile Include="Eventer.cpp" />
     <ClCompile Include="Experiment001.cpp" />
     <ClCompile Include="Experiment002.cpp" />
     <ClCompile Include="Experiment003.cpp" />
@@ -120,7 +130,9 @@
     <ClCompile Include="Experiment101.cpp" />
     <ClCompile Include="ExperimentData.cpp" />
     <ClCompile Include="FileIO.cpp" />
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="LibBase.cpp" />
+    <ClCompile Include="Surface.cpp" />
     <ClCompile Include="issei_grad_main.cpp" />
     <ClCompile Include="MeasureBasement.cpp" />
     <ClCompile Include="main.cpp" />
@@ -133,6 +145,7 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="utils.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="WinRS.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

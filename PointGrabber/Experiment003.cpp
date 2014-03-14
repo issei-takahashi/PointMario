@@ -4,6 +4,7 @@
 #include "Display.h"
 #include "utils.h"
 #include "Timer.h"
+#include "Eventer.h"
 
 void issei::Experiment003::experimentLoop()
 {
@@ -11,19 +12,12 @@ void issei::Experiment003::experimentLoop()
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
 	mario::RedClusterDetecter base;
 	base.start();
-	static int const DISP_X_mm = mario::FileIO::getConst("DISP_X_mm");
-	static int const DISP_Y_mm = mario::FileIO::getConst("DISP_Y_mm");
-	static int const DISP_Z_mm = mario::FileIO::getConst("DISP_Z_mm");
-	static int const DISP_X_px = mario::FileIO::getConst("DISP_X_px");
-	static int const DISP_Y_px = mario::FileIO::getConst("DISP_Y_px");
-	static mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
-	disp.start();
-	disp.setScreenMode( true );
+
 	Eigen::Matrix4d A;
 	mario::FileIO::loadTranslation( "data/MtoD.csv", A );
 	bool endFlag = false;
 	while( endFlag == false ){
-		auto ms1 = mario::DisplayTimer::getTime();
+		auto ms1 = Timer::getInstance()->getms();
 		//base.oneLoop();
 		auto thisRed = base.getRedCenter();
 		//thisRed *= 1000;
@@ -35,18 +29,17 @@ void issei::Experiment003::experimentLoop()
 		tmpv = A*tmpv;
 		mario::Coordinate<mario::typeD> pD(tmpv(0),tmpv(1),tmpv(2));
 		cout << pD.x << "," << pD.y << "," << pD.z << endl;
-		disp.drawCross( pD, true );
-		if( disp.quitEvent() ){
+		mario::Display::getInstance()->drawCross( pD, true );
+		if( mario::Eventer::getInstance()->quitEvent() ){
 			endFlag = true;
 		}
-		auto ms2 = mario::DisplayTimer::getTime();
+		auto ms2 = Timer::getInstance()->getms();
 		static int const FPS = mario::FileIO::getConst("FPS");
 		if( ms2 - ms1 < 1000.0/FPS ){
-			disp.wait( 1000.0/FPS - ( ms2 - ms1 ) );
+			Sleep( 1000.0/FPS - ( ms2 - ms1 ) );
 		}
-		auto ms3 = mario::DisplayTimer::getTime();
+		auto ms3 = Timer::getInstance()->getms();
 	}
-	disp.stop();
 	base.stop();
 	return ;
 }

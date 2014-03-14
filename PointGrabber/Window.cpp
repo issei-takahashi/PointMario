@@ -32,7 +32,7 @@ void mario::Window::setScreenMode( bool _isScreenMode )
 	}
 }
 
-int mario::Window::getPriority() 
+int mario::Window::getPriority() const
 {
 	return 1;
 }

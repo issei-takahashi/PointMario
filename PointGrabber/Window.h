@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Displayed.h"
-#include "Shared.h"
 
 struct SDL_Surface;
 
 namespace mario{
 
-	class Window final : public Displayed, public Shared<Window>
+	class Window final : public Displayed
 	{
 	public:
 		Window( int _width, int _height, string const & _windowName, bool _screenModeFlag );

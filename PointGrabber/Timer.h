@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Singleton.h"
 
 /*------------------- Class Timer ---------------------------
 
@@ -8,7 +9,7 @@
 
 --------------------------------------------------------*/
 
-class Timer
+class Timer : public Singleton<Timer>
 {
 public:
 
@@ -28,4 +29,5 @@ public:
 
 	Timer::TimeStamp getTimeStamp();
 	string getTimeStampString();
+	clock_t getms();
 };

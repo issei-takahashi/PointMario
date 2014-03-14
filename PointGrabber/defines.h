@@ -3,6 +3,13 @@
 #define rforeach(it,con) for(auto it=con.rbegin();it!=con.rend();it++)
 #define times(__i__,BEGIN,END) for(int __i__=BEGIN;__i__<END;__i__++)
 
+#define SHARED(__T__) \
+	friend class shared_ptr<__T__>;\
+	friend class unique_ptr<__T__>;\
+	typedef shared_ptr<__T__> Ptr;\
+	typedef weak_ptr<__T__> wPtr;\
+	typedef unique_ptr<__T__> uPtr
+
 /* if version of C++ is greater than C++11 */
 #ifdef CPP_11
 #else

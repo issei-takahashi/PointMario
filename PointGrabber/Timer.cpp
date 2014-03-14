@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include "utils.h"
+#include <time.h>
 
 Timer::TimeStamp Timer::getTimeStamp()
 {
@@ -22,6 +23,7 @@ Timer::TimeStamp Timer::getTimeStamp()
 	ret.hour   = local->tm_hour;
 	ret.minute = local->tm_min;
 	ret.sec    = local->tm_sec;
+	
 
 	return ret;
 }
@@ -30,4 +32,9 @@ string Timer::getTimeStampString()
 	Timer::TimeStamp stamp = Timer::getTimeStamp();
 	return utils::int2string(stamp.year) + "_" + utils::int2string(stamp.month) + "_" + utils::int2string(stamp.day) +
 		" " + utils::int2string(stamp.hour) + ":" + utils::int2string(stamp.minute) + ":" + utils::int2string(stamp.sec);
+}
+
+clock_t Timer::getms()
+{
+	return clock();
 }

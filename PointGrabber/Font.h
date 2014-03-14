@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Displayed.h"
-#include "Shared.h"
 
 struct _TTF_Font;
 
 namespace mario{
 
-	class Font final : public Displayed, public Shared<Font>
+	class Font final : public Displayed
 	{
 	public:
 		Font();

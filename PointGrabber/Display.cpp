@@ -5,25 +5,38 @@
 #include "WinRS.h"
 #include "utils.h"
 #include "Displayed.h"
+#include "Window.h"
+#include "Surface.h"
 
 static std::string const SCREEN_CAPTION = "SDL window test";
 
-mario::Display::Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx )
-	:screenXmm(_scrXmm), screenYmm(_scrYmm), screenXpx(_scrXpx), screenYpx(_scrYpx)
+mario::Display::Display()
 {
+	this->screenXmm = mario::FileIO::getConst("DISP_X_mm");
+	this->screenYmm = mario::FileIO::getConst("DISP_Y_mm");
+	static int const DISP_Z_mm = mario::FileIO::getConst("DISP_Z_mm");
+	this->screenXpx = mario::FileIO::getConst("DISP_X_px");
+	this->screenYpx = mario::FileIO::getConst("DISP_Y_px");
+
 	/* アクチュエータの初期化 */
 	this->upActuator = ( unique_ptr<mario::Display::Actuator> )( new mario::Display::Actuator() );
-	 
+	/* ウィンドウ初期化 */
+	this->window = (unique_ptr<mario::Window>)(new mario::Window(this->screenXpx,this->screenYpx,"Main Window",false));
 }
 
 void mario::Display::oneLoop()
 {
-	foreach(it,this->displayedElements){
-		it->second->oneLoop();
+	for(auto it=this->displayedElements.begin();it!=this->displayedElements.end(); ){
+		if(auto sp=it->second.lock()){
+			sp->oneLoop();
+			it++;
+		}else{
+			it = this->displayedElements.erase(it);
+		}
 	}
 }
 
-void mario::Display::addDisplayedElement( shared_ptr<Displayed> _ptr )
+void mario::Display::addDisplayedElement( shared_ptr<mario::Displayed> _ptr )
 {
 	this->displayedElements.insert(make_pair(_ptr->getPriority(),_ptr));
 }

@@ -168,19 +168,19 @@ mario::Coordinate<mario::typeD> issei::Experiment001::showCrossAndRegisterCrossL
 	bool endFlag = false;
 	bool keyUpdateFlag = false;
 	while( endFlag == false ){
-		auto ms1 = mario::DisplayTimer::getTime();
+		auto ms1 = Timer::getInstance()->getms();
 		if( keyUpdateFlag ){
 			endFlag = disp.keyInputEvent1();
 		}
 		keyUpdateFlag = !keyUpdateFlag;
 		disp.drawCross( disp.get_crossPos(), true );
 		disp.quitEvent();
-		auto ms2 = mario::DisplayTimer::getTime();
+		auto ms2 = Timer::getInstance()->getms();
 		static int const FPS = mario::FileIO::getConst("FPS");
 		if( ms2 - ms1 < 1000.0/FPS ){
 			disp.wait( 1000.0/FPS - ( ms2 - ms1 ) );
 		}
-		auto ms3 = mario::DisplayTimer::getTime();
+		auto ms3 = Timer::getInstance()->getms();
 	}
 	disp.stop();
 	return disp.get_crossPos();

@@ -1,22 +1,23 @@
 #pragma once
 
 #include "Coordinate.h"
-#include "Shared.h"
+#include "Singleton.h"
 
 namespace mario
 {
-	class Display final : public Shared<Display>
+	class Display final : public Singleton<Display>
 	{
 	public:
-		Display( int _scrXmm, int _scrYmm, int _scrXpx, int _scrYpx );
 		void oneLoop();
 		void addDisplayedElement( shared_ptr<class Displayed> _ptr );
 	private:
+		Display();
+		unique_ptr<class Window> window;
 		multimap<int,weak_ptr<class Displayed> > displayedElements;
-		int const screenXmm;
-		int const screenYmm;
-		int const screenXpx;
-		int const screenYpx;
+		int screenXmm;
+		int screenYmm;
+		int screenXpx;
+		int screenYpx;
 		/* アクチュエータ */
 		class Actuator
 		{
@@ -30,14 +31,4 @@ namespace mario
 		/* アクチュエータ関連 */
 		unique_ptr<mario::Display::Actuator> upActuator;
 	};
-
-
-	//class DisplayTimer
-	//{
-	//public:
-	//	static Uint32 getTime(){
-	//		return SDL_GetTicks();
-	//	}
-	//private:
-	//};
 };

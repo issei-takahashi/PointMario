@@ -22,15 +22,13 @@ void mario::PointCapture::keyboard_callback( const pcl::visualization::KeyboardE
 				if (_evt.keyDown()){
 					g_latestPointCapture->showMode = (g_latestPointCapture->showMode+1) % CLOUD_TYPE_NUM;
 					cout << "p is pressed" << endl;
-				}
-				else{
+				}else{
 					//cout << "p is released" << endl;
 				}
 				break;
 			}
 		}
-	}
-	else{
+	}else{
 		cout << "the special key \'" << _evt.getKeySym() << "\' was";
 	}
 }

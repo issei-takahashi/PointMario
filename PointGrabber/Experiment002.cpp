@@ -473,12 +473,10 @@ void issei::Experiment002::makeDataSetFromCsv( string const & _filePath, issei::
 						count++;
 						points.push_back( tmp );
 						indexes.insert( make_pair(tmpIndex,tmpIndex) );
-					}
-					else{
+					}else{
 						cout <<"("<<x<<","<<y<<","<<z<<")‚ÍŠù‚É“o˜^‚³‚ê‚Ä‚¢‚Ü‚·D" << endl;
 					}
-			}
-			else{
+			}else{
 				cout << "50‚Ì”{”‚©‚Â0`200‚Ì’l‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢D" << endl;
 			}
 		}

@@ -3,6 +3,13 @@
 #define rforeach(it,con) for(auto it=con.rbegin();it!=con.rend();it++)
 #define times(__i__,BEGIN,END) for(int __i__=BEGIN;__i__<END;__i__++)
 
+#define intc     int const
+#define uint     unsigned int
+#define uintc    uint const
+#define doublec  double const
+#define udouble  unsigned double
+#define udoublec udouble const
+
 #define SHARED(__T__) \
 	friend class shared_ptr<__T__>;\
 	friend class unique_ptr<__T__>;\

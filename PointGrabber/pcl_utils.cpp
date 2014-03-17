@@ -128,8 +128,7 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 		if( DOWN_FILTER_LEAF > 0 ){
 			if( filterCount > 0 ){
 				sor.setInputCloud ( cloudPtrs[filterCount] );
-			}
-			else{
+			}else{
 				sor.setInputCloud ( cloud );
 			}
 			filterCount++;
@@ -175,8 +174,7 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 		ave /= l_dst.size();
 		redCenter = ave;
 		return true;
-	}
-	else{
+	}else{
 		return false;
 	}
 }
@@ -228,8 +226,7 @@ void mario::outlierFilter( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & 
 		pass.setInputCloud ( cloud );
 		///pass.setFilterLimitsNegative (true);
 		pass.filter ( *dst );
-	}
-	else{
+	}else{
 		dst = cloud->makeShared();
 	}
 }

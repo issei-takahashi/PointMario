@@ -103,8 +103,9 @@
     <ClInclude Include="ifLine.h" />
     <ClInclude Include="KeyTypes.h" />
     <ClInclude Include="LibBase.h" />
-    <ClInclude Include="Shared.h" />
-    <ClInclude Include="Surface.h" />
+    <ClInclude Include="SDL_macros.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="MeasureBasement.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
@@ -132,7 +133,7 @@
     <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="LibBase.cpp" />
-    <ClCompile Include="Surface.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="issei_grad_main.cpp" />
     <ClCompile Include="MeasureBasement.cpp" />
     <ClCompile Include="main.cpp" />

@@ -61,9 +61,6 @@
     <ClCompile Include="Font.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
     <ClCompile Include="LibBase.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
@@ -74,6 +71,9 @@
       <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
     <ClCompile Include="Eventer.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
   </ItemGroup>
@@ -132,14 +132,8 @@
     <ClInclude Include="Font.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
     <ClInclude Include="LibBase.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Shared.h">
-      <Filter>Others</Filter>
     </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
@@ -154,6 +148,15 @@
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
     <ClInclude Include="Displayed.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL_macros.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
   </ItemGroup>

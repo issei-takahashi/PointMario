@@ -15,8 +15,7 @@ mario::WinRS::WinRS(int addr, int bps, mario::ifLine::delim delim, char *mode, b
 	{ // このポートはまだ open されていない
 		init(addr, bps, mode);
 		if (ifaceValid) portSet.insert(addr);
-	}
-	else  // 多重オープンには対応できない
+	}else  // 多重オープンには対応できない
 		throw portDuplex(addr);
 
 }
@@ -32,7 +31,7 @@ int mario::WinRS::init(int addr, int bps, char* mode)
 #else
 #define PRAMA_CHAR char
 #define L_Suffix(x) x
-#define SPRINTF std::sprintf
+#define SPRINTF sprintf_s // fixed by issei @ 14.03.17
 #endif
 
 	PRAMA_CHAR paraBuff[256];
@@ -68,8 +67,7 @@ int mario::WinRS::init(int addr, int bps, char* mode)
 	{
 		dcb1.fRtsControl = RTS_CONTROL_HANDSHAKE;
 		dcb1.fOutxCtsFlow = TRUE;
-	}
-	else
+	}else
 	{
 		dcb1.fRtsControl = RTS_CONTROL_ENABLE;
 		dcb1.fOutxCtsFlow = FALSE;

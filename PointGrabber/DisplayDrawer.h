@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Coordinate.h"
+#include "Displayed.h"
 
 namespace issei
 {
-	class DisplayDrawer
+	class Cross : public mario::Displayed
 	{
-		void drawCross( mario::Coordinate<mario::typeD> _pd, bool _printStringFLag );
+	public:
+		virtual int getPriority() const { return 1; };
+		virtual void oneLoop();
 	};
 };

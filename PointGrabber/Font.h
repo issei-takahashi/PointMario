@@ -8,13 +8,16 @@ namespace mario{
 
 	class Font final : public Displayed
 	{
+		SHARED(Font);
 	public:
-		Font();
+		static shared_ptr<Font> makeShared();
 		~Font();
 		int getPriority() const final override;
-		void oneLoop() final override;
+		void oneLoop( uint _x, uint _y ) final override;
 	private:
+		Font();
 		_TTF_Font* pFont;
+		string stringBuffer;
 	};
 
 };

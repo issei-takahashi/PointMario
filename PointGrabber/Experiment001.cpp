@@ -50,12 +50,10 @@ bool issei::Experiment001::inputContinueLoop()
 		cin  >> okStr;
 		if( okStr == "y" ){
 			return false;
-		}
-		else{
+		}else{
 			return true;
 		}
-	}
-	else{
+	}else{
 		return true;
 	}
 }
@@ -145,8 +143,7 @@ mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vect
 		cin  >> againStr;
 		if( againStr == "y" ){
 			continue;
-		}
-		else{
+		}else{
 			break;
 		}
 	}

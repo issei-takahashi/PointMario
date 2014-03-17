@@ -14,8 +14,7 @@ bool utils::randomEvent( double _prop )
 {
 	if( ((double)rand())/RAND_MAX <= _prop ){
 		return true;
-	}
-	else{
+	}else{
 		return false;
 	}
 }
@@ -137,8 +136,7 @@ bool utils::isNumber( string const & s )
 	int i = 0;
 	if( s[i] == '-' || ( '0' <= s[i] && s[i] <= '9' ) ){
 		// ok.
-	}
-	else{
+	}else{
 		return false;
 	}
 	i++;
@@ -149,12 +147,10 @@ bool utils::isNumber( string const & s )
 			dot++;
 			if( dot > 1 )
 				return false;
-		}
-		else if( '0' <= (s[i]) && (s[i]) <= '9' ){
+		}else if( '0' <= (s[i]) && (s[i]) <= '9' ){
 			// ok.
 			continue;
-		}
-		else{
+		}else{
 			return false;
 		}
 	}
@@ -163,8 +159,7 @@ bool utils::isNumber( string const & s )
 	if( i == s.size()-1 ){
 		if( '0' <= (s[i]) && (s[i]) <= '9' ){
 			return true;
-		}
-		else{
+		}else{
 			return false;
 		}
 	}

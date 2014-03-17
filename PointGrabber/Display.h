@@ -9,11 +9,9 @@ namespace mario
 	{
 	public:
 		void oneLoop();
-		void addDisplayedElement( shared_ptr<class Displayed> _ptr );
 	private:
 		Display();
-		unique_ptr<class Window> window;
-		multimap<int,weak_ptr<class Displayed> > displayedElements;
+		shared_ptr<class Window> window;
 		int screenXmm;
 		int screenYmm;
 		int screenXpx;
@@ -21,14 +19,17 @@ namespace mario
 		/* アクチュエータ */
 		class Actuator
 		{
+			SHARED(Actuator);
 		public:
-			Actuator();
+			shared_ptr<Actuator> makeShared();
 			void moveTo( typeD _zd );
 		private:
+			Actuator();
+			~Actuator();
 			typeD zd;
-			unique_ptr<class WinRS>  upPort; // Arduino用のポート
+			unique_ptr<class WinRS>  arduinoPort; // Arduino用のポート
 		};
 		/* アクチュエータ関連 */
-		unique_ptr<mario::Display::Actuator> upActuator;
+		shared_ptr<mario::Display::Actuator> actuator;
 	};
 };

@@ -3,12 +3,20 @@
 #include "Coordinate.h"
 #include "Singleton.h"
 
+typedef int pix;
+
 namespace mario
 {
 	class Display final : public Singleton<Display>
 	{
 	public:
 		void oneLoop();
+		void moveActuatorTo( typeD _z );
+		void addDisplayedElement( shared_ptr<class _Displayed> _ptr );
+		void setScreenMode( bool _isScreenMode );
+		void wait( int _ms );
+		pix getPixX( typeD _dx ) const;
+		pix getPixY( typeD _dy ) const;
 	private:
 		Display();
 		shared_ptr<class Window> window;

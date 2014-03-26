@@ -26,7 +26,38 @@ mario::Display::Display()
 void mario::Display::oneLoop()
 {
 	this->window->oneLoop();
-	this->actuator->moveTo( 300 );
+}
+
+void mario::Display::moveActuatorTo( typeD _z )
+{
+	assert(this->actuator);
+	this->actuator->moveTo(_z);
+}
+
+void mario::Display::addDisplayedElement( shared_ptr<_Displayed> _ptr )
+{
+	assert(this->window);
+	this->window->addDisplayedElement(_ptr);
+}
+
+void mario::Display::setScreenMode( bool _isScreenMode )
+{
+
+}
+
+void mario::Display::wait( int _ms )
+{
+
+}
+
+pix mario::Display::getPixX( typeD _dx ) const
+{
+
+}
+
+pix mario::Display::getPixY( typeD _dy ) const
+{
+
 }
 
 

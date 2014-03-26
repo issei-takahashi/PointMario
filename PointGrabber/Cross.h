@@ -2,22 +2,18 @@
 
 #include "Displayed.h"
 
-struct _TTF_Font;
-
 namespace mario{
 
-	class Font final : public Displayed
+	class Cross final : public Displayed
 	{
-		SHARED(Font);
+		SHARED(Cross);
 	public:
-		static shared_ptr<Font> makeShared();
-		~Font();
+		static shared_ptr<Cross> makeShared();
+		~Cross();
 		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
 	private:
-		Font();
-		_TTF_Font* pFont;
-		string stringBuffer;
+		Cross();
 	};
 
 };

@@ -152,33 +152,27 @@ mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vect
 
 mario::Coordinate<mario::typeD> issei::Experiment001::showCrossAndRegisterCrossLoop( mario::Coordinate<mario::typeD> const & _beforepD )
 {
-	static int const DISP_X_mm = mario::FileIO::getConst("DISP_X_mm");
-	static int const DISP_Y_mm = mario::FileIO::getConst("DISP_Y_mm");
-	static int const DISP_Z_mm = mario::FileIO::getConst("DISP_Z_mm");
-	static int const DISP_X_px = mario::FileIO::getConst("DISP_X_px");
-	static int const DISP_Y_px = mario::FileIO::getConst("DISP_Y_px");
 	cout << "+ƒ}[ƒN‚ð‡‚í‚¹‚Ä‚­‚¾‚³‚¢" << endl;
-	static mario::Display disp( DISP_X_mm, DISP_Y_mm, DISP_X_px, DISP_Y_px );
-	disp.start();
-	disp.setScreenMode( true );
-	disp.set_crossPos( _beforepD );
+
+	auto disp = mario::Display::getInstance();
+	disp->setScreenMode( true );
+	auto cross = mario::Cross::makeShared();
+	cross->setDisplayPoint( _beforepD );
+
 	bool endFlag = false;
 	bool keyUpdateFlag = false;
 	while( endFlag == false ){
 		auto ms1 = Timer::getInstance()->getms();
 		if( keyUpdateFlag ){
-			endFlag = disp.keyInputEvent1();
+			endFlag = mario::Eventer::getInstance()->quitEvent();
 		}
 		keyUpdateFlag = !keyUpdateFlag;
-		disp.drawCross( disp.get_crossPos(), true );
-		disp.quitEvent();
 		auto ms2 = Timer::getInstance()->getms();
 		static int const FPS = mario::FileIO::getConst("FPS");
 		if( ms2 - ms1 < 1000.0/FPS ){
-			disp.wait( 1000.0/FPS - ( ms2 - ms1 ) );
+			disp->wait( 1000.0/FPS - ( ms2 - ms1 ) );
 		}
 		auto ms3 = Timer::getInstance()->getms();
 	}
-	disp.stop();
-	return disp.get_crossPos();
+	return cross->getDisplayPoint();
 }

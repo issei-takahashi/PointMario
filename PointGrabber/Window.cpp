@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "SDL_macros.h"
+#include "Displayed.h"
 
 shared_ptr<mario::Window> mario::Window::makeShared( int _width, int _height, string const & _windowName, bool _screenModeFlag )
 {
@@ -22,10 +23,32 @@ mario::Window::~Window()
 	SDL_FreeSurface( this->surface );
 }
 
-void mario::Window::addDisplayedElement( shared_ptr<mario::Displayed> _ptr )
+void mario::Window::addDisplayedElement( shared_ptr<mario::_Displayed> _ptr )
 {
 	_ptr->setWindow( this->shared_from_this() );
-	this->displayedElements.insert(make_pair(_ptr->getPriority(),_ptr));
+	auto itr = this->displayedElements.find(_ptr->getPriority());
+	if( itr == this->displayedElements.end() ){
+		multimap< Counter<_Displayed>, weak_ptr<_Displayed> > mm;
+		mm.insert( make_pair( _ptr->getCount(), _ptr ) );
+		this->displayedElements.insert( make_pair(_ptr->getPriority(),mm) );
+	}else{
+		this->displayedElements.insert(make_pair(_ptr->getPriority(),_ptr));
+	}
+}
+
+void mario::Window::removeDisplayedElement( shared_ptr<mario::_Displayed> _ptr )
+{
+	_ptr->setWindow( NULL );
+	auto itr = this->displayedElements.find(_ptr->getPriority());
+	if( itr != this->displayedElements.end() ){
+		auto range = itr->second.equal_range(_ptr->getCount());
+		for(auto it = range.first; it != range.second; it++){
+			if( it->second.lock() == _ptr ){
+				itr->second.erase(it);
+				break;
+			}
+		}
+	}
 }
 
 void mario::Window::setScreenMode( bool _isScreenMode )
@@ -48,7 +71,8 @@ void mario::Window::oneLoop()
 	CLEAR_WINDOW(this->surface);
 	for(auto it=this->displayedElements.begin();it!=this->displayedElements.end(); ){
 		if(auto sp=it->second.lock()){
-			sp->oneLoop(0,0);
+			auto d = sp->getDisplayPoint();
+			sp->oneLoop(d.x,d.y);
 			it++;
 		}else{
 			it = this->displayedElements.erase(it);

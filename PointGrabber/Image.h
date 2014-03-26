@@ -12,7 +12,7 @@ namespace mario
 	public:
 		~Image();
 		static shared_ptr<Image> makeShared( string const & _fileName );
-		int getPriority() const final override;
+		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
 	private:
 		Image( string const & _filePath );

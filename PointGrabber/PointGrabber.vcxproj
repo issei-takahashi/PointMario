@@ -92,8 +92,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Coordinate.h" />
+    <ClInclude Include="Counter.h" />
+    <ClInclude Include="Cross.h" />
     <ClInclude Include="Display.h" />
-    <ClInclude Include="DisplayDrawer.h" />
     <ClInclude Include="Displayed.h" />
     <ClInclude Include="Eventer.h" />
     <ClInclude Include="Experiment.h" />
@@ -120,8 +121,8 @@
     <ClInclude Include="WinRS.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cross.cpp" />
     <ClCompile Include="Display.cpp" />
-    <ClCompile Include="DisplayDrawer.cpp" />
     <ClCompile Include="Eventer.cpp" />
     <ClCompile Include="Experiment001.cpp" />
     <ClCompile Include="Experiment002.cpp" />

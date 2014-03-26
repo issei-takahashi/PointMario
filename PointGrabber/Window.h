@@ -12,7 +12,8 @@ namespace mario{
 	public:
 		~Window();
 		static shared_ptr<Window> makeShared( int _width, int _height, string const & _windowName, bool _screenModeFlag );
-		void addDisplayedElement( shared_ptr<class Displayed> _ptr );
+		void addDisplayedElement( shared_ptr<class _Displayed> _ptr );
+		void removeDisplayedElement( shared_ptr<class _Displayed> _ptr );
 		void oneLoop();
 		void setScreenMode(bool _isScreenMode);
 		void wait( int _ms );
@@ -24,7 +25,7 @@ namespace mario{
 		int height;
 		string windowName;
 		bool isScreenMode;
-		multimap<int,weak_ptr<class Displayed> > displayedElements;
+		map< priority, multimap< Counter<_Displayed> ,weak_ptr<class _Displayed> > > displayedElements;
 	};
 
 };

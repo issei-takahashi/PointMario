@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "Timer.h"
 #include "Eventer.h"
+#include "Cross.h"
 
 void issei::Experiment003::experimentLoop()
 {
@@ -16,6 +17,8 @@ void issei::Experiment003::experimentLoop()
 	Eigen::Matrix4d A;
 	mario::FileIO::loadTranslation( "data/MtoD.csv", A );
 	bool endFlag = false;
+	auto cross = mario::Cross::makeShared();
+	
 	while( endFlag == false ){
 		auto ms1 = Timer::getInstance()->getms();
 		//base.oneLoop();
@@ -29,7 +32,9 @@ void issei::Experiment003::experimentLoop()
 		tmpv = A*tmpv;
 		mario::Coordinate<mario::typeD> pD(tmpv(0),tmpv(1),tmpv(2));
 		cout << pD.x << "," << pD.y << "," << pD.z << endl;
+
 		mario::Display::getInstance()->drawCross( pD, true );
+		mario::Display::getInstance()->moveActuatorTo(pD.z);
 		if( mario::Eventer::getInstance()->quitEvent() ){
 			endFlag = true;
 		}

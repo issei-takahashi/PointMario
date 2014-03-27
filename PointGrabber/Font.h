@@ -6,7 +6,7 @@ struct _TTF_Font;
 
 namespace mario{
 
-	class Font final : public Displayed
+	class Font final : public Displayed<Font>
 	{
 		SHARED(Font);
 	public:

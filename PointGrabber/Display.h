@@ -9,6 +9,7 @@ namespace mario
 {
 	class Display final : public Singleton<Display>
 	{
+		friend class Singleton<Display>;
 	public:
 		void oneLoop();
 		void moveActuatorTo( typeD _z );
@@ -28,12 +29,12 @@ namespace mario
 		class Actuator
 		{
 			SHARED(Actuator);
+			friend class Display;
 		public:
 			shared_ptr<Actuator> makeShared();
 			void moveTo( typeD _zd );
 		private:
 			Actuator();
-			~Actuator();
 			typeD zd;
 			unique_ptr<class WinRS>  arduinoPort; // Arduino用のポート
 		};

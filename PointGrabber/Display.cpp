@@ -52,12 +52,12 @@ void mario::Display::wait( int _ms )
 
 pix mario::Display::getPixX( typeD _dx ) const
 {
-
+	return _dx * this->screenXpx / this->screenXmm;
 }
 
 pix mario::Display::getPixY( typeD _dy ) const
 {
-
+	return _dy * this->screenYpx / this->screenYmm;
 }
 
 
@@ -72,7 +72,7 @@ shared_ptr<mario::Display::Actuator> mario::Display::Actuator::makeShared()
 mario::Display::Actuator::Actuator()
 	:zd(0.0)
 {
-	static intc ARDUINO_COM_NUM = FileIO::getConst("ARDUINO_COM_NUM");
+	static int const ARDUINO_COM_NUM = FileIO::getConst("ARDUINO_COM_NUM");
 	this->arduinoPort = (unique_ptr<mario::WinRS>)( new mario::WinRS( ARDUINO_COM_NUM, 9600, ifLine::cr, "8N1", false ) );
 }
 

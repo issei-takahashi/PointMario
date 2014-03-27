@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "FileIO.h"
 #include "Window.h"
+#include "Display.h"
 
 mario::Cross::Cross()
 {
@@ -48,7 +49,7 @@ void mario::Cross::oneLoop( uint _x, uint _y )
 			SDL_FillRect( windowSurface, &rect1, red );
 			SDL_FillRect( windowSurface, &rect2, red );
 
-			if( _printStringFLag ){
+			if( 1 ){
 				//SDL_Rect rect, scr_rect;
 				//SDL_Color white = {0xff, 0xff, 0xff};
 				//string str = string("Pd = (") + utils::double2string( _x ) +","+

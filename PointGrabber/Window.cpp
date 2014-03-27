@@ -32,7 +32,7 @@ void mario::Window::addDisplayedElement( shared_ptr<mario::_Displayed> _ptr )
 		mm.insert( make_pair( _ptr->getCount(), _ptr ) );
 		this->displayedElements.insert( make_pair(_ptr->getPriority(),mm) );
 	}else{
-		this->displayedElements.insert(make_pair(_ptr->getPriority(),_ptr));
+		itr->second.insert(make_pair(_ptr->getCount(),_ptr));
 	}
 }
 
@@ -69,13 +69,15 @@ void mario::Window::setScreenMode( bool _isScreenMode )
 void mario::Window::oneLoop()
 {
 	CLEAR_WINDOW(this->surface);
-	for(auto it=this->displayedElements.begin();it!=this->displayedElements.end(); ){
-		if(auto sp=it->second.lock()){
-			auto d = sp->getDisplayPoint();
-			sp->oneLoop(d.x,d.y);
-			it++;
-		}else{
-			it = this->displayedElements.erase(it);
+	foreach(it,this->displayedElements){
+		for( auto it2 = it->second.begin(); it2 != it->second.end(); ){
+			if( auto sp = it2->second.lock() ){
+				auto d = sp->getDisplayPoint();
+				sp->oneLoop(d.x,d.y);
+				it2++;
+			}else{
+				it2 = it->second.erase(it2);
+			}
 		}
 	}
 	FLIP_WINDOW;

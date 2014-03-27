@@ -6,7 +6,7 @@ struct SDL_Surface;
 
 namespace mario
 {
-	class Image final : public Displayed
+	class Image final : public Displayed<Image>
 	{
 		SHARED(Image);
 	public:

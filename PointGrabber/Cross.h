@@ -4,7 +4,7 @@
 
 namespace mario{
 
-	class Cross final : public Displayed
+	class Cross final : public Displayed<Cross>
 	{
 		SHARED(Cross);
 	public:

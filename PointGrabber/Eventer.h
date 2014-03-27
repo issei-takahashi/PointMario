@@ -7,6 +7,7 @@ namespace mario
 {
 	class Eventer : public Singleton<Eventer>
 	{
+		friend class Singleton<Eventer>;
 	public:
 		bool quitEvent();
 		bool keyEvent( mario::KeyType _key );

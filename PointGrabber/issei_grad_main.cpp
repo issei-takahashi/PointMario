@@ -1,7 +1,7 @@
 #include "utils.h"
 #include "Experiment.h"
 
-int appMain()
+int issei_grad_appMain()
 {
 	bool endFlag = false;
 	while( endFlag == false ){

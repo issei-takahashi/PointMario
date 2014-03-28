@@ -28,6 +28,12 @@ bool mario::Eventer::quitEvent()
 	return false;
 }
 
+void mario::Eventer::pollEvent()
+{
+	SDL_Event Qevnts;
+	SDL_PollEvent( &Qevnts );
+}
+
 int getSDLKey( mario::KeyType _key )
 {
 	switch(_key){
@@ -130,11 +136,12 @@ int getSDLKey( mario::KeyType _key )
 	}
 }
 
-bool mario::Eventer::keyEvent( mario::KeyType _key )
+bool mario::Eventer::getIskeyPushed( mario::KeyType _key )
 {
 	Uint8 *getKeys = SDL_GetKeyState(NULL);
 	int sdlk = ::getSDLKey(_key);
 	int size = sizeof(getKeys)/sizeof(Uint8);
+	return getKeys[sdlk]==SDL_PRESSED;
 	if(sdlk<size){
 		return (getKeys[sdlk]==SDL_PRESSED);
 	}else{

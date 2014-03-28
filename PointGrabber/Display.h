@@ -16,6 +16,7 @@ namespace mario
 		void addDisplayedElement( shared_ptr<class _Displayed> _ptr );
 		void setScreenMode( bool _isScreenMode );
 		void wait( int _ms );
+		void closeWindow();
 		pix getPixX( typeD _dx ) const;
 		pix getPixY( typeD _dy ) const;
 	private:

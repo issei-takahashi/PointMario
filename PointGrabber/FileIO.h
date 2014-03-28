@@ -12,7 +12,8 @@ namespace mario{
 	public:
 		static void loadAllData();
 		static double getConst( string const & _name );
-		static void loadTranslation( string const & _path, Eigen::Matrix4d & _A );
+		static void loadMatrix( string const & _path, Eigen::Matrix4d & _A );
+		static void writeMatrix( string const & _path, Eigen::Matrix4d const & _A );
 	public: 
 		class CoordinatesData{
 			friend class boost::serialization::access;

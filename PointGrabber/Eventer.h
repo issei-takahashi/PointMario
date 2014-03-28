@@ -10,7 +10,8 @@ namespace mario
 		friend class Singleton<Eventer>;
 	public:
 		bool quitEvent();
-		bool keyEvent( mario::KeyType _key );
+		void pollEvent();
+		bool getIskeyPushed( mario::KeyType _key );
 	private:
 		Eventer(){}
 	};

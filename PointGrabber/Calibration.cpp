@@ -20,15 +20,17 @@ void Calibration::executeCalibration( int _measureTime, string const & _filePath
 		cross->setDisplayPoint( Coordinate<typeD>() );
 
 		/* エンターキーが押されるまでループ */
-		while( mario::Eventer::getInstance()->keyEvent( mario::KeyType::KEY_RETURN ) == false ){
+		while( mario::Eventer::getInstance()->getIskeyPushed( mario::KeyType::KEY_RETURN ) == false ){
 			auto ms1 = Timer::getInstance()->getms();
 			disp->oneLoop();
+			mario::Eventer::getInstance()->pollEvent();
 			auto ms2 = Timer::getInstance()->getms();
 			static int const FPS = FileIO::getConst("FPS");
 			if( ms2 - ms1 < 1000.0/FPS ){
 				disp->wait( 1000.0/FPS - ( ms2 - ms1 ) );
 			}
 		}
+		disp->closeWindow();
 
 		/* 治具の位置を計測 */
 		Coordinate<typeM> jigCenter;
@@ -75,7 +77,7 @@ void Calibration::executeCalibration( int _measureTime, string const & _filePath
 	}
 	boost::shared_ptr<Eigen::Matrix4d> affineMat;
 	this->getAffineTransformation(P,Y,affineMat);
-	
+	FileIO::writeMatrix("data/MDmatrix.csv",*affineMat);
 }
 
 

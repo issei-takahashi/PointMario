@@ -25,19 +25,23 @@ mario::Display::Display()
 
 void mario::Display::oneLoop()
 {
-	this->window->oneLoop();
+	if(this->window){
+		this->window->oneLoop();
+	}
 }
 
 void mario::Display::moveActuatorTo( typeD _z )
 {
-	assert(this->actuator);
-	this->actuator->moveTo(_z);
+	if(this->actuator){
+		this->actuator->moveTo(_z);
+	}
 }
 
 void mario::Display::addDisplayedElement( shared_ptr<_Displayed> _ptr )
 {
-	assert(this->window);
-	this->window->addDisplayedElement(_ptr);
+	if(this->window){
+		this->window->addDisplayedElement(_ptr);
+	}
 }
 
 void mario::Display::setScreenMode( bool _isScreenMode )
@@ -48,6 +52,13 @@ void mario::Display::setScreenMode( bool _isScreenMode )
 void mario::Display::wait( int _ms )
 {
 
+}
+
+void mario::Display::closeWindow()
+{
+	if(this->window){
+		this->window.reset();
+	}
 }
 
 pix mario::Display::getPixX( typeD _dx ) const

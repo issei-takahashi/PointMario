@@ -68,7 +68,7 @@ void mario::FileIO::loadConst( string const & _path )
 
 // 変換データ読み込み
 // 定数データ読み込み
-void mario::FileIO::loadTranslation( string const & _path, Eigen::Matrix4d & _A )
+void mario::FileIO::loadMatrix( string const & _path, Eigen::Matrix4d & _A )
 {
 	mario::FileIO::io_mutex.lock();
 	ifstream ifs( _path );
@@ -83,6 +83,25 @@ void mario::FileIO::loadTranslation( string const & _path, Eigen::Matrix4d & _A 
 		utils::cutLine( line, cells );
 		times(j,0,4){
 			_A(i,j) = utils::string2double( cells.at(j) );
+		}
+	}
+	mario::FileIO::io_mutex.unlock();
+}
+
+void mario::FileIO::writeMatrix( string const & _path, Eigen::Matrix4d const & _A )
+{
+	mario::FileIO::io_mutex.lock();
+	ofstream ofs( _path );
+	//1行分のバッファ
+	string line;
+	times(i,0,_A.rows()){
+		times(j,0,_A.cols()){
+			ofs << _A(i,j);
+			if( j < _A.cols()-1 ){
+				ofs << ",";
+			}else{
+				ofs << endl;
+			}
 		}
 	}
 	mario::FileIO::io_mutex.unlock();

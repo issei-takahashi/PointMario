@@ -15,7 +15,7 @@ void issei::Experiment003::experimentLoop()
 	base.start();
 
 	Eigen::Matrix4d A;
-	mario::FileIO::loadTranslation( "data/MtoD.csv", A );
+	mario::FileIO::loadMatrix( "data/MtoD.csv", A );
 	bool endFlag = false;
 	auto cross = mario::Cross::makeShared();
 	cross->displayStart();

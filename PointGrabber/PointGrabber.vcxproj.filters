@@ -34,9 +34,6 @@
     <ClCompile Include="issei_grad_main.cpp">
       <Filter>Program\Issei_Grad_thesis</Filter>
     </ClCompile>
-    <ClCompile Include="Display.cpp">
-      <Filter>MARIO_Engine\Display</Filter>
-    </ClCompile>
     <ClCompile Include="WinRS.cpp">
       <Filter>MARIO_Engine\Display</Filter>
     </ClCompile>
@@ -67,14 +64,20 @@
     <ClCompile Include="Window.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
-    <ClCompile Include="DisplayDrawer.cpp">
-      <Filter>Program\Issei_Grad_thesis</Filter>
-    </ClCompile>
     <ClCompile Include="Eventer.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Cross.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>MARIO_Engine\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="Calibration.cpp">
+      <Filter>MARIO_Engine\Calibration</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +141,6 @@
     <ClInclude Include="Window.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
-    <ClInclude Include="DisplayDrawer.h">
-      <Filter>Program\Issei_Grad_thesis</Filter>
-    </ClInclude>
     <ClInclude Include="Eventer.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
@@ -158,6 +158,18 @@
     </ClInclude>
     <ClInclude Include="Image.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Cross.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Counter.h">
+      <Filter>Others</Filter>
+    </ClInclude>
+    <ClInclude Include="Calibration.h">
+      <Filter>MARIO_Engine\Calibration</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixSerialization.h">
+      <Filter>MARIO_Engine\others</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +208,9 @@
     </Filter>
     <Filter Include="MARIO_Engine\DrawLibWrapper">
       <UniqueIdentifier>{e82e5ffb-8513-4ec2-8c70-d1d2fb1aa4c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Calibration">
+      <UniqueIdentifier>{6a4c917f-dfa1-4ab9-8db0-d7a2e15fd782}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

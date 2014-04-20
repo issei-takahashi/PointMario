@@ -1,7 +1,13 @@
 #include "Window.h"
 
 #include <SDL.h>
+#pragma comment(lib, "SDL.lib")
+#pragma comment(lib, "SDLmain.lib")
 #include <SDL_image.h>
+#pragma comment(lib, "SDL_image.lib")
+#include <SDL_ttf.h>
+#pragma comment(lib, "SDL_ttf.lib")
+
 #include "SDL_macros.h"
 #include "Displayed.h"
 
@@ -13,6 +19,12 @@ shared_ptr<mario::Window> mario::Window::makeShared( int _width, int _height, st
 mario::Window::Window( int _width, int _height, string const & _windowName, bool _screenModeFlag )
 	:width(_width),height(_height),windowName(_windowName),isScreenMode(_screenModeFlag)
 {
+	if( SDL_Init(SDL_INIT_EVERYTHING) == -1 ) {
+		SDL_Quit();
+	}
+	if( TTF_Init() == -1 ) {
+		TTF_Quit();
+	}
 	this->surface = SDL_SetVideoMode( _width, _height, 32, SDL_HWSURFACE );
 	this->setScreenMode(_screenModeFlag);
 	SDL_WM_SetCaption(_windowName.c_str(),NULL);
@@ -20,7 +32,10 @@ mario::Window::Window( int _width, int _height, string const & _windowName, bool
 
 mario::Window::~Window()
 {
-	SDL_FreeSurface( this->surface );
+	// window‚ÉŒÀ‚Á‚Ä‚Í‚â‚Á‚¿‚áƒ_ƒ‚ç‚µ‚¢
+	//SDL_FreeSurface( this->surface );
+	SDL_Quit();
+	TTF_Quit();
 }
 
 void mario::Window::addDisplayedElement( shared_ptr<mario::_Displayed> _ptr )

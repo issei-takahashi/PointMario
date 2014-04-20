@@ -7,6 +7,9 @@
 #include "Displayed.h"
 #include "Window.h"
 
+#define MAKE_WINDOW_IF_NOT_EXIST if(this->window==NULL)this->window=mario::Window::makeShared(this->screenXpx,this->screenYpx,"Main Window",false)
+
+
 static std::string const SCREEN_CAPTION = "SDL window test";
 
 mario::Display::Display()
@@ -19,15 +22,13 @@ mario::Display::Display()
 
 	/* アクチュエータの初期化 */
 	this->actuator = ( unique_ptr<mario::Display::Actuator> )( new mario::Display::Actuator() );
-	/* ウィンドウ初期化 */
-	this->window = mario::Window::makeShared(this->screenXpx,this->screenYpx,"Main Window",false);
+	MAKE_WINDOW_IF_NOT_EXIST;
 }
 
 void mario::Display::oneLoop()
 {
-	if(this->window){
-		this->window->oneLoop();
-	}
+	MAKE_WINDOW_IF_NOT_EXIST;
+	this->window->oneLoop();
 }
 
 void mario::Display::moveActuatorTo( typeD _z )
@@ -39,19 +40,20 @@ void mario::Display::moveActuatorTo( typeD _z )
 
 void mario::Display::addDisplayedElement( shared_ptr<_Displayed> _ptr )
 {
-	if(this->window){
-		this->window->addDisplayedElement(_ptr);
-	}
+	MAKE_WINDOW_IF_NOT_EXIST;
+	this->window->addDisplayedElement(_ptr);
 }
 
 void mario::Display::setScreenMode( bool _isScreenMode )
 {
-
+	MAKE_WINDOW_IF_NOT_EXIST;
+	this->window->setScreenMode(_isScreenMode);
 }
 
 void mario::Display::wait( int _ms )
 {
-
+	MAKE_WINDOW_IF_NOT_EXIST;
+	this->window->wait(_ms);
 }
 
 void mario::Display::closeWindow()

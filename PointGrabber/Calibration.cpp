@@ -18,6 +18,7 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 		disp->setScreenMode( true );
 		auto cross = Cross::makeShared();
 		cross->setDisplayPoint( *it );
+		cross->displayStart();
 
 		/* エンターキーが押されるまでループ */
 		while( mario::Eventer::getInstance()->getIskeyPushed( mario::KeyType::KEY_RETURN ) == false ){

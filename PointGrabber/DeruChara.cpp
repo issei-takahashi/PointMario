@@ -32,6 +32,17 @@ void DeruChara::mainLoop()
 		if( this->downOutMeasure.collisionDetectionWithCloud( *chara ) ){
 			vel.y() *= -1; // ぶつかったらy方向に反射
 		}
+		auto pos = chara->getDisplayPoint();
+		if(pos.x<0) vel.x() = abs(vel.x());
+		if(pos.y<0) vel.y() = abs(vel.y());
+		if(pos.z<0) vel.z() = abs(vel.z());
+		if(pos.x>300) vel.x() = -abs(vel.x());
+		if(pos.y>300) vel.y() = -abs(vel.y());
+		if(pos.z>300) vel.z() = -abs(vel.z());
+		pos.x = min(300.0,max(0.0,pos.x));
+		pos.y = min(300.0,max(0.0,pos.y));
+		pos.z = min(300.0,max(0.0,pos.z));
+		chara->setDisplayPoint(pos);
 		chara->setVelocity(vel);
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();

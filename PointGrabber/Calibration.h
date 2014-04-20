@@ -19,7 +19,7 @@ namespace mario
 			Eigen::Vector3d average;
 		};
 	public:
-		void executeCalibration( int _measureTime, string const & _filePath );
+		void executeCalibration( list<Coordinate<typeD> > const & _calibPoints, string const & _filePath );
 	private:
 		Calibration(){}
 

@@ -8,16 +8,16 @@
 
 using namespace mario;
 
-void Calibration::executeCalibration( int _measureTime, string const & _filePath )
+void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoints, string const & _filePath )
 {
 	Calibration::DataSet P('M'),Y('D');
-	times(i,0,_measureTime){
+	foreach(it,_calibPoints){
 		cout << "+マークに治具を合わせてください" << endl;
 
 		auto disp = Display::getInstance();
 		disp->setScreenMode( true );
 		auto cross = Cross::makeShared();
-		cross->setDisplayPoint( Coordinate<typeD>() );
+		cross->setDisplayPoint( *it );
 
 		/* エンターキーが押されるまでループ */
 		while( mario::Eventer::getInstance()->getIskeyPushed( mario::KeyType::KEY_RETURN ) == false ){
@@ -77,7 +77,7 @@ void Calibration::executeCalibration( int _measureTime, string const & _filePath
 	}
 	boost::shared_ptr<Eigen::Matrix4d> affineMat;
 	this->getAffineTransformation(P,Y,affineMat);
-	FileIO::writeMatrix("data/MDmatrix.csv",*affineMat);
+	FileIO::writeMatrix(_filePath,*affineMat);
 }
 
 

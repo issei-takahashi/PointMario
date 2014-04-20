@@ -4,6 +4,8 @@
 #define times(__i__,BEGIN,END) for(int __i__=BEGIN;__i__<END;__i__++)
 
 typedef unsigned int uint;
+typedef uint frame_t;
+typedef uint count_t;
 
 #define SHARED(__T__) \
 	friend class shared_ptr<__T__>;\

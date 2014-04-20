@@ -24,7 +24,6 @@ namespace utils
 
 	// var1～var2の間の乱数発生
 	double random( double var1, double var2 );
-
 	
 	//stringをdoubleに変換
 	double string2double(const string& str);
@@ -49,4 +48,7 @@ namespace utils
 
 	// csvの1行をセルごとにカット
 	void cutLine( string _line, vector<string>& _dst );
+
+	// ディレクトリのファイルリストを取得
+	bool getFileList( string const & _dir, list<string> & _dst );
 };

@@ -7,6 +7,12 @@
 #include "Eventer.h"
 #include "Cross.h"
 
+issei::Experiment003::Experiment003( string const & _MDmatFilePath )
+	:MDfilePath(_MDmatFilePath)
+{
+
+}
+
 void issei::Experiment003::experimentLoop()
 {
 	mario::Coordinate<mario::typeM> ret;
@@ -15,7 +21,7 @@ void issei::Experiment003::experimentLoop()
 	base.start();
 
 	Eigen::Matrix4d A;
-	mario::FileIO::loadMatrix( "data/MtoD.csv", A );
+	mario::FileIO::loadMatrix( this->MDfilePath, A );
 	bool endFlag = false;
 	auto cross = mario::Cross::makeShared();
 	cross->displayStart();

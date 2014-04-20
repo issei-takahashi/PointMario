@@ -180,3 +180,34 @@ void utils::cutLine( string _line, vector<string>& _dst )
 	// 文字列_lineを","で区切って_dstに格納
 	boost::algorithm::split( _dst, _line,  boost::is_any_of(",") );
 }
+
+#include <Windows.h>
+#include <tchar.h>
+// ディレクトリのファイルリストを取得
+bool utils::getFileList( string const & _dir, list<string> & _dst )
+{
+	SetCurrentDirectory(_dir.c_str());
+	bool ret = false;
+	WIN32_FIND_DATA fd;
+	// 全てのファイルを列挙する
+	HANDLE hSearch = FindFirstFile( _T("*.*"), &fd );
+	if( hSearch == INVALID_HANDLE_VALUE ){
+		ret = false;
+	}else{
+		while(1){
+			string tmp = fd.cFileName;
+			if( tmp != "." && tmp != ".." ){
+				_dst.push_back( tmp );
+			}
+			if( !FindNextFile( hSearch, &fd ) ){
+				if( GetLastError() == ERROR_NO_MORE_FILES ){ // 正常終了
+					ret = true;
+				}else{ // 異常終了
+					ret = false;
+				}
+			}
+		}
+	}
+	SetCurrentDirectory("..");
+	return ret;
+}

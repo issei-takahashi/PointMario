@@ -31,7 +31,7 @@ int issei_grad_appMain()
 			}
 		case 3:
 			{
-				issei::Experiment003 exp003;
+				issei::Experiment003 exp003("data/MtoD.csv");
 				exp003.experimentLoop();
 				break;
 			}

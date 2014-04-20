@@ -82,7 +82,10 @@ namespace issei
 	class Experiment003 : public Experiment
 	{
 	public:
+		Experiment003( string const & _MDmatFilePath );
 		void experimentLoop();
+	private:
+		string const MDfilePath;
 	};
 
 	/* 実験101(赤色4点抽出テストモード) */

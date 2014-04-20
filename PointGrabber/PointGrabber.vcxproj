@@ -91,18 +91,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="MatrixSerialization.h" />
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Calibration.h" />
+    <ClInclude Include="CollisionInterface.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Counter.h" />
     <ClInclude Include="Cross.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="Displayed.h" />
+    <ClInclude Include="DownOutMeasure.h" />
     <ClInclude Include="Eventer.h" />
     <ClInclude Include="Experiment.h" />
     <ClInclude Include="ExperimentData.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="DeruChara.h" />
     <ClInclude Include="ifLine.h" />
     <ClInclude Include="KeyTypes.h" />
     <ClInclude Include="LibBase.h" />
@@ -115,6 +118,7 @@
     <ClInclude Include="PointCapture.h" />
     <ClInclude Include="RedClusterDetecter.h" />
     <ClInclude Include="SerializableData.h" />
+    <ClInclude Include="SolidAnimation.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
@@ -123,9 +127,12 @@
     <ClInclude Include="WinRS.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Calibration.cpp" />
     <ClCompile Include="Cross.cpp" />
+    <ClCompile Include="DeruChara.cpp" />
     <ClCompile Include="Display.cpp" />
+    <ClCompile Include="DownOutMeasure.cpp" />
     <ClCompile Include="Eventer.cpp" />
     <ClCompile Include="Experiment001.cpp" />
     <ClCompile Include="Experiment002.cpp" />
@@ -143,7 +150,9 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
     <ClCompile Include="PointCapture.cpp" />
+    <ClCompile Include="PointMario_main.cpp" />
     <ClCompile Include="RedClusterDetecter.cpp" />
+    <ClCompile Include="SolidAnimation.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

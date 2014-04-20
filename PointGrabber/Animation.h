@@ -25,7 +25,7 @@ namespace mario{
 	public:
 		static shared_ptr<Animation> makeShared( string const & _fileName );
 		priority getPriority() const final override;
-		void oneLoop( uint _x, uint _y ) final override;
+		virtual void oneLoop( uint _x, uint _y ) override;
 	protected:
 		Animation( string const& _folderPath );
 		string const folderPath;

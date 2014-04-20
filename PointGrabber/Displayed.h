@@ -23,7 +23,6 @@ namespace mario{
 		virtual void oneLoop( uint _x, uint _y ) = 0;	
 	protected:
 		weak_ptr<class Window> ownerWindow;
-	private:
 		mario::Coordinate<mario::typeD> displayPoint;
 	};
 

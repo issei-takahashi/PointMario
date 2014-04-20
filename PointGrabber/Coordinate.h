@@ -155,6 +155,46 @@ namespace mario
 			else
 				return false;
 		}
+
+		/* Eigen との互換性 */
+
+		// +演算子オーバーロード
+		Coordinate<T> operator+(const Eigen::Vector3d& obj) const
+		{
+			Coordinate tmp;
+			tmp.x = x + obj(0);
+			tmp.y = y + obj(1);
+			tmp.z = z + obj(2);
+			return tmp;
+		}
+
+
+		// -演算子オーバーロード
+		Coordinate<T> operator-(const Eigen::Vector3d& obj) const
+		{
+			Coordinate tmp;
+			tmp.x = x - obj(0);
+			tmp.y = y - obj(1);
+			tmp.z = z - obj(2);
+			return tmp;
+		}
+
+		// +=演算子オーバーロード
+		Coordinate<T>& operator+=(const Eigen::Vector3d& obj)
+		{
+			x += obj(0);
+			y += obj(1);
+			z += obj(2);
+			return *this;
+		}
+
+		// -=演算子オーバーロード
+		Coordinate<T>& operator-=(const Eigen::Vector3d& obj)
+		{
+			x -= obj(0);
+			y -= obj(1);
+			z -= obj(2);
+		}	
 	};
 
 };

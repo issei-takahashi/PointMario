@@ -3,6 +3,7 @@
 #include "FileIO.h"
 #include "CollisionInterface.h"
 
+
 mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
  :MeasureBasement(), MtoDMat(_mat)
 {
@@ -11,7 +12,15 @@ mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
 
 bool mario::DownOutMeasure::collisionDetectionWithCloud( CollisionInterface & _obj )
 {
-	return false;
+	this->cld_mutex.lock();
+	indices_t indices;
+	mario::searchNeighbors_voxel( this->spcCloud, _obj.getSearchPoint(), 32.0, indices );
+	this->cld_mutex.unlock();
+	if( indices->size() > 10 ){
+		return true;
+	}else{
+		return false;
+	}
 }
 
 // Simple callbacks.

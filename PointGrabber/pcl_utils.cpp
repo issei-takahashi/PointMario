@@ -1,9 +1,9 @@
 #include "pcl_utils.h"
 #include "FileIO.h"
 
+using namespace mario;
 
-
-mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+Coordinate<typeM> mario::redDetection( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
 {
 	dst = cloud->makeShared();
 	long double x=0,y=0,z=0;
@@ -28,7 +28,7 @@ mario::Coordinate<mario::typeM> mario::redDetection( const pcl::PointCloud<pcl::
 	y/=rcount;
 	z/=rcount;
 	cout<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
-	return mario::Coordinate<mario::typeM>(x,y,z);
+	return Coordinate<typeM>(x,y,z);
 }
 
 void mario::redExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
@@ -135,13 +135,13 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 			sor.filter ( *cloudPtrs[filterCount] );
 		}
 		// 平面抽出
-		//auto inliers = mario::segmentate( cloud_down_filtered, 0.001 ); //大きいほどアバウトに検出
+		//auto inliers = segmentate( cloud_down_filtered, 0.001 ); //大きいほどアバウトに検出
 		//auto cloud_plane_filtered = filter( cloud_down_filtered, inliers, true );
-		//inliers = mario::segmentate( cloud_plane_filtered, 0.001 ); //大きいほどアバウトに検出
+		//inliers = segmentate( cloud_plane_filtered, 0.001 ); //大きいほどアバウトに検出
 		// 格納されている順番に赤く着色
-		//mario::redIteration( *cloud_down_filtered );
+		//redIteration( *cloud_down_filtered );
 		// 赤色を検出して緑色に変換
-		//mario::redDetection( *cloudPtrs[filterCount] );
+		//redDetection( *cloudPtrs[filterCount] );
 		dst = cloudPtrs[filterCount]->makeShared();
 	}
 }
@@ -157,18 +157,18 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	reded = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	clustered = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
 
-	mario::downSamplingFilter( cloud, downed );
-	mario::outlierFilter( downed, filtered );
+	downSamplingFilter( cloud, downed );
+	outlierFilter( downed, filtered );
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // 大きいほど除去する
-	//mario::removePlane( filtered, planed, SEGMENT_THRESHOULD );
-	mario::redExtraction( filtered, reded );
+	//removePlane( filtered, planed, SEGMENT_THRESHOULD );
+	redExtraction( filtered, reded );
 
-	mario::clusterize( reded, dst, l_dst, 4 );
+	clusterize( reded, dst, l_dst, 4 );
 	//cout << "cluster size == " << l_dst.size() << endl;
 	if( l_dst.size() == 4 ){
-		mario::Coordinate<mario::typeM> ave;
+		Coordinate<typeM> ave;
 		foreach(it,l_dst){
-			ave += mario::getAverage(*it);
+			ave += getAverage(*it);
 			//cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
 		}
 		ave /= l_dst.size();
@@ -329,8 +329,8 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 	//	{
 	//		typedef std::vector<pcl::PointIndices> PI;
 	//		bool operator()(const PI& lhs, const PI& rhs) const {
-	//			Coordinate<typeM> avel = mario::getAverage(lhs);
-	//			Coordinate<typeM> aver = mario::getAverage(rhs);
+	//			Coordinate<typeM> avel = getAverage(lhs);
+	//			Coordinate<typeM> aver = getAverage(rhs);
 	//			static Coordinate<typeM> zero;
 	//			return avel.distance(zero) < aver.distance(zero);
 	//		}
@@ -360,12 +360,137 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 		l_dst.push_back( cloud_cluster );
 		j++;
 	}
-
 }
 
-mario::Coordinate<mario::typeM> mario::getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )
+void mario::searchNeighbors_voxel( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+	pcl::PointXYZRGBA const & _searchPoint, float _resolution,
+	indices_t & _ind )
 {
-	mario::Coordinate<mario::typeM> ret(0,0,0);
+	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+	octree.setInputCloud (_inputCloud);
+	octree.addPointsFromInputCloud ();
+
+	// Neighbors within voxel search
+
+	indices_t pointIdxVec = (indices_t)(new vector<int>());
+
+	if (octree.voxelSearch (_searchPoint, *pointIdxVec)){
+		std::cout << "Neighbors within voxel search at (" << _searchPoint.x 
+			<< " " << _searchPoint.y 
+			<< " " << _searchPoint.z << ")" 
+			<< std::endl;
+
+		for (size_t i = 0; i < pointIdxVec->size (); ++i){
+			std::cout << "    " << _inputCloud->points[(*pointIdxVec)[i]].x 
+				<< " " << _inputCloud->points[(*pointIdxVec)[i]].y 
+				<< " " << _inputCloud->points[(*pointIdxVec)[i]].z << std::endl;
+		}
+	}
+	_ind = pointIdxVec;
+}
+
+
+void mario::searchNeighbors_Knearest( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+	pcl::PointXYZRGBA const & _searchPoint, float _resolution, int _K,
+	indices_t & _ind, distances_t & _dist )
+{
+	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+	octree.setInputCloud (_inputCloud);
+	octree.addPointsFromInputCloud ();
+
+	// K nearest neighbor search
+
+	indices_t pointIdxNKNSearch = (indices_t)(new vector<int>());
+	distances_t pointNKNSquaredDistance = (distances_t)(new vector<float>());
+
+	std::cout << "K nearest neighbor search at (" << _searchPoint.x 
+		<< " " << _searchPoint.y 
+		<< " " << _searchPoint.z
+		<< ") with K=" << _K << std::endl;
+
+	if (octree.nearestKSearch (_searchPoint, _K, *pointIdxNKNSearch, *pointNKNSquaredDistance) > 0){
+		for (size_t i = 0; i < pointIdxNKNSearch->size (); ++i){
+			std::cout << "    "  <<   _inputCloud->points[ (*pointIdxNKNSearch)[i] ].x 
+				<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].y 
+				<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].z 
+				<< " (squared distance: " << (*pointNKNSquaredDistance)[i] << ")" << std::endl;
+		}
+	}
+	_ind = pointIdxNKNSearch;
+	_dist = pointNKNSquaredDistance;
+}
+
+void mario::searchNeighbors_radius( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+	pcl::PointXYZRGBA const & _searchPoint, float _resolution, float _radius,
+	indices_t & _ind, distances_t & _dist )
+{
+	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+	octree.setInputCloud (_inputCloud);
+	octree.addPointsFromInputCloud ();
+
+	// Neighbors within radius search
+
+	indices_t pointIdxRadiusSearch = (indices_t)(new vector<int>());
+	distances_t pointRadiusSquaredDistance = (distances_t)(new vector<float>());
+
+	std::cout << "Neighbors within radius search at (" << _searchPoint.x 
+		<< " " << _searchPoint.y 
+		<< " " << _searchPoint.z
+		<< ") with radius=" << _radius << std::endl;
+
+
+	if (octree.radiusSearch (_searchPoint, _radius, *pointIdxRadiusSearch, *pointRadiusSquaredDistance) > 0){
+		for (size_t i = 0; i < pointIdxRadiusSearch->size (); ++i){
+			std::cout << "    "  <<   _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].x 
+				<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].y 
+				<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].z 
+				<< " (squared distance: " << (*pointRadiusSquaredDistance)[i] << ")" << std::endl;
+		}
+	}
+	_ind = pointIdxRadiusSearch;
+	_dist = pointRadiusSquaredDistance;
+}
+
+
+void mario::newPointSearch( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudA,
+	const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudB, float _resolution,
+	indices_t & _ind )
+{
+	// Octree resolution - side length of octree voxels
+
+	// Instantiate octree-based point cloud change detection class
+	pcl::octree::OctreePointCloudChangeDetector<pcl::PointXYZRGBA> octree (_resolution);
+
+	// Add points from cloudA to octree
+	octree.setInputCloud (_cloudA);
+	octree.addPointsFromInputCloud ();
+
+	// Switch octree buffers: This resets octree but keeps previous tree structure in memory.
+	octree.switchBuffers ();
+
+	// Add points from cloudB to octree
+	octree.setInputCloud (_cloudB);
+	octree.addPointsFromInputCloud ();
+
+	indices_t newPointIdxVector = (indices_t)(new vector<int>());
+
+	// Get vector of point indices from octree voxels which did not exist in previous buffer
+	octree.getPointIndicesFromNewVoxels (*newPointIdxVector);
+
+	// Output points
+	std::cout << "Output from getPointIndicesFromNewVoxels:" << std::endl;
+	for (size_t i = 0; i < newPointIdxVector->size (); ++i){
+		std::cout << i << "# Index:" << (*newPointIdxVector)[i]
+	<< "  Point:" << _cloudB->points[(*newPointIdxVector)[i]].x << " "
+		<< _cloudB->points[(*newPointIdxVector)[i]].y << " "
+		<< _cloudB->points[(*newPointIdxVector)[i]].z << std::endl;
+	}
+	_ind = newPointIdxVector;
+}
+
+Coordinate<typeM> mario::getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )
+{
+	Coordinate<typeM> ret(0,0,0);
 	int count = 0;
 	for( count=0; count<cloud->points.size(); count++ ){
 		ret.x += cloud->points[count].x;

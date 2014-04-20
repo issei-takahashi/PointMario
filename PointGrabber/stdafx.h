@@ -76,6 +76,9 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/segmentation/extract_clusters.h>
 
+// octree
+#include <pcl/octree/octree.h>
+
  #include "pcl/segmentation/sac_segmentation.h"
 
 // Sample Consensus methods

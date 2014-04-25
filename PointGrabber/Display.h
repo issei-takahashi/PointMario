@@ -30,14 +30,14 @@ namespace mario
 		class Actuator
 		{
 			SHARED(Actuator);
-			friend class Display;
 		public:
-			shared_ptr<Actuator> makeShared();
+			static shared_ptr<Actuator> makeShared();
 			void moveTo( typeD _zd );
 		private:
 			Actuator();
 			typeD zd;
-			unique_ptr<class WinRS>  arduinoPort; // Arduino用のポート
+			uint portNum;
+			shared_ptr<class WinRS>  arduinoPort; // Arduino用のポート
 		};
 		/* アクチュエータ関連 */
 		shared_ptr<mario::Display::Actuator> actuator;

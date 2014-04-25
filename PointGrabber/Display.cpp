@@ -21,7 +21,7 @@ mario::Display::Display()
 	this->screenYpx = mario::FileIO::getConst("DISP_Y_px");
 
 	/* アクチュエータの初期化 */
-	this->actuator = ( unique_ptr<mario::Display::Actuator> )( new mario::Display::Actuator() );
+	this->actuator = mario::Display::Actuator::makeShared();
 	MAKE_WINDOW_IF_NOT_EXIST;
 }
 
@@ -86,10 +86,13 @@ mario::Display::Actuator::Actuator()
 	:zd(0.0)
 {
 	static int const ARDUINO_COM_NUM = FileIO::getConst("ARDUINO_COM_NUM");
-	this->arduinoPort = (unique_ptr<mario::WinRS>)( new mario::WinRS( ARDUINO_COM_NUM, 9600, ifLine::cr, "8N1", false ) );
+	this->portNum = ARDUINO_COM_NUM;
+	this->arduinoPort = (shared_ptr<mario::WinRS>)( new mario::WinRS( ARDUINO_COM_NUM, 9600, ifLine::cr, "8N1", false ) );
 }
 
 void mario::Display::Actuator::moveTo( typeD _zd )
 {
-	this->arduinoPort->putc1( max(0.0,_zd) );
+	int sendChar = max(0,(int)_zd);
+	cout << sendChar << endl;
+	this->arduinoPort->putc1( 100 );
 }

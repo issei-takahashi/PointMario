@@ -15,10 +15,11 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 		cout << "+マークに治具を合わせてください" << endl;
 
 		auto disp = Display::getInstance();
-		disp->setScreenMode( true );
+		//disp->setScreenMode( true );
 		auto cross = Cross::makeShared();
 		cross->setDisplayPoint( *it );
 		cross->displayStart();
+		disp->moveActuatorTo(it->z);
 
 		/* エンターキーが押されるまでループ */
 		while( mario::Eventer::getInstance()->getIskeyPushed( mario::KeyType::KEY_RETURN ) == false ){

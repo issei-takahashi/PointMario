@@ -8,18 +8,14 @@ SolidAnimation::SolidAnimation( string const& _folderPath )
 
 }
 
-SolidAnimation::Ptr SolidAnimation::makeShared( string const& _folderPath )
-{
-	return (SolidAnimation::Ptr)(new SolidAnimation(_folderPath));
-}
 
 void SolidAnimation::oneLoop( uint _x, uint _y ) 
 {
 	Animation::oneLoop(_x,_y);
-	this->displayPoint += this->velocity;
+	this->addDisplayPoint(this->velocity);
 }
 
-pcl::PointXYZRGBA const SolidAnimation::getSearchPoint() const
+pcl::PointXYZRGBA const SolidAnimation::getSearchPoint()
 {
 	auto dp = this->getDisplayPoint();
 	pcl::PointXYZRGBA ret;

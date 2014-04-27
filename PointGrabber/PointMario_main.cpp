@@ -42,8 +42,10 @@ int appMain()
 			}
 		case 2:
 			{
-				issei::Experiment003 exp003( CALIB_PATH );
-				exp003.experimentLoop();
+				Eigen::Matrix4d A;
+				FileIO::loadMatrix(CALIB_PATH,A);
+				DeruChara deru(A);
+				deru.mainLoop();
 				break;
 			}
 		case 3:

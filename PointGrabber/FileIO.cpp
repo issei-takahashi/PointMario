@@ -74,8 +74,6 @@ void mario::FileIO::loadMatrix( string const & _path, Eigen::Matrix4d & _A )
 	ifstream ifs( _path );
 	//1行分のバッファ
 	string line;
-	//最初の１行は捨てる
-	getline( ifs, line );
 	// 回転成分
 	times(i,0,4){
 		getline( ifs, line );

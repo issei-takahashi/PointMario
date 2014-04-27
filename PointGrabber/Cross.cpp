@@ -14,11 +14,6 @@ mario::Cross::~Cross()
 {
 }
 
-shared_ptr<mario::Cross> mario::Cross::makeShared()
-{
-	return shared_ptr<Cross>(new Cross());
-}
-
 int mario::Cross::getPriority() const
 {
 	return 1;

@@ -15,8 +15,8 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 		cout << "+ƒ}[ƒN‚ÉŽ¡‹ï‚ð‡‚í‚¹‚Ä‚­‚¾‚³‚¢" << endl;
 
 		auto disp = Display::getInstance();
-		//disp->setScreenMode( true );
-		auto cross = Cross::makeShared();
+		disp->setScreenMode( true );
+		auto cross = (shared_ptr<Cross>)(new Cross());
 		cross->setDisplayPoint( *it );
 		cross->displayStart();
 		disp->moveActuatorTo(it->z);

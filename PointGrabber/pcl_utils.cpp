@@ -366,27 +366,29 @@ void mario::searchNeighbors_voxel( const pcl::PointCloud<pcl::PointXYZRGBA>::Con
 	pcl::PointXYZRGBA const & _searchPoint, float _resolution,
 	indices_t & _ind )
 {
-	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
-	octree.setInputCloud (_inputCloud);
-	octree.addPointsFromInputCloud ();
+	if( _inputCloud ){
+		pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+		octree.setInputCloud (_inputCloud);
+		octree.addPointsFromInputCloud ();
 
-	// Neighbors within voxel search
+		// Neighbors within voxel search
 
-	indices_t pointIdxVec = (indices_t)(new vector<int>());
+		indices_t pointIdxVec = (indices_t)(new vector<int>());
 
-	if (octree.voxelSearch (_searchPoint, *pointIdxVec)){
-		std::cout << "Neighbors within voxel search at (" << _searchPoint.x 
-			<< " " << _searchPoint.y 
-			<< " " << _searchPoint.z << ")" 
-			<< std::endl;
+		if (octree.voxelSearch (_searchPoint, *pointIdxVec)){
+			std::cout << "Neighbors within voxel search at (" << _searchPoint.x 
+				<< " " << _searchPoint.y 
+				<< " " << _searchPoint.z << ")" 
+				<< std::endl;
 
-		for (size_t i = 0; i < pointIdxVec->size (); ++i){
-			std::cout << "    " << _inputCloud->points[(*pointIdxVec)[i]].x 
-				<< " " << _inputCloud->points[(*pointIdxVec)[i]].y 
-				<< " " << _inputCloud->points[(*pointIdxVec)[i]].z << std::endl;
+			for (size_t i = 0; i < pointIdxVec->size (); ++i){
+				std::cout << "    " << _inputCloud->points[(*pointIdxVec)[i]].x 
+					<< " " << _inputCloud->points[(*pointIdxVec)[i]].y 
+					<< " " << _inputCloud->points[(*pointIdxVec)[i]].z << std::endl;
+			}
 		}
+		_ind = pointIdxVec;
 	}
-	_ind = pointIdxVec;
 }
 
 
@@ -394,61 +396,65 @@ void mario::searchNeighbors_Knearest( const pcl::PointCloud<pcl::PointXYZRGBA>::
 	pcl::PointXYZRGBA const & _searchPoint, float _resolution, int _K,
 	indices_t & _ind, distances_t & _dist )
 {
-	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
-	octree.setInputCloud (_inputCloud);
-	octree.addPointsFromInputCloud ();
+	if( _inputCloud ){
+		pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+		octree.setInputCloud (_inputCloud);
+		octree.addPointsFromInputCloud ();
 
-	// K nearest neighbor search
+		// K nearest neighbor search
 
-	indices_t pointIdxNKNSearch = (indices_t)(new vector<int>());
-	distances_t pointNKNSquaredDistance = (distances_t)(new vector<float>());
+		indices_t pointIdxNKNSearch = (indices_t)(new vector<int>());
+		distances_t pointNKNSquaredDistance = (distances_t)(new vector<float>());
 
-	std::cout << "K nearest neighbor search at (" << _searchPoint.x 
-		<< " " << _searchPoint.y 
-		<< " " << _searchPoint.z
-		<< ") with K=" << _K << std::endl;
+		std::cout << "K nearest neighbor search at (" << _searchPoint.x 
+			<< " " << _searchPoint.y 
+			<< " " << _searchPoint.z
+			<< ") with K=" << _K << std::endl;
 
-	if (octree.nearestKSearch (_searchPoint, _K, *pointIdxNKNSearch, *pointNKNSquaredDistance) > 0){
-		for (size_t i = 0; i < pointIdxNKNSearch->size (); ++i){
-			std::cout << "    "  <<   _inputCloud->points[ (*pointIdxNKNSearch)[i] ].x 
-				<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].y 
-				<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].z 
-				<< " (squared distance: " << (*pointNKNSquaredDistance)[i] << ")" << std::endl;
+		if (octree.nearestKSearch (_searchPoint, _K, *pointIdxNKNSearch, *pointNKNSquaredDistance) > 0){
+			for (size_t i = 0; i < pointIdxNKNSearch->size (); ++i){
+				std::cout << "    "  <<   _inputCloud->points[ (*pointIdxNKNSearch)[i] ].x 
+					<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].y 
+					<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].z 
+					<< " (squared distance: " << (*pointNKNSquaredDistance)[i] << ")" << std::endl;
+			}
 		}
+		_ind = pointIdxNKNSearch;
+		_dist = pointNKNSquaredDistance;
 	}
-	_ind = pointIdxNKNSearch;
-	_dist = pointNKNSquaredDistance;
 }
 
 void mario::searchNeighbors_radius( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
 	pcl::PointXYZRGBA const & _searchPoint, float _resolution, float _radius,
 	indices_t & _ind, distances_t & _dist )
 {
-	pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
-	octree.setInputCloud (_inputCloud);
-	octree.addPointsFromInputCloud ();
+	if( _inputCloud ){
+		pcl::octree::OctreePointCloudSearch<pcl::PointXYZRGBA> octree (_resolution);
+		octree.setInputCloud (_inputCloud);
+		octree.addPointsFromInputCloud ();
 
-	// Neighbors within radius search
+		// Neighbors within radius search
 
-	indices_t pointIdxRadiusSearch = (indices_t)(new vector<int>());
-	distances_t pointRadiusSquaredDistance = (distances_t)(new vector<float>());
+		indices_t pointIdxRadiusSearch = (indices_t)(new vector<int>());
+		distances_t pointRadiusSquaredDistance = (distances_t)(new vector<float>());
 
-	std::cout << "Neighbors within radius search at (" << _searchPoint.x 
-		<< " " << _searchPoint.y 
-		<< " " << _searchPoint.z
-		<< ") with radius=" << _radius << std::endl;
+		std::cout << "Neighbors within radius search at (" << _searchPoint.x 
+			<< " " << _searchPoint.y 
+			<< " " << _searchPoint.z
+			<< ") with radius=" << _radius << std::endl;
 
 
-	if (octree.radiusSearch (_searchPoint, _radius, *pointIdxRadiusSearch, *pointRadiusSquaredDistance) > 0){
-		for (size_t i = 0; i < pointIdxRadiusSearch->size (); ++i){
-			std::cout << "    "  <<   _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].x 
-				<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].y 
-				<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].z 
-				<< " (squared distance: " << (*pointRadiusSquaredDistance)[i] << ")" << std::endl;
+		if (octree.radiusSearch (_searchPoint, _radius, *pointIdxRadiusSearch, *pointRadiusSquaredDistance) > 0){
+			for (size_t i = 0; i < pointIdxRadiusSearch->size (); ++i){
+				std::cout << "    "  <<   _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].x 
+					<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].y 
+					<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].z 
+					<< " (squared distance: " << (*pointRadiusSquaredDistance)[i] << ")" << std::endl;
+			}
 		}
+		_ind = pointIdxRadiusSearch;
+		_dist = pointRadiusSquaredDistance;
 	}
-	_ind = pointIdxRadiusSearch;
-	_dist = pointRadiusSquaredDistance;
 }
 
 
@@ -456,36 +462,38 @@ void mario::newPointSearch( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &
 	const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudB, float _resolution,
 	indices_t & _ind )
 {
-	// Octree resolution - side length of octree voxels
+	if( _cloudA ){
+		// Octree resolution - side length of octree voxels
 
-	// Instantiate octree-based point cloud change detection class
-	pcl::octree::OctreePointCloudChangeDetector<pcl::PointXYZRGBA> octree (_resolution);
+		// Instantiate octree-based point cloud change detection class
+		pcl::octree::OctreePointCloudChangeDetector<pcl::PointXYZRGBA> octree (_resolution);
 
-	// Add points from cloudA to octree
-	octree.setInputCloud (_cloudA);
-	octree.addPointsFromInputCloud ();
+		// Add points from cloudA to octree
+		octree.setInputCloud (_cloudA);
+		octree.addPointsFromInputCloud ();
 
-	// Switch octree buffers: This resets octree but keeps previous tree structure in memory.
-	octree.switchBuffers ();
+		// Switch octree buffers: This resets octree but keeps previous tree structure in memory.
+		octree.switchBuffers ();
 
-	// Add points from cloudB to octree
-	octree.setInputCloud (_cloudB);
-	octree.addPointsFromInputCloud ();
+		// Add points from cloudB to octree
+		octree.setInputCloud (_cloudB);
+		octree.addPointsFromInputCloud ();
 
-	indices_t newPointIdxVector = (indices_t)(new vector<int>());
+		indices_t newPointIdxVector = (indices_t)(new vector<int>());
 
-	// Get vector of point indices from octree voxels which did not exist in previous buffer
-	octree.getPointIndicesFromNewVoxels (*newPointIdxVector);
+		// Get vector of point indices from octree voxels which did not exist in previous buffer
+		octree.getPointIndicesFromNewVoxels (*newPointIdxVector);
 
-	// Output points
-	std::cout << "Output from getPointIndicesFromNewVoxels:" << std::endl;
-	for (size_t i = 0; i < newPointIdxVector->size (); ++i){
-		std::cout << i << "# Index:" << (*newPointIdxVector)[i]
-	<< "  Point:" << _cloudB->points[(*newPointIdxVector)[i]].x << " "
-		<< _cloudB->points[(*newPointIdxVector)[i]].y << " "
-		<< _cloudB->points[(*newPointIdxVector)[i]].z << std::endl;
+		// Output points
+		std::cout << "Output from getPointIndicesFromNewVoxels:" << std::endl;
+		for (size_t i = 0; i < newPointIdxVector->size (); ++i){
+			std::cout << i << "# Index:" << (*newPointIdxVector)[i]
+			<< "  Point:" << _cloudB->points[(*newPointIdxVector)[i]].x << " "
+				<< _cloudB->points[(*newPointIdxVector)[i]].y << " "
+				<< _cloudB->points[(*newPointIdxVector)[i]].z << std::endl;
+		}
+		_ind = newPointIdxVector;
 	}
-	_ind = newPointIdxVector;
 }
 
 Coordinate<typeM> mario::getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud )

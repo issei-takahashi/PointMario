@@ -9,12 +9,11 @@ namespace mario{
 	{
 	public:
 		SHARED(OneAnimationFrame);
-	public:		
-		static OneAnimationFrame::Ptr makeShared( string const& _filePath, frame_t _frame );
+	public:	
+		OneAnimationFrame( string const& _filePath, frame_t _frame );
 		Image::Ptr image;
 		frame_t getFrame() const { return this->frame; }
 	private:
-		OneAnimationFrame( string const& _filePath, frame_t _frame );
 		frame_t const frame;
 	};
 
@@ -23,11 +22,10 @@ namespace mario{
 	public:
 		SHARED(Animation);
 	public:
-		static shared_ptr<Animation> makeShared( string const & _fileName );
+		Animation( string const& _folderPath );
 		priority getPriority() const final override;
 		virtual void oneLoop( uint _x, uint _y ) override;
 	protected:
-		Animation( string const& _folderPath );
 		string const folderPath;
 		typedef map<string, OneAnimationFrame::Ptr > frameMap_t;
 		frameMap_t frames;

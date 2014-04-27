@@ -3,6 +3,7 @@
 #include "FileIO.h"
 #include "CollisionInterface.h"
 
+#define MAKE_CLOUD(dst) dst=(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr)(new pcl::PointCloud<pcl::PointXYZRGBA>)
 
 mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
  :MeasureBasement(), MtoDMat(_mat)
@@ -14,13 +15,15 @@ bool mario::DownOutMeasure::collisionDetectionWithCloud( CollisionInterface & _o
 {
 	this->cld_mutex.lock();
 	indices_t indices;
-	mario::searchNeighbors_voxel( this->spcCloud, _obj.getSearchPoint(), 32.0, indices );
+	auto search = _obj.getSearchPoint();
+	mario::searchNeighbors_voxel( this->spcCloud, search, 32.0, indices );
 	this->cld_mutex.unlock();
-	if( indices->size() > 10 ){
-		return true;
-	}else{
-		return false;
+	if( indices ){
+		if( indices->size() > 10 ){
+			return true;
+		}
 	}
+	return false;
 }
 
 // Simple callbacks.
@@ -94,10 +97,12 @@ bool mario::DownOutMeasure::convertMtoD_withDownAndOut( const pcl::PointCloud<pc
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & _dcloud )
 {
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered;
+	MAKE_CLOUD(downed);
+	MAKE_CLOUD(filtered);
 
 	//downed    = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
 	if( _dcloud.get() == NULL ){
-		_dcloud = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
+		MAKE_CLOUD(_dcloud);
 	}
 
 	mario::downSamplingFilter( _mcloud, downed );

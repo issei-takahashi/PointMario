@@ -10,8 +10,8 @@ namespace mario{
 	{
 		SHARED(Window);
 	public:
+		Window( int _width, int _height, string const & _windowName, bool _screenModeFlag );
 		~Window();
-		static shared_ptr<Window> makeShared( int _width, int _height, string const & _windowName, bool _screenModeFlag );
 		void addDisplayedElement( shared_ptr<class _Displayed> _ptr );
 		void removeDisplayedElement( shared_ptr<class _Displayed> _ptr );
 		void oneLoop();
@@ -19,7 +19,6 @@ namespace mario{
 		void wait( int _ms );
 		SDL_Surface* getSurface() const { return this->surface; }
 	private:
-		Window( int _width, int _height, string const & _windowName, bool _screenModeFlag );
 		SDL_Surface* surface;
 		int width;
 		int height;

@@ -8,12 +8,11 @@ namespace mario{
 	{
 		SHARED(Cross);
 	public:
-		static shared_ptr<Cross> makeShared();
+		Cross();
 		~Cross();
 		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
 	private:
-		Cross();
 	};
 
 };

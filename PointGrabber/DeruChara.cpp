@@ -7,22 +7,24 @@
 #include "SolidAnimation.h"
 #include "DownOutMeasure.h"
 
+using namespace mario;
+
 DeruChara::DeruChara( Eigen::Matrix4d const & _MtoD )
-	:MtoDMat(_MtoD),downOutMeasure( mario::DownOutMeasure(_MtoD) )
+	:MtoDMat(_MtoD),downOutMeasure( DownOutMeasure(_MtoD) )
 {
 
 }
 
 void DeruChara::mainLoop()
 {
-	mario::Coordinate<mario::typeM> ret;
+	auto disp = Display::getInstance();
+	//disp->setScreenMode( true );
+	auto chara = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/"));
+	chara->displayStart();
+
+	Coordinate<typeM> ret;
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
 	this->downOutMeasure.start();
-
-	auto disp = mario::Display::getInstance();
-	disp->setScreenMode( true );
-	auto chara = mario::SolidAnimation::makeShared("image/hiyoko/");
-	chara->displayStart();
 
 	while(1){
 		auto ms1 = Timer::getInstance()->getms();
@@ -48,12 +50,12 @@ void DeruChara::mainLoop()
 		disp->oneLoop();
 		disp->moveActuatorTo(chara->getDisplayPoint().z);
 		/* I—¹ˆ— */
-		if( mario::Eventer::getInstance()->quitEvent() ){
+		if( Eventer::getInstance()->quitEvent() ){
 			break;
 		}
 		/* FPS‚Ì’²® */
 		auto ms2 = Timer::getInstance()->getms();
-		static int const FPS = mario::FileIO::getConst("FPS");
+		static int const FPS = FileIO::getConst("FPS");
 		if( ms2 - ms1 < 1000.0/FPS ){
 			Sleep( 1000.0/FPS - ( ms2 - ms1 ) );
 		}

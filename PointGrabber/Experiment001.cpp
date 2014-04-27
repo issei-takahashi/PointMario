@@ -159,7 +159,7 @@ mario::Coordinate<mario::typeD> issei::Experiment001::showCrossAndRegisterCrossL
 
 	auto disp = mario::Display::getInstance();
 	disp->setScreenMode( true );
-	auto cross = mario::Cross::makeShared();
+	auto cross = (shared_ptr<mario::Cross>)(new mario::Cross());
 	cross->setDisplayPoint( _beforepD );
 
 	bool endFlag = false;

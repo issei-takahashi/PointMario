@@ -11,11 +11,6 @@
 #include "SDL_macros.h"
 #include "Displayed.h"
 
-shared_ptr<mario::Window> mario::Window::makeShared( int _width, int _height, string const & _windowName, bool _screenModeFlag )
-{
-	return shared_ptr<Window>(new Window( _width, _height,_windowName,_screenModeFlag ));
-}
-
 mario::Window::Window( int _width, int _height, string const & _windowName, bool _screenModeFlag )
 	:width(_width),height(_height),windowName(_windowName),isScreenMode(_screenModeFlag)
 {

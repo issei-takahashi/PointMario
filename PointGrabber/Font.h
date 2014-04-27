@@ -10,12 +10,11 @@ namespace mario{
 	{
 		SHARED(Font);
 	public:
-		static shared_ptr<Font> makeShared();
+		Font();
 		~Font();
 		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
 	private:
-		Font();
 		_TTF_Font* pFont;
 		string stringBuffer;
 	};

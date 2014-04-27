@@ -140,7 +140,7 @@ bool utils::isNumber( string const & s )
 		return false;
 	}
 	i++;
-		
+
 	// ２～N-1文字目
 	for( ; i < s.size() -1 ; i++ ){
 		if( (s[i]) == '.' ){
@@ -186,28 +186,34 @@ void utils::cutLine( string _line, vector<string>& _dst )
 // ディレクトリのファイルリストを取得
 bool utils::getFileList( string const & _dir, list<string> & _dst )
 {
-	SetCurrentDirectory(_dir.c_str());
 	bool ret = false;
-	WIN32_FIND_DATA fd;
-	// 全てのファイルを列挙する
-	HANDLE hSearch = FindFirstFile( _T("*.*"), &fd );
-	if( hSearch == INVALID_HANDLE_VALUE ){
-		ret = false;
-	}else{
-		while(1){
-			string tmp = fd.cFileName;
-			if( tmp != "." && tmp != ".." ){
-				_dst.push_back( tmp );
-			}
-			if( !FindNextFile( hSearch, &fd ) ){
-				if( GetLastError() == ERROR_NO_MORE_FILES ){ // 正常終了
-					ret = true;
-				}else{ // 異常終了
-					ret = false;
+	if( SetCurrentDirectory(_dir.c_str()) ){
+		WIN32_FIND_DATA fd;
+		// 全てのファイルを列挙する
+		HANDLE hSearch = FindFirstFile( _T("*.*"), &fd );
+		if( hSearch == INVALID_HANDLE_VALUE ){
+			ret = false;
+		}else{
+			while(1){
+				string tmp = fd.cFileName;
+				if( tmp.at(0) != '.' ){
+					_dst.push_back( tmp );
+				}
+				if( !FindNextFile( hSearch, &fd ) ){
+					if( GetLastError() == ERROR_NO_MORE_FILES ){ // 正常終了
+						ret = true;
+						break;
+					}else{ // 異常終了
+						ret = false;
+						break;
+					}
 				}
 			}
 		}
+		SetCurrentDirectory("..");
+
+	}else{
+		cout << _dir << "というディレクトリは存在しません．" << endl;
 	}
-	SetCurrentDirectory("..");
 	return ret;
 }

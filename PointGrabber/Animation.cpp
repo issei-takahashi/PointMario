@@ -8,21 +8,11 @@ using namespace mario;
 OneAnimationFrame::OneAnimationFrame( string const & _filePath, frame_t _frame )
 	:frame(_frame)
 {
-	this->image = Image::makeShared(_filePath);
-}
-
-OneAnimationFrame::Ptr OneAnimationFrame::makeShared( string const& _filePath, frame_t _frame )
-{
-	return (OneAnimationFrame::Ptr)( new OneAnimationFrame(_filePath,_frame) );
+	this->image = (shared_ptr<Image>)(new Image(_filePath));
 }
 
 
 /* ---------- Animation ---------- */
-
-shared_ptr<Animation> Animation::makeShared( string const & _folderPath )
-{
-	return shared_ptr<Animation>( new Animation(_folderPath) );
-}
 
 Animation::Animation( string const & _folderPath )
 	:folderPath(_folderPath),frameCount(0)
@@ -32,7 +22,7 @@ Animation::Animation( string const & _folderPath )
 	if( fileList.size() > 0 ){
 		foreach(it,fileList){
 			if( IS_IMAGE_FILE(*it) ){
-				this->frames[*it] = OneAnimationFrame::makeShared(*it,4);
+				this->frames[*it] = (shared_ptr<OneAnimationFrame>)(new OneAnimationFrame(*it,4));
 			}
 		}
 		this->it_frame = this->frames.begin();

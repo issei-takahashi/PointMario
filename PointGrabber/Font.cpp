@@ -2,11 +2,6 @@
 
 #include <SDL_ttf.h>
 
-shared_ptr<mario::Font> mario::Font::makeShared()
-{
-	return (shared_ptr<Font>)(new Font());
-}
-
 mario::Font::Font()
 {
 	// ƒtƒHƒ“ƒg‰Šú‰»

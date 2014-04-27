@@ -2,11 +2,6 @@
 #include "Window.h"
 #include <SDL_image.h>
 
-shared_ptr<mario::Image> mario::Image::makeShared( string const & _filePath )
-{
-	return (shared_ptr<mario::Image>)(new mario::Image(_filePath));
-}
-
 mario::Image::Image( string const & _filePath )
 	:imageFilePath(_filePath)
 {

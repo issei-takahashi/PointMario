@@ -11,6 +11,7 @@ namespace mario
 	{
 		friend class Singleton<Display>;
 	public:
+		Display();
 		void oneLoop();
 		void moveActuatorTo( typeD _z );
 		void addDisplayedElement( shared_ptr<class _Displayed> _ptr );
@@ -20,7 +21,6 @@ namespace mario
 		pix getPixX( typeD _dx ) const;
 		pix getPixY( typeD _dy ) const;
 	private:
-		Display();
 		shared_ptr<class Window> window;
 		int screenXmm;
 		int screenYmm;

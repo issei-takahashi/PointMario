@@ -4,8 +4,8 @@ namespace mario{
 	class CollisionInterface abstract
 	{
 	public:
-		virtual pcl::PointXYZRGBA const getSearchPoint() const = 0;
-	private:
-
+		virtual pcl::PointXYZRGBA const getSearchPoint() = 0;
+	protected:
+		
 	};
 };

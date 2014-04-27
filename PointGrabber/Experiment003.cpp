@@ -23,7 +23,7 @@ void issei::Experiment003::experimentLoop()
 	Eigen::Matrix4d A;
 	mario::FileIO::loadMatrix( this->MDfilePath, A );
 	bool endFlag = false;
-	auto cross = mario::Cross::makeShared();
+	auto cross = (shared_ptr<mario::Cross>)(new mario::Cross());
 	cross->displayStart();
 
 	while( endFlag == false ){

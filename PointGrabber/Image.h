@@ -13,12 +13,11 @@ namespace mario
 	public:
 		SHARED(Image);
 	public:
+		Image( string const & _filePath );
 		~Image();
-		static shared_ptr<Image> makeShared( string const & _fileName );
 		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
 	private:
-		Image( string const & _filePath );
 		SDL_Surface* image;
 		string const imageFilePath;
 	};

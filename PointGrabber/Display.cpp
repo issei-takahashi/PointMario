@@ -94,5 +94,5 @@ void mario::Display::Actuator::moveTo( typeD _zd )
 {
 	int sendChar = max(0,(int)_zd);
 	cout << sendChar << endl;
-	this->arduinoPort->putc1( 100 );
+	this->arduinoPort->putc1( 2);
 }

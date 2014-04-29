@@ -10,7 +10,7 @@ namespace mario{
 	public:
 		SHARED(OneAnimationFrame);
 	public:	
-		OneAnimationFrame( string const& _filePath, frame_t _frame );
+		OneAnimationFrame( string const& _filePath, frame_t _frame, weak_ptr<class Window> _pOwner );
 		Image::Ptr image;
 		frame_t getFrame() const { return this->frame; }
 	private:

@@ -14,9 +14,10 @@ namespace mario{
 		pcl::PointXYZRGBA const getSearchPoint() final override;
 	
 		void setVelocity( double _x, double _y, double _z );
-		void setVelocity( Eigen::Vector3d const & _v ){ this->velocity = _v; }
-		Eigen::Vector3d getVelocity() const { return this->velocity; }
+		void setVelocity( Eigen::Vector3d const & _v );
+		Eigen::Vector3d getVelocity();
 	private:
+		boost::mutex velocityMutex;
 		Eigen::Vector3d velocity;
 	};
 };

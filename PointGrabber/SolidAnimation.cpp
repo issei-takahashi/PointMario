@@ -3,7 +3,7 @@
 using namespace mario;
 
 SolidAnimation::SolidAnimation( string const& _folderPath )
-	:Animation(_folderPath)
+	:Animation(_folderPath), velocity( Eigen::Vector3d::Zero() )
 {
 
 }
@@ -12,7 +12,9 @@ SolidAnimation::SolidAnimation( string const& _folderPath )
 void SolidAnimation::oneLoop( uint _x, uint _y ) 
 {
 	Animation::oneLoop(_x,_y);
+	this->velocityMutex.lock();
 	this->addDisplayPoint(this->velocity);
+	this->velocityMutex.unlock();
 }
 
 pcl::PointXYZRGBA const SolidAnimation::getSearchPoint()
@@ -27,7 +29,25 @@ pcl::PointXYZRGBA const SolidAnimation::getSearchPoint()
 
 void SolidAnimation::setVelocity( double _x, double _y, double _z )
 {
+	this->velocityMutex.lock();
 	this->velocity.x() = _x;
 	this->velocity.y() = _y;
 	this->velocity.z() = _z;
+	this->velocityMutex.unlock();
+}
+
+Eigen::Vector3d SolidAnimation::getVelocity() 
+{
+	this->velocityMutex.lock();
+	auto ret = this->velocity;
+	this->velocityMutex.unlock();
+	return ret;
+}
+
+
+void SolidAnimation::setVelocity( Eigen::Vector3d const & _v )
+{
+	this->velocityMutex.lock();
+	this->velocity = _v;
+	this->velocityMutex.unlock();
 }

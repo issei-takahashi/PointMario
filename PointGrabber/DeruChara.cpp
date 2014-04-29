@@ -53,6 +53,8 @@ void DeruChara::mainLoop()
 		if( Eventer::getInstance()->quitEvent() ){
 			break;
 		}
+		/* PCL‰æ–ÊXV */
+		this->downOutMeasure.oneLoop();
 		/* FPS‚Ì’²® */
 		auto ms2 = Timer::getInstance()->getms();
 		static int const FPS = FileIO::getConst("FPS");

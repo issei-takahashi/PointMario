@@ -27,7 +27,7 @@ Coordinate<typeM> mario::redDetection( const pcl::PointCloud<pcl::PointXYZRGBA>:
 	x/=rcount;
 	y/=rcount;
 	z/=rcount;
-	cout<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
+	cout<<"RedDetection:"<<x<<" "<<y<<" "<<z<<" :"<<rcount<<endl;
 	return Coordinate<typeM>(x,y,z);
 }
 
@@ -380,12 +380,13 @@ void mario::searchNeighbors_voxel( const pcl::PointCloud<pcl::PointXYZRGBA>::Con
 				<< " " << _searchPoint.y 
 				<< " " << _searchPoint.z << ")" 
 				<< std::endl;
-
+			/*
 			for (size_t i = 0; i < pointIdxVec->size (); ++i){
 				std::cout << "    " << _inputCloud->points[(*pointIdxVec)[i]].x 
 					<< " " << _inputCloud->points[(*pointIdxVec)[i]].y 
 					<< " " << _inputCloud->points[(*pointIdxVec)[i]].z << std::endl;
 			}
+			*/
 		}
 		_ind = pointIdxVec;
 	}
@@ -412,12 +413,14 @@ void mario::searchNeighbors_Knearest( const pcl::PointCloud<pcl::PointXYZRGBA>::
 			<< ") with K=" << _K << std::endl;
 
 		if (octree.nearestKSearch (_searchPoint, _K, *pointIdxNKNSearch, *pointNKNSquaredDistance) > 0){
+			/*
 			for (size_t i = 0; i < pointIdxNKNSearch->size (); ++i){
 				std::cout << "    "  <<   _inputCloud->points[ (*pointIdxNKNSearch)[i] ].x 
 					<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].y 
 					<< " " << _inputCloud->points[ (*pointIdxNKNSearch)[i] ].z 
 					<< " (squared distance: " << (*pointNKNSquaredDistance)[i] << ")" << std::endl;
 			}
+			*/
 		}
 		_ind = pointIdxNKNSearch;
 		_dist = pointNKNSquaredDistance;
@@ -445,12 +448,14 @@ void mario::searchNeighbors_radius( const pcl::PointCloud<pcl::PointXYZRGBA>::Co
 
 
 		if (octree.radiusSearch (_searchPoint, _radius, *pointIdxRadiusSearch, *pointRadiusSquaredDistance) > 0){
+			/*
 			for (size_t i = 0; i < pointIdxRadiusSearch->size (); ++i){
 				std::cout << "    "  <<   _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].x 
 					<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].y 
 					<< " " << _inputCloud->points[ (*pointIdxRadiusSearch)[i] ].z 
 					<< " (squared distance: " << (*pointRadiusSquaredDistance)[i] << ")" << std::endl;
 			}
+			*/
 		}
 		_ind = pointIdxRadiusSearch;
 		_dist = pointRadiusSquaredDistance;
@@ -487,10 +492,12 @@ void mario::newPointSearch( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &
 		// Output points
 		std::cout << "Output from getPointIndicesFromNewVoxels:" << std::endl;
 		for (size_t i = 0; i < newPointIdxVector->size (); ++i){
+			/*
 			std::cout << i << "# Index:" << (*newPointIdxVector)[i]
 			<< "  Point:" << _cloudB->points[(*newPointIdxVector)[i]].x << " "
 				<< _cloudB->points[(*newPointIdxVector)[i]].y << " "
 				<< _cloudB->points[(*newPointIdxVector)[i]].z << std::endl;
+				*/
 		}
 		_ind = newPointIdxVector;
 	}

@@ -1,11 +1,13 @@
 #include "Image.h"
 #include "Window.h"
 #include <SDL_image.h>
+#pragma comment(lib, "SDL_image.lib")
 
 mario::Image::Image( string const & _filePath )
 	:imageFilePath(_filePath)
 {
-	this->image = IMG_Load( _filePath.c_str() );
+	this->image = SDL_LoadBMP( _filePath.c_str() );
+	assert(this->image);
 }
 
 mario::Image::~Image()

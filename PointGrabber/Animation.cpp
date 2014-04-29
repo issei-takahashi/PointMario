@@ -1,14 +1,16 @@
 #include "Animation.h"
 #include "utils.h"
+#include "Window.h"
 
 using namespace mario;
 
 /* ---------- OneAnimationFrame ---------- */
 
-OneAnimationFrame::OneAnimationFrame( string const & _filePath, frame_t _frame )
+OneAnimationFrame::OneAnimationFrame( string const & _filePath, frame_t _frame, weak_ptr<Window> _pOwner )
 	:frame(_frame)
 {
 	this->image = (shared_ptr<Image>)(new Image(_filePath));
+	this->image->setWindow(_pOwner.lock());
 }
 
 
@@ -22,7 +24,7 @@ Animation::Animation( string const & _folderPath )
 	if( fileList.size() > 0 ){
 		foreach(it,fileList){
 			if( IS_IMAGE_FILE(*it) ){
-				this->frames[*it] = (shared_ptr<OneAnimationFrame>)(new OneAnimationFrame(*it,4));
+				this->frames[*it] = (shared_ptr<OneAnimationFrame>)(new OneAnimationFrame(_folderPath+(*it),4,this->ownerWindow));
 			}
 		}
 		this->it_frame = this->frames.begin();

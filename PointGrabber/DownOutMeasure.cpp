@@ -107,7 +107,7 @@ bool mario::DownOutMeasure::convertMtoD_withDownAndOut( const pcl::PointCloud<pc
 
 	mario::downSamplingFilter( _mcloud, downed );
 	mario::outlierFilter( downed, filtered );
-
+	cout << "DownOut:" << filtered->points.size() << endl;
 	times(count,0,filtered->points.size()){
 		Eigen::Vector4d tmpv;
 		tmpv(0) = filtered->points[count].x;

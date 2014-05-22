@@ -1,6 +1,7 @@
 #include "Animation.h"
 #include "utils.h"
 #include "Window.h"
+#include "Display.h"
 
 using namespace mario;
 
@@ -50,3 +51,15 @@ void Animation::oneLoop( uint _x, uint _y )
 	this->it_frame->second->image->oneLoop(_x,_y);
 }
 
+void Animation::displayStart() 
+{
+	mario::Display::getInstance()->addDisplayedElement( this->shared_from_this() );
+	foreach(it,this->frames){
+		it->second->image->setWindow(this->ownerWindow.lock());
+	}
+}
+
+void Animation::displayStop()
+{
+	//mario::Display::getInstance()->removeDisplayedElement( this->shared_from_this() );
+}

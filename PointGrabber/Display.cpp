@@ -72,7 +72,7 @@ pix Display::getPixX( typeD _dx ) const
 
 pix Display::getPixY( typeD _dy ) const
 {
-	return _dy * this->screenYpx / this->screenYmm;
+	return (this->screenYmm-_dy) * this->screenYpx / this->screenYmm;
 }
 
 

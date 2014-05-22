@@ -164,7 +164,7 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	redExtraction( filtered, reded );
 
 	clusterize( reded, dst, l_dst, 4 );
-	//cout << "cluster size == " << l_dst.size() << endl;
+	cout << "cluster size == " << l_dst.size() << endl;
 	if( l_dst.size() == 4 ){
 		Coordinate<typeM> ave;
 		foreach(it,l_dst){

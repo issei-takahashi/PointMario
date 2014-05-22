@@ -25,6 +25,8 @@ namespace mario{
 		Animation( string const& _folderPath );
 		priority getPriority() const final override;
 		virtual void oneLoop( uint _x, uint _y ) override;
+		void displayStart() final override;
+		void displayStop() final override;
 	protected:
 		string const folderPath;
 		typedef map<string, OneAnimationFrame::Ptr > frameMap_t;

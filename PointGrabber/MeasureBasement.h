@@ -19,6 +19,7 @@ namespace mario{
 		virtual void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image) = 0;
 		
 	public:
+		bool displayFlag;
 		boost::mutex cld_mutex, img_mutex;
 		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;

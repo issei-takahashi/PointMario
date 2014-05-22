@@ -179,6 +179,22 @@ namespace mario
 			return tmp;
 		}
 
+		// +演算子オーバーロード
+		Coordinate<T> operator*(const Eigen::Matrix4d& obj) const
+		{
+			Eigen::Vector4d vec;
+			vec(0) = this->x;
+			vec(1) = this->y;
+			vec(2) = this->z;
+			vec(3) = 1;
+			auto vec2 = obj * vec;
+			Coordinate tmp;
+			tmp.x = vec2(0);
+			tmp.y = vec2(1);
+			tmp.z = vec2(2);
+			return tmp;
+		}
+
 		// +=演算子オーバーロード
 		Coordinate<T>& operator+=(const Eigen::Vector3d& obj)
 		{

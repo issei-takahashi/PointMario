@@ -6,7 +6,7 @@ static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
 
 mario::MeasureBasement::MeasureBasement()
-	:isInitDone(false),rgb_data(0), rgb_data_size(0)
+	:isInitDone(false),rgb_data(0), rgb_data_size(0), displayFlag(true)
 {
 
 }
@@ -31,7 +31,9 @@ void mario::MeasureBasement::start()
 	this->bindedFunction = boost::bind( &MeasureBasement::cloud_cb, this, _1);
 	this->signals2Connection = this->upGrabberInterface->registerCallback( this->bindedFunction );
 
-	this->upGrabberInterface->start();
+	if( this->displayFlag ){
+		this->upGrabberInterface->start();
+	}
 }
 
 void mario::MeasureBasement::stop()
@@ -50,12 +52,14 @@ void mario::MeasureBasement::stop()
 
 void mario::MeasureBasement::oneLoop()
 {
-	// Render and process events in the two interactors
-	this->spVisualizer->spinOnce (); // ここで画面更新
-	//img->spinOnce ();
-	FPS_CALC ("drawing");
-	this->showCloud();
-	//this->showImage();
+	if( this->displayFlag ){
+		// Render and process events in the two interactors
+		this->spVisualizer->spinOnce (); // ここで画面更新
+		//img->spinOnce ();
+		FPS_CALC ("drawing");
+		this->showCloud();
+		//this->showImage();
+	}
 	boost::this_thread::sleep (boost::posix_time::microseconds (100));
 }
 

@@ -9,5 +9,5 @@ public:
 	void mainLoop();
 private:
 	Eigen::Matrix4d const MtoDMat;
-	mario::DownOutMeasure downOutMeasure;
+	//mario::DownOutMeasure downOutMeasure;
 };

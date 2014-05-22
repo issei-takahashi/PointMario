@@ -7,6 +7,8 @@
 #include "Eventer.h"
 #include "Cross.h"
 
+using namespace mario;
+
 issei::Experiment003::Experiment003( string const & _MDmatFilePath )
 	:MDfilePath(_MDmatFilePath)
 {
@@ -29,7 +31,7 @@ void issei::Experiment003::experimentLoop()
 	while( endFlag == false ){
 		auto ms1 = Timer::getInstance()->getms();
 		//base.oneLoop();
-		auto thisRed = base.getRedCenter();
+		Coordinate<typeM> thisRed = base.getRedCenter();
 		//thisRed *= 1000;
 		Eigen::Vector4d tmpv;
 		tmpv(0) = thisRed.x;

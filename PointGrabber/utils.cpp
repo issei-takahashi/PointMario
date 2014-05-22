@@ -186,6 +186,12 @@ void utils::cutLine( string _line, vector<string>& _dst )
 // ディレクトリのファイルリストを取得
 bool utils::getFileList( string const & _dir, list<string> & _dst )
 {
+	int depth=0;
+	foreach(it,_dir){
+		if( *it == '/' ){
+			depth++;
+		}
+	}
 	bool ret = false;
 	if( SetCurrentDirectory(_dir.c_str()) ){
 		WIN32_FIND_DATA fd;
@@ -210,10 +216,32 @@ bool utils::getFileList( string const & _dir, list<string> & _dst )
 				}
 			}
 		}
-		SetCurrentDirectory("..");
-
+		times(i,0,depth){
+			SetCurrentDirectory("..");
+		}
 	}else{
 		cout << _dir << "というディレクトリは存在しません．" << endl;
 	}
 	return ret;
+}
+
+string exeFilePath;
+
+// 実行ディレクトリのパスを取得
+string utils::getExeDirectry()
+{
+	return ::exeFilePath;
+}
+
+void utils::setExeDirectry()
+{
+	char szDirectoryName[MAX_PATH];
+	GetCurrentDirectory( sizeof(szDirectoryName)/sizeof(szDirectoryName[0]), szDirectoryName );
+	::exeFilePath = szDirectoryName;
+	foreach(it,::exeFilePath){
+		if( *it == '\\' ){
+			*it = '/';
+		}
+	}
+	::exeFilePath += "/";
 }

@@ -8,6 +8,7 @@ void init()
 {
 	LibBase::initLib();
 	mario::FileIO::loadAllData();
+	utils::setExeDirectry();
 }
 
 void quit()

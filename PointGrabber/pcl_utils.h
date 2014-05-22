@@ -33,4 +33,7 @@ namespace mario{
 		indices_t & _ind);
 
 	Coordinate<typeM> getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud );
+
+	// +演算子オーバーロード
+	Coordinate<typeD> innerProduct(const Eigen::Matrix4d& mat, Coordinate<typeM> const & point);
 }

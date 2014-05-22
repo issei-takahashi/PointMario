@@ -51,4 +51,8 @@ namespace utils
 
 	// ディレクトリのファイルリストを取得
 	bool getFileList( string const & _dir, list<string> & _dst );
+
+	// 実行ディレクトリのパスを取得
+	string getExeDirectry();
+	void setExeDirectry();
 };

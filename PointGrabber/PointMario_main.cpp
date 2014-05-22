@@ -30,13 +30,12 @@ int appMain()
 		case 1:
 			{
 				list<Coordinate<typeD> > pointList;
-				static int const SHIFT = 30;
-				pointList.push_back( Coordinate<typeD>(SHIFT+0,SHIFT+100,100) );
-				pointList.push_back( Coordinate<typeD>(SHIFT+200,SHIFT+100,100) );
-				pointList.push_back( Coordinate<typeD>(SHIFT+100,SHIFT+0,100) );
-				pointList.push_back( Coordinate<typeD>(SHIFT+100,SHIFT+200,100) );
-				pointList.push_back( Coordinate<typeD>(SHIFT+100,SHIFT+100,0) );
-				pointList.push_back( Coordinate<typeD>(SHIFT+100,SHIFT+100,200) );
+				pointList.push_back( Coordinate<typeD>(0,100,100) );
+				pointList.push_back( Coordinate<typeD>(200,100,100) );
+				pointList.push_back( Coordinate<typeD>(100,0,100) );
+				pointList.push_back( Coordinate<typeD>(100,200,100) );
+				pointList.push_back( Coordinate<typeD>(100,100,0) );
+				pointList.push_back( Coordinate<typeD>(100,100,200) );
 				Calibration::getInstance()->executeCalibration(pointList,CALIB_PATH);
 				break;
 			}

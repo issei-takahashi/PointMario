@@ -2,6 +2,7 @@
 
 #include "Coordinate.h"
 #include "Counter.h"
+#include "Display.h"
 
 namespace mario{
 	typedef int priority;
@@ -46,11 +47,11 @@ namespace mario{
 	public:
 		virtual ~Displayed(){
 		}
-		void displayStart(){
+		virtual void displayStart(){
 			mario::Display::getInstance()->addDisplayedElement( this->shared_from_this() );
 		}
-		void displayStop(){
-			mario::Display::getInstance()->removeDisplayedElement( this->shared_from_this() );
+		virtual void displayStop(){
+			//mario::Display::getInstance()->removeDisplayedElement( this->shared_from_this() );
 		}
 	};
 

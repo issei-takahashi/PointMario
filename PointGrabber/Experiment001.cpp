@@ -8,6 +8,8 @@
 #include "Timer.h"
 #include "Eventer.h"
 
+using namespace mario;
+
 void issei::Experiment001::experimentLoop()
 {
 	static int const DISP_X_mm = mario::FileIO::getConst("DISP_X_mm");
@@ -131,7 +133,7 @@ mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vect
 			int mc = base.getMeasureCount();
 			if( mc > measureCount ){
 				measureCount = mc;
-				auto thisred = base.getRedCenter();
+				Coordinate<typeM> thisred = base.getRedCenter();
 				ret += thisred;
 				_pDst->push_back( thisred );
 				cout << "*";

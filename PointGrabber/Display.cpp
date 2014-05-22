@@ -36,7 +36,7 @@ void Display::oneLoop()
 void Display::moveActuatorTo( typeD _z )
 {
 	if(this->actuator){
-		this->actuator->moveTo(_z);
+		this->actuator->moveTo(300-_z);
 	}
 }
 
@@ -72,7 +72,7 @@ pix Display::getPixX( typeD _dx ) const
 
 pix Display::getPixY( typeD _dy ) const
 {
-	return _dy * this->screenYpx / this->screenYmm;
+	return (this->screenYmm-_dy) * this->screenYpx / this->screenYmm;
 }
 
 

@@ -209,6 +209,19 @@ mario::ifLine::stat mario::WinRS::putc1(char c)
 	return mario::ifLine::normalEnd;
 }
 
+#include "utils.h"
+mario::ifLine::stat mario::WinRS::putInt(int c)
+{
+	static int sint=0;
+	sint = c;
+	LPDWORD written;
+	char* send = (char*)malloc(sizeof(sint));
+	WriteFile(handle, reinterpret_cast<char*>(sint), sizeof(sint), written, NULL);
+	FlushFileBuffers(handle);
+	free(send);
+	return mario::ifLine::normalEnd;
+}
+
 mario::WinRS::~WinRS()
 {
 	if (portSet.find(myAddr) != portSet.end())

@@ -43,6 +43,9 @@ namespace mario
 		string inputFileNameLoop( string const & _message );
 		char inputCoordinateTypeLoop( string const & _message );
 		void makeDataSetFromCsv( string const & _filePath, class Experiment001DataList const & _dataList, DataSet & P, DataSet & Y );
+		void writeMatrix( string const & _fileName,
+			char type1, char type2,
+			boost::shared_ptr<Eigen::Matrix4d> const& Affine );
 		void writeCalculatedValues(
 			string const & _filePath,
 			char type1, char type2,

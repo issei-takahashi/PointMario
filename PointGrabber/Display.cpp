@@ -228,6 +228,9 @@ bool mario::Display::keyInputEvent1()
 		this->crossPos.z -= 1.0 * this->crossSpeed * speedBias;
 	}	
 
+	this->crossPos.z = min(300.0,this->crossPos.z);
+	this->crossPos.z = max(300.0-255.0,this->crossPos.z);
+
 	// EnterƒL[
 	if( getKeys[SDLK_RETURN] ){
 		return true;
@@ -258,5 +261,6 @@ mario::Display::Actuator::~Actuator()
 
 void mario::Display::Actuator::moveTo( typeD _zd )
 {
-	this->upPort->putc1( max(0.0,_zd) );
+	this->upPort->putc1( min(255,max(0,(int)_zd)) );
+	//this->upPort->putInt((int)_zd);
 }

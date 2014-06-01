@@ -39,6 +39,7 @@ namespace mario{
 
 		ifLine::stat talk(char *message);
 		ifLine::stat putN(char *mess, int len);
+		ifLine::stat putInt(int i);
 		ifLine::stat putc1(char c);
 		ifLine::stat listen(char *message, unsigned int &len);
 		ifLine::stat setDelim(ifLine::delim delim)

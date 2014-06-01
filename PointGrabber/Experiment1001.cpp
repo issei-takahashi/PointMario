@@ -23,7 +23,7 @@ void mario::Experiment1001::experimentLoop()
 		cin  >> okStr;
 		if( okStr == "y" ){
 			foreach(it,datas.l_exp001datas){
-				it->pM *= 1000;
+				//it->pM *= 1000;
 				it->pD.z = 300-it->pD.z;
 			}
 		}

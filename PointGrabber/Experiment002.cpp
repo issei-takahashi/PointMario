@@ -61,7 +61,7 @@ void mario::Experiment002::experimentLoop()
 							cout << "-----アフィン変換A-----" << endl;
 							cout << *Affine << endl;
 							cout << "------------------" << endl;
-							this->writeCalculatedValues( files[i], ptype, ytype, P, Y, P_all, Y_all, Affine, Err, tex_ofs );
+							this->writeMatrix( files[i], ptype, ytype, Affine );
 							//this->writeGraphWithGL( "", Y_all, Err );
 						}
 					}
@@ -102,6 +102,26 @@ char mario::Experiment002::inputCoordinateTypeLoop( string const & _message )
 	return buf.at(0);
 }
 
+void mario::Experiment002::writeMatrix( string const & _fileName,
+	char type1, char type2,
+	boost::shared_ptr<Eigen::Matrix4d> const& Affine )
+{
+	string filePath = string("calcdata/") + _fileName + "_" + type1 + type2 + ".csv";
+	ofstream ofs( filePath, std::ios::out | std::ios::trunc );
+	ofs << "//" << type1 << "->" << type2 << "の座標変換" << endl;
+
+	ofs << "//アフィン変換A" << endl;
+	times(i,0,4){
+		times(j,0,4){
+			ofs << (*Affine)(i,j);
+			if( j == 3 ){
+				ofs << endl;
+			} else {
+				ofs << ",";
+			}
+		}
+	}
+}
 
 void mario::Experiment002::writeCalculatedValues(
 	string const & _fileName,

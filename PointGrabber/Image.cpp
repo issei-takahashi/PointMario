@@ -28,23 +28,17 @@ int mario::Image::getPriority() const
 void mario::Image::oneLoop( uint _x, uint _y )
 {
 	if( auto sp = this->ownerWindow.lock() ){
-		SDL_Rect rect, scr_rect;
 
 		int xpx = mario::Display::getInstance()->getPixX(_x);
 		int ypx = mario::Display::getInstance()->getPixY(_y);
 
 		/* 画像の矩形情報設定 */
-		rect.x = 0;
-		rect.y = 0;
-		rect.w = this->image->w;
-		rect.h = this->image->h;
-
+		SDL_Rect src_r = {0, 0, this->image->w, this->image->h};
 		/* 画像配置位置情報の設定 */
-		scr_rect.x = xpx;
-		scr_rect.y = ypx;
+		SDL_Rect dest_r = {xpx-this->image->w/2, ypx-this->image->h/2,xpx+this->image->w/2, ypx+this->image->h/2};
 
 		/* サーフェスの複写 */
 		auto windowSurface = sp->getSurface();
-		SDL_BlitSurface(image, &rect, windowSurface, &scr_rect);
+		SDL_BlitSurface( image, &src_r, windowSurface, &dest_r);
 	}
 }

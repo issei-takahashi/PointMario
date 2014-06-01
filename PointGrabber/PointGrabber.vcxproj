@@ -92,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="Calibration.h" />
     <ClInclude Include="CollisionInterface.h" />
     <ClInclude Include="Coordinate.h" />
@@ -122,6 +123,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TokyoSky1.h" />
+    <ClInclude Include="TokyoSky2.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WinRS.h" />
@@ -158,6 +161,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TokyoSky1.cpp" />
+    <ClCompile Include="TokyoSky2.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="WinRS.cpp" />

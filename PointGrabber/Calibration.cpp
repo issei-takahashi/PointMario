@@ -19,7 +19,7 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 		auto cross = (shared_ptr<Cross>)(new Cross());
 		cross->setDisplayPoint( *it );
 		cross->displayStart();
-		disp->moveActuatorTo(300-it->z);
+		disp->moveActuatorTo(it->z);
 
 		/* エンターキーが押されるまでループ */
 		while( mario::Eventer::getInstance()->getIskeyPushed( mario::KeyType::KEY_RETURN ) == false ){

@@ -20,6 +20,10 @@ namespace mario
 		void closeWindow();
 		pix getPixX( typeD _dx ) const;
 		pix getPixY( typeD _dy ) const;
+		int getScreenXmm() const { return this->screenXmm; }
+		int getScreenYmm() const { return this->screenYmm; }
+		int getScreenXpx() const { return this->screenXpx; }
+		int getScreenYpx() const { return this->screenYpx; }
 	private:
 		shared_ptr<class Window> window;
 		int screenXmm;

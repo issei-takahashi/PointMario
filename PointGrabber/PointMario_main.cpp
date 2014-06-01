@@ -3,6 +3,8 @@
 #include "FileIO.h"
 #include "Experiment.h"
 #include "DeruChara.h"
+#include "TokyoSky1.h"
+#include "TokyoSky2.h"
 
 using namespace mario;
 
@@ -17,7 +19,8 @@ int appMain()
 			cout << "モード(0～2,101～)を入力してください(0で終了)：" << endl;
 			cout << "   1:キャリブレーション" << endl;
 			cout << "   2:「でるキャラ」" << endl;
-			cout << "   3:「ジオラマ」" << endl;
+			cout << "   3:「ジオラマ解説」" << endl;
+			cout << "   4:「ジオラマと雪」" << endl;
 			cin  >> buf;
 		}
 		int mode = utils::string2int(buf);
@@ -43,16 +46,24 @@ int appMain()
 			{
 				Eigen::Matrix4d A;
 				FileIO::loadMatrix(CALIB_PATH,A);
-				DeruChara deru(A);
-				deru.mainLoop();
+				auto deru = DeruChara::makeShared(A);
+				deru->mainLoop();
 				break;
 			}
 		case 3:
 			{
 				Eigen::Matrix4d A;
 				FileIO::loadMatrix(CALIB_PATH,A);
-				DeruChara deru(A);
-				deru.mainLoop();
+				auto app = TokyoSky1::makeShared(A);
+				app->mainLoop();
+				break;
+			}
+		case 4:
+			{
+				Eigen::Matrix4d A;
+				FileIO::loadMatrix(CALIB_PATH,A);
+				auto app = TokyoSky2::makeShared(A);
+				app->mainLoop();
 				break;
 			}
 		}

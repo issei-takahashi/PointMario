@@ -1,13 +1,12 @@
 #pragma once
-#include "Coordinate.h"
-#include "DownOutMeasure.h"
+#include "Application.h"
 
-class DeruChara
+class DeruChara : public mario::Application, public enable_shared_from_this<DeruChara>
 {
 public:
-	DeruChara( Eigen::Matrix4d const & _MtoD );
-	void mainLoop();
+	SHARED(DeruChara);
+	static shared_ptr<DeruChara> makeShared( Eigen::Matrix4d const & _MtoD );
+	void mainLoop() final override;
 private:
-	Eigen::Matrix4d const MtoDMat;
-	//mario::DownOutMeasure downOutMeasure;
+	DeruChara( Eigen::Matrix4d const & _MtoD );
 };

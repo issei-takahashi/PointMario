@@ -80,10 +80,10 @@
       <Filter>MARIO_Engine\Calibration</Filter>
     </ClCompile>
     <ClCompile Include="PointMario_main.cpp">
-      <Filter>Program\Sample</Filter>
+      <Filter>Program\Applications</Filter>
     </ClCompile>
     <ClCompile Include="DeruChara.cpp">
-      <Filter>Program\Sample</Filter>
+      <Filter>Program\Applications</Filter>
     </ClCompile>
     <ClCompile Include="DownOutMeasure.cpp">
       <Filter>MARIO_Engine\Measure</Filter>
@@ -93,6 +93,12 @@
     </ClCompile>
     <ClCompile Include="SolidAnimation.cpp">
       <Filter>MARIO_Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="TokyoSky1.cpp">
+      <Filter>Program\Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="TokyoSky2.cpp">
+      <Filter>Program\Applications</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -184,7 +190,7 @@
       <Filter>MARIO_Engine\Calibration</Filter>
     </ClInclude>
     <ClInclude Include="DeruChara.h">
-      <Filter>Program\Sample</Filter>
+      <Filter>Program\Applications</Filter>
     </ClInclude>
     <ClInclude Include="DownOutMeasure.h">
       <Filter>MARIO_Engine\Measure</Filter>
@@ -197,6 +203,15 @@
     </ClInclude>
     <ClInclude Include="SolidAnimation.h">
       <Filter>MARIO_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="TokyoSky1.h">
+      <Filter>Program\Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="TokyoSky2.h">
+      <Filter>Program\Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>MARIO_Engine\Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -239,11 +254,14 @@
     <Filter Include="MARIO_Engine\Calibration">
       <UniqueIdentifier>{6a4c917f-dfa1-4ab9-8db0-d7a2e15fd782}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Program\Sample">
-      <UniqueIdentifier>{ae7b9b05-9b5d-4a2d-a97c-8d23b6a90cd1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="MARIO_Engine\Collision">
       <UniqueIdentifier>{0984d14f-da21-42d6-9623-8721c58c3534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program\Applications">
+      <UniqueIdentifier>{ae7b9b05-9b5d-4a2d-a97c-8d23b6a90cd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Application">
+      <UniqueIdentifier>{16d41427-0ec6-4b44-8ae7-fb8415b362ed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

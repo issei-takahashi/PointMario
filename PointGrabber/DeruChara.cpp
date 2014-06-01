@@ -10,8 +10,14 @@
 
 using namespace mario;
 
+shared_ptr<DeruChara> DeruChara::makeShared( Eigen::Matrix4d const & _MtoD )
+{
+	shared_ptr<DeruChara> sp = (shared_ptr<DeruChara>)(new DeruChara(_MtoD));
+	return sp;
+}
+
 DeruChara::DeruChara( Eigen::Matrix4d const & _MtoD )
-	:MtoDMat(_MtoD)//,downOutMeasure( DownOutMeasure(_MtoD) )
+	:Application(_MtoD)
 {
 
 }
@@ -20,37 +26,57 @@ void DeruChara::mainLoop()
 {
 	Coordinate<typeM> ret;
 	cout << "MeasureBasementの初期化中..." << endl;
-	//this->downOutMeasure.displayFlag = false;
-	//this->downOutMeasure.start();
-	RedClusterDetecter detecter;
-	detecter.start();
-	Coordinate<typeR> rcR;
-	while( rcR.x == 0 && rcR.y == 0 && rcR.z == 0 ){
-		detecter.oneLoop();
-		rcR = detecter.getRedCenter();
-	}
-	detecter.stop();
-	cout << rcR.x << " " << rcR.y << " " << rcR.z << endl;
-	auto rcD = rcR * this->MtoDMat;
-	Coordinate<typeD> tokyoP(rcD.x+60,rcD.y+150,rcD.z-150);
-	Coordinate<typeD> skyP(rcD.x-60,rcD.y+75,rcD.z-150);
+	DownOutMeasure base(this->MtoDMat);
+	base.start();
+
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
-	//auto tokyo = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/tokyo_mm/"));
-	//auto sky = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/sky_mm/"));
-	auto tokyo = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/"));
-	auto sky = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/"));
-	tokyo->displayStart();
-	tokyo->setDisplayPoint(tokyoP);
-	sky->displayStart();
-	sky->setDisplayPoint(skyP);
 
+	auto hiyoko = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/",this->shared_from_this()));
+	hiyoko->displayStart();
+	hiyoko->setDisplayPoint( Coordinate<typeD>(0,20,0) );
+	hiyoko->setVelocity(Eigen::Vector3d(1,1,1));
+
+	frame_t frameCount = 0;
 	while(1){
+		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
-
+		/* キャラクターの移動 */
+		auto thisVel = hiyoko->getVelocity();
+		bool edgeHit = false;
+		auto dp = hiyoko->getDisplayPoint();
+		if( dp.x < 0 ){
+			thisVel.x() = abs(thisVel.x());
+			edgeHit = true;
+		}else if( dp.x > disp->getScreenXmm() ){
+			thisVel.x() = -abs(thisVel.x());
+			edgeHit = true;
+		}
+		if( dp.y < 20 ){
+			thisVel.y() = abs(thisVel.y());
+			edgeHit = true;
+		}else if( dp.y > disp->getScreenYmm() ){
+			thisVel.y() = -abs(thisVel.y());
+			edgeHit = true;
+		}
+		if( dp.z < 45 ){
+			thisVel.z() = abs(thisVel.z());
+			edgeHit = true;
+		}else if( dp.z > 300 ){
+			thisVel.z() = -abs(thisVel.z());
+			edgeHit = true;
+		}
+		if( edgeHit ){
+			hiyoko->setVelocity(thisVel);
+		}else{ /* 当たり判定 */
+			if( base.collisionDetectionWithCloud(*hiyoko) ){
+				hiyoko->setVelocity(-thisVel);
+			}
+		}
+		hiyoko->oneLoop();
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();
-		disp->moveActuatorTo(300-tokyo->getDisplayPoint().z);
+		disp->moveActuatorTo(hiyoko->getDisplayPoint().z);
 		/* 終了処理 */
 		if( Eventer::getInstance()->quitEvent() ){
 			break;

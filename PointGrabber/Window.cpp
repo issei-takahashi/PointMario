@@ -7,6 +7,7 @@
 #pragma comment(lib, "SDL_image.lib")
 #include <SDL_ttf.h>
 #pragma comment(lib, "SDL_ttf.lib")
+#include <SDL_syswm.h>
 
 #include "SDL_macros.h"
 #include "Displayed.h"
@@ -20,9 +21,13 @@ mario::Window::Window( int _width, int _height, string const & _windowName, bool
 	if( TTF_Init() == -1 ) {
 		TTF_Quit();
 	}
+	SDL_WM_SetCaption(_windowName.c_str(),NULL);
+	this->wmInfo = (shared_ptr<SDL_SysWMinfo>)(new SDL_SysWMinfo());
+	SDL_VERSION(&this->wmInfo->version);
+	SDL_GetWMInfo(&*this->wmInfo);
+
 	this->surface = SDL_SetVideoMode( _width, _height, 32, SDL_HWSURFACE );
 	this->setScreenMode(_screenModeFlag);
-	SDL_WM_SetCaption(_windowName.c_str(),NULL);
 }
 
 mario::Window::~Window()
@@ -69,7 +74,17 @@ void mario::Window::setScreenMode( bool _isScreenMode )
 			SDL_FreeSurface( this->surface );
 		}
 		if( this->isScreenMode ){
-			this->surface = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE | SDL_FULLSCREEN );
+			this->surface = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE /*| SDL_FULLSCREEN*/ );
+			// 1367,0
+			SetWindowPos(
+				this->wmInfo->window,             // ウィンドウのハンドル
+				NULL,  // 配置順序のハンドル
+				1367,                 // 横方向の位置
+				0,                 // 縦方向の位置
+				this->width,                // 幅
+				this->height,                // 高さ
+				SWP_NOSIZE            // ウィンドウ位置のオプション
+				);
 		}else{
 			this->surface = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE );
 		}

@@ -3,6 +3,7 @@
 #include "Displayed.h"
 
 struct SDL_Surface;
+struct SDL_SysWMinfo;
 
 namespace mario{
 
@@ -20,6 +21,7 @@ namespace mario{
 		SDL_Surface* getSurface() const { return this->surface; }
 	private:
 		SDL_Surface* surface;
+		shared_ptr<SDL_SysWMinfo> wmInfo;
 		int width;
 		int height;
 		string windowName;

@@ -11,12 +11,12 @@ mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
 
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud( CollisionInterface & _obj )
+bool mario::DownOutMeasure::collisionDetectionWithCloud( CollisionInterface & _obj, double _resolution )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	auto search = _obj.getSearchPoint();
-	mario::searchNeighbors_voxel( this->spcCloud, search, 32.0, indices );
+	mario::searchNeighbors_voxel( this->spcCloud, search, _resolution, indices );
 	this->cld_mutex.unlock();
 	if( indices ){
 		if( indices->size() > 10 ){

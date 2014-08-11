@@ -69,7 +69,7 @@ void DeruChara::mainLoop()
 		if( edgeHit ){
 			hiyoko->setVelocity(thisVel);
 		}else{ /* “–‚½‚è”»’è */
-			if( base.collisionDetectionWithCloud(*hiyoko) ){
+			if( base.collisionDetectionWithCloud(*hiyoko,10.0) ){
 				hiyoko->setVelocity(-thisVel);
 			}
 		}

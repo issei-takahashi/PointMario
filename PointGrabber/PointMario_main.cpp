@@ -5,6 +5,7 @@
 #include "DeruChara.h"
 #include "TokyoSky1.h"
 #include "TokyoSky2.h"
+#include "FallingSnow.h"
 
 using namespace mario;
 
@@ -62,7 +63,7 @@ int appMain()
 			{
 				Eigen::Matrix4d A;
 				FileIO::loadMatrix(CALIB_PATH,A);
-				auto app = TokyoSky2::makeShared(A);
+				auto app = FallingSnow::makeShared(A);
 				app->mainLoop();
 				break;
 			}

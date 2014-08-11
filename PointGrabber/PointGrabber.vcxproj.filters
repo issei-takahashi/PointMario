@@ -100,6 +100,15 @@
     <ClCompile Include="TokyoSky2.cpp">
       <Filter>Program\Applications</Filter>
     </ClCompile>
+    <ClCompile Include="FallingSnow.cpp">
+      <Filter>Program\Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL_utils.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pcl_utils.h">
@@ -212,6 +221,18 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>MARIO_Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="FallingSnow.h">
+      <Filter>Program\Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorRGB.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL_utils.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

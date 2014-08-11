@@ -10,7 +10,7 @@ namespace mario
 	{
 	public:
 		DownOutMeasure( Eigen::Matrix4d const & _MtoDmat );
-		bool collisionDetectionWithCloud( class CollisionInterface & _obj );
+		bool collisionDetectionWithCloud( class CollisionInterface & _obj, double _resolution );
 	private:
 		void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud);
 		void image_callback (const boost::shared_ptr<openni_wrapper::Image>& image);

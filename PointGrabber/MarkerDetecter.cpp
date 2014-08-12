@@ -1,13 +1,13 @@
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 #include "pcl_utils.h"
 #include "FileIO.h"
 
-mario::RedClusterDetecter::RedClusterDetecter()
+mario::MarkerDetecter::MarkerDetecter()
  :MeasureBasement(), measureCount(0)
 {}
 
 // Simple callbacks.
-void mario::RedClusterDetecter::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
+void mario::MarkerDetecter::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
 {
 	//std::string* message = (std::string*)cookie;
 	//cout << (*message) << " :: ";
@@ -31,7 +31,7 @@ void mario::RedClusterDetecter::keyboard_callback( const pcl::visualization::Key
 	//}
 }
 
-void mario::RedClusterDetecter::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
+void mario::MarkerDetecter::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
 {
 	std::string* message = (std::string*) cookie;
 	// ¶ƒNƒŠƒbƒN
@@ -44,29 +44,29 @@ void mario::RedClusterDetecter::mouse_callback( const pcl::visualization::MouseE
 }
 
 
-void mario::RedClusterDetecter::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
+void mario::MarkerDetecter::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud)
 {
 	FPS_CALC ("callback");
 
 	this->cld_mutex.lock ();
-	this->redCenter_mutex.lock();
+	this->jigCenter_mutex.lock();
 
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud2 ;
 	list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr > l_cluster ;
 
-	if( mario::filterB( cloud, cloud2, l_cluster, this->redCenter ) ){
+	if( mario::detectMarkers( cloud, cloud2, l_cluster, this->jigCenter ) ){
 		this->spcCloud = cloud2->makeShared();
 		this->measureCount_mutex.lock();
 		this->measureCount++;
 		this->measureCount_mutex.unlock();
 	}
 
-	this->redCenter_mutex.unlock();
+	this->jigCenter_mutex.unlock();
 	this->cld_mutex.unlock ();
 
 }
 
-void mario::RedClusterDetecter::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
+void mario::MarkerDetecter::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
 {
 	FPS_CALC ("image callback");
 
@@ -79,15 +79,15 @@ void mario::RedClusterDetecter::image_callback ( const boost::shared_ptr<openni_
 	this->img_mutex.unlock ();
 }
 
-mario::Coordinate<mario::typeM> mario::RedClusterDetecter::getRedCenter()
+mario::Coordinate<mario::typeM> mario::MarkerDetecter::getJigCenter()
 {
-	this->redCenter_mutex.lock();
-	auto ret = this->redCenter * 1000; 
-	this->redCenter_mutex.unlock();
+	this->jigCenter_mutex.lock();
+	auto ret = this->jigCenter * 1000; 
+	this->jigCenter_mutex.unlock();
 	return ret;
 }
 
-int mario::RedClusterDetecter::getMeasureCount()
+int mario::MarkerDetecter::getMeasureCount()
 {
 	this->measureCount_mutex.lock();
 	int ret = this->measureCount;
@@ -97,8 +97,8 @@ int mario::RedClusterDetecter::getMeasureCount()
 
 static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
-void mario::RedClusterDetecter::setCallBackFunctions()
+void mario::MarkerDetecter::setCallBackFunctions()
 {
-	this->spVisualizer->registerMouseCallback   ( &mario::RedClusterDetecter::mouse_callback   , (void*)(&mouseMsg3D) );    
-	this->spVisualizer->registerKeyboardCallback( &mario::RedClusterDetecter::keyboard_callback, (void*)(&keyMsg3D) );
+	this->spVisualizer->registerMouseCallback   ( &mario::MarkerDetecter::mouse_callback   , (void*)(&mouseMsg3D) );    
+	this->spVisualizer->registerKeyboardCallback( &mario::MarkerDetecter::keyboard_callback, (void*)(&keyMsg3D) );
 }

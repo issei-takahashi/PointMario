@@ -6,7 +6,7 @@
 #include "Eventer.h"
 #include "SolidAnimation.h"
 #include "DownOutMeasure.h"
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 #include "Circle.h"
 
 using namespace mario;
@@ -29,12 +29,12 @@ void FallingSnow::mainLoop()
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
 	//this->downOutMeasure.displayFlag = false;
 	//this->downOutMeasure.start();
-	RedClusterDetecter detecter;
+	MarkerDetecter detecter;
 	detecter.start();
 	Coordinate<typeM> rcM;
 	while( rcM.x == 0 && rcM.y == 0 && rcM.z == 0 ){
 		detecter.oneLoop();
-		rcM = detecter.getRedCenter();
+		rcM = detecter.getJigCenter();
 	}
 	detecter.stop();
 	cout << rcM.x << " " << rcM.y << " " << rcM.z << endl;
@@ -54,7 +54,7 @@ void FallingSnow::mainLoop()
 		if( frameCount % 10 == 0 ){
 			auto circle = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/circle/",this->shared_from_this()));
 			circle->displayStart();
-			double ran = utils::random(-150,150);
+			double ran = utils::random(-300,300);
 			circle->setDisplayPoint( Coordinate<typeD>(rcD.x+ran,rcD.y+300,rcD.z) );
 			circle->setVelocity(Eigen::Vector3d(0,-1,0));
 			snows.push_back(circle);

@@ -6,7 +6,7 @@
 #include "Eventer.h"
 #include "SolidAnimation.h"
 #include "DownOutMeasure.h"
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 
 using namespace mario;
 
@@ -28,12 +28,12 @@ void TokyoSky1::mainLoop()
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
 	//this->downOutMeasure.displayFlag = false;
 	//this->downOutMeasure.start();
-	RedClusterDetecter detecter;
+	MarkerDetecter detecter;
 	detecter.start();
 	Coordinate<typeM> rcM;
 	while( rcM.x == 0 && rcM.y == 0 && rcM.z == 0 ){
 		detecter.oneLoop();
-		rcM = detecter.getRedCenter();
+		rcM = detecter.getJigCenter();
 	}
 	detecter.stop();
 	cout << rcM.x << " " << rcM.y << " " << rcM.z << endl;

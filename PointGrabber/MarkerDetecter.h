@@ -4,11 +4,11 @@
 
 namespace mario
 {
-	class RedClusterDetecter : public MeasureBasement
+	class MarkerDetecter : public MeasureBasement
 	{
 	public:
-		RedClusterDetecter();
-		Coordinate<typeM> getRedCenter();
+		MarkerDetecter();
+		Coordinate<typeM> getJigCenter();
 		int getMeasureCount();
 	private:
 		void cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud);
@@ -19,8 +19,8 @@ namespace mario
 		static void keyboard_callback (const pcl::visualization::KeyboardEvent& _evt, void* cookie);
 		static void mouse_callback (const pcl::visualization::MouseEvent& mouse_event, void* cookie);
 	private:
-		Coordinate<typeM> redCenter;
-		boost::mutex redCenter_mutex;
+		Coordinate<typeM> jigCenter;
+		boost::mutex jigCenter_mutex;
 		boost::mutex measureCount_mutex;
 		int measureCount;
 	};

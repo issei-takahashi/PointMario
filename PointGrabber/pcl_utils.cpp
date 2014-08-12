@@ -1,5 +1,6 @@
 #include "pcl_utils.h"
 #include "FileIO.h"
+#include "ColorRGB.h"
 
 using namespace mario;
 
@@ -44,6 +45,55 @@ void mario::redExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & 
 				pt.r = 255;
 				pt.g = 0;
 				pt.b = 0;
+				pt.a = 255;
+				pt.x = cloud->points[count].x;
+				pt.y = cloud->points[count].y;
+				pt.z = cloud->points[count].z;
+				dst->push_back( pt );
+				rcount++;
+		}
+	}
+}
+
+void mario::greenExtraction( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+{
+	int rcount=0;
+	static double GREEN_VAL = FileIO::getConst("GREEN_VAL");
+	static double GREEN_RATE = FileIO::getConst("GREEN_RATE");
+	for(int count=0;count<cloud->points.size();count++){
+		if( cloud->points[count].g > GREEN_VAL && 
+			cloud->points[count].g > cloud->points[count].r*GREEN_RATE &&
+			cloud->points[count].g > cloud->points[count].b*GREEN_RATE ){
+				pcl::PointXYZRGBA pt;
+				pt.r = 0;
+				pt.g = 255;
+				pt.b = 0;
+				pt.a = 255;
+				pt.x = cloud->points[count].x;
+				pt.y = cloud->points[count].y;
+				pt.z = cloud->points[count].z;
+				dst->push_back( pt );
+				rcount++;
+		}
+	}
+}
+
+void mario::colorExtractionHSV( ColorRGB const & color, uint hTh, uint sTh, uint vTh, const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst )
+{
+	int H = color.getH();
+	int S = color.getS();
+	int V = color.getV();
+	int rcount=0;
+	for(int count=0;count<cloud->points.size();count++){
+		ColorRGB pColor(cloud->points[count].r,cloud->points[count].g,cloud->points[count].b);
+		int h = pColor.getH();
+		int s = pColor.getS();
+		int v = pColor.getV();
+		if( abs(H-h)<hTh && abs(S-s)<sTh && abs(V-v)<vTh ){
+				pcl::PointXYZRGBA pt;
+				pt.r = color.R;
+				pt.g = color.G;
+				pt.b = color.B;
 				pt.a = 255;
 				pt.x = cloud->points[count].x;
 				pt.y = cloud->points[count].y;
@@ -146,7 +196,7 @@ void mario::filterA( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	}
 }
 
-bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, Coordinate<typeM> & redCenter )
+bool mario::detectMarkers( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, Coordinate<typeM> & jigCenter )
 {
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered, planed, reded, clustered;
 
@@ -161,7 +211,8 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 	outlierFilter( downed, filtered );
 	static double SEGMENT_THRESHOULD = FileIO::getConst("SEGMENT_THRESHOULD"); // ëÂÇ´Ç¢ÇŸÇ«èúãéÇ∑ÇÈ
 	//removePlane( filtered, planed, SEGMENT_THRESHOULD );
-	redExtraction( filtered, reded );
+	ColorRGB green(0,200,0);
+	mario::greenExtraction( filtered, reded );
 
 	clusterize( reded, dst, l_dst, 4 );
 	cout << "cluster size == " << l_dst.size() << endl;
@@ -172,7 +223,7 @@ bool mario::filterB( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,
 			//cout << "\t" << ave.x << "," << ave.y << "," << ave.z << endl;
 		}
 		ave /= l_dst.size();
-		redCenter = ave;
+		jigCenter = ave;
 		return true;
 	}else{
 		return false;

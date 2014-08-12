@@ -43,9 +43,6 @@
     <ClCompile Include="PointCapture.cpp">
       <Filter>MARIO_Engine\Measure</Filter>
     </ClCompile>
-    <ClCompile Include="RedClusterDetecter.cpp">
-      <Filter>MARIO_Engine\Measure</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Others</Filter>
     </ClCompile>
@@ -109,6 +106,10 @@
     <ClCompile Include="SDL_utils.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
+    <ClCompile Include="MarkerDetecter.cpp">
+      <Filter>MARIO_Engine\Measure</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorRGB.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pcl_utils.h">
@@ -140,9 +141,6 @@
     </ClInclude>
     <ClInclude Include="WinRS.h">
       <Filter>MARIO_Engine\Display</Filter>
-    </ClInclude>
-    <ClInclude Include="RedClusterDetecter.h">
-      <Filter>MARIO_Engine\Measure</Filter>
     </ClInclude>
     <ClInclude Include="MeasureBasement.h">
       <Filter>MARIO_Engine\Measure</Filter>
@@ -233,6 +231,9 @@
     </ClInclude>
     <ClInclude Include="SDL_utils.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="MarkerDetecter.h">
+      <Filter>MARIO_Engine\Measure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

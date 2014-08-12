@@ -1,5 +1,5 @@
 #include "Experiment.h"
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 #include "FileIO.h"
 #include "Display.h"
 #include "utils.h"
@@ -17,7 +17,7 @@ void issei::Experiment003::experimentLoop()
 {
 	mario::Coordinate<mario::typeM> ret;
 	cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
-	mario::RedClusterDetecter base;
+	mario::MarkerDetecter base;
 	base.start();
 
 	Eigen::Matrix4d A;
@@ -29,7 +29,7 @@ void issei::Experiment003::experimentLoop()
 	while( endFlag == false ){
 		auto ms1 = Timer::getInstance()->getms();
 		//base.oneLoop();
-		auto thisRed = base.getRedCenter();
+		auto thisRed = base.getJigCenter();
 		//thisRed *= 1000;
 		Eigen::Vector4d tmpv;
 		tmpv(0) = thisRed.x;

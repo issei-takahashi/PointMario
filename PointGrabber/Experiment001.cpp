@@ -1,5 +1,5 @@
 #include "Experiment.h"
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 #include "FileIO.h"
 #include "Display.h"
 #include "utils.h"
@@ -117,7 +117,7 @@ mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vect
 	while(1){
 		ret = mario::Coordinate<mario::typeM>(0,0,0);
 		cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
-		mario::RedClusterDetecter base;
+		mario::MarkerDetecter base;
 		base.start();
 		static int const RED_CENTER_TIMES = mario::FileIO::getConst("RED_CENTER_TIMES");
 		cout << "Ô‚¢êŠ‚ÌdS‚ð"<< RED_CENTER_TIMES <<"‰ñŒv‘ª‚µ‚Ü‚·..." << endl;
@@ -131,7 +131,7 @@ mario::Coordinate<mario::typeM> issei::Experiment001::measureRedPointsLoop( vect
 			int mc = base.getMeasureCount();
 			if( mc > measureCount ){
 				measureCount = mc;
-				auto thisred = base.getRedCenter();
+				auto thisred = base.getJigCenter();
 				ret += thisred;
 				_pDst->push_back( thisred );
 				cout << "*";

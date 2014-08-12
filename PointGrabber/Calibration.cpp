@@ -1,5 +1,5 @@
 #include "Calibration.h"
-#include "RedClusterDetecter.h"
+#include "MarkerDetecter.h"
 #include "Display.h"
 #include "Cross.h"
 #include "Timer.h"
@@ -39,7 +39,7 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 		while(1){
 			jigCenter = Coordinate<typeM>(0,0,0);
 			cout << "MeasureBasement‚Ì‰Šú‰»’†..." << endl;
-			RedClusterDetecter base;
+			MarkerDetecter base;
 			base.start();
 			static int const RED_CENTER_TIMES = FileIO::getConst("RED_CENTER_TIMES");
 			cout << "Ô‚¢êŠ‚ÌdS‚ð"<< RED_CENTER_TIMES <<"‰ñŒv‘ª‚µ‚Ü‚·..." << endl;
@@ -53,7 +53,7 @@ void Calibration::executeCalibration( list<Coordinate<typeD> > const & _calibPoi
 				int mc = base.getMeasureCount();
 				if( mc > measureCount ){
 					measureCount = mc;
-					auto thisred = base.getRedCenter();
+					auto thisred = base.getJigCenter();
 					jigCenter += thisred;
 					cout << "*";
 				}

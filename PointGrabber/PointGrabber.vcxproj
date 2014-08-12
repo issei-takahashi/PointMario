@@ -121,7 +121,7 @@
     <ClInclude Include="defines.h" />
     <ClInclude Include="pcl_utils.h" />
     <ClInclude Include="PointCapture.h" />
-    <ClInclude Include="RedClusterDetecter.h" />
+    <ClInclude Include="MarkerDetecter.h" />
     <ClInclude Include="SerializableData.h" />
     <ClInclude Include="SolidAnimation.h" />
     <ClInclude Include="stdafx.h" />
@@ -137,6 +137,7 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Calibration.cpp" />
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="ColorRGB.cpp" />
     <ClCompile Include="Cross.cpp" />
     <ClCompile Include="DeruChara.cpp" />
     <ClCompile Include="Display.cpp" />
@@ -160,7 +161,7 @@
     <ClCompile Include="pcl_utils.cpp" />
     <ClCompile Include="PointCapture.cpp" />
     <ClCompile Include="PointMario_main.cpp" />
-    <ClCompile Include="RedClusterDetecter.cpp" />
+    <ClCompile Include="MarkerDetecter.cpp" />
     <ClCompile Include="SDL_utils.cpp" />
     <ClCompile Include="SolidAnimation.cpp" />
     <ClCompile Include="stdafx.cpp">

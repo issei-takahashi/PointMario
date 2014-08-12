@@ -75,6 +75,8 @@ void mario::Window::setScreenMode( bool _isScreenMode )
 		}
 		if( this->isScreenMode ){
 			this->surface = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE /*| SDL_FULLSCREEN*/ );
+			//ウィンドウの属性と位置変更
+			SetWindowLong(this->wmInfo->window, GWL_STYLE, WS_POPUP);
 			// 1367,0
 			SetWindowPos(
 				this->wmInfo->window,             // ウィンドウのハンドル
@@ -83,8 +85,9 @@ void mario::Window::setScreenMode( bool _isScreenMode )
 				0,                 // 縦方向の位置
 				this->width,                // 幅
 				this->height,                // 高さ
-				SWP_NOSIZE            // ウィンドウ位置のオプション
+				SWP_SHOWWINDOW            // ウィンドウ位置のオプション
 				);
+
 		}else{
 			this->surface = SDL_SetVideoMode( width, height, 32, SDL_HWSURFACE );
 		}

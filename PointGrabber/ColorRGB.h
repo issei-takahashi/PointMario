@@ -12,6 +12,9 @@ namespace mario
 		uint R;
 		uint G;
 		uint B;
+		uint getH() const;
+		uint getS() const;
+		uint getV() const;
 	private:
 
 	};

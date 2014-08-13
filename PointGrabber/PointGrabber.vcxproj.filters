@@ -109,7 +109,12 @@
     <ClCompile Include="MarkerDetecter.cpp">
       <Filter>MARIO_Engine\Measure</Filter>
     </ClCompile>
-    <ClCompile Include="ColorRGB.cpp" />
+    <ClCompile Include="RegisterationCheck.cpp">
+      <Filter>Program\Applications</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorRGB.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pcl_utils.h">
@@ -234,6 +239,9 @@
     </ClInclude>
     <ClInclude Include="MarkerDetecter.h">
       <Filter>MARIO_Engine\Measure</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterationCheck.h">
+      <Filter>Program\Applications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

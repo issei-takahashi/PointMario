@@ -6,6 +6,7 @@
 #include "TokyoSky1.h"
 #include "TokyoSky2.h"
 #include "FallingSnow.h"
+#include "RegisterationCheck.h"
 
 using namespace mario;
 
@@ -18,10 +19,11 @@ int appMain()
 		string buf = "";
 		while( utils::isNumber(buf) == false ){
 			cout << "モード(0～2,101～)を入力してください(0で終了)：" << endl;
-			cout << "   1:キャリブレーション" << endl;
+			cout << "   1: キャリブレーション" << endl;
 			cout << "   2:「でるキャラ」" << endl;
 			cout << "   3:「ジオラマ解説」" << endl;
 			cout << "   4:「ジオラマと雪」" << endl;
+			cout << "   5:「位置合わせチェック」" << endl;
 			cin  >> buf;
 		}
 		int mode = utils::string2int(buf);
@@ -66,6 +68,14 @@ int appMain()
 				auto app = FallingSnow::makeShared(A);
 				app->mainLoop();
 				break;
+			}
+		case 5:
+			{
+				Eigen::Matrix4d A;
+				FileIO::loadMatrix(CALIB_PATH,A);
+				auto app = RegisterationCheck::makeShared(A);
+				app->mainLoop();
+				break;		
 			}
 		}
 	}

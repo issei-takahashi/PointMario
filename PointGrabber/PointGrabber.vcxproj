@@ -113,6 +113,7 @@
     <ClInclude Include="ifLine.h" />
     <ClInclude Include="KeyTypes.h" />
     <ClInclude Include="LibBase.h" />
+    <ClInclude Include="RegisterationCheck.h" />
     <ClInclude Include="SDL_macros.h" />
     <ClInclude Include="SDL_utils.h" />
     <ClInclude Include="Singleton.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="PointCapture.cpp" />
     <ClCompile Include="PointMario_main.cpp" />
     <ClCompile Include="MarkerDetecter.cpp" />
+    <ClCompile Include="RegisterationCheck.cpp" />
     <ClCompile Include="SDL_utils.cpp" />
     <ClCompile Include="SolidAnimation.cpp" />
     <ClCompile Include="stdafx.cpp">

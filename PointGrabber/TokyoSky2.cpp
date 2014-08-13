@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "Timer.h"
 #include "Eventer.h"
-#include "SolidAnimation.h"
+#include "Animation.h"
 #include "DownOutMeasure.h"
 #include "MarkerDetecter.h"
 
@@ -38,16 +38,12 @@ void TokyoSky2::mainLoop()
 	detecter.stop();
 	cout << rcM.x << " " << rcM.y << " " << rcM.z << endl;
 	auto rcD = rcM * this->MtoDMat;
-	//Coordinate<typeD> tokyoP(rcD.x+100,rcD.y+35,rcD.z-150);
-	//Coordinate<typeD> skyP(rcD.x-100,rcD.y+130,rcD.z-150);
 	Coordinate<typeD> tokyoP(rcD.x,rcD.y,rcD.z);
 	Coordinate<typeD> skyP(rcD.x,rcD.y,rcD.z);
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
-	//auto tokyo = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/tokyo_mm/"));
-	//auto sky = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/sky_mm/"));
-	auto tokyo = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/",this->shared_from_this()));
-	auto sky = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/",this->shared_from_this()));
+	auto tokyo = (shared_ptr<Animation>)(new Animation("image/hiyoko/"));
+	auto sky = (shared_ptr<Animation>)(new Animation("image/hiyoko/"));
 	tokyo->displayStart();
 	tokyo->setDisplayPoint(tokyoP);
 	sky->displayStart();

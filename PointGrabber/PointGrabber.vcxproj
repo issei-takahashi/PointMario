@@ -91,11 +91,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MidairObject.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Calibration.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="CollisionInterface.h" />
+    <ClInclude Include="SolidBody.h" />
     <ClInclude Include="ColorRGB.h" />
     <ClInclude Include="Coordinate.h" />
     <ClInclude Include="Counter.h" />
@@ -124,7 +125,7 @@
     <ClInclude Include="PointCapture.h" />
     <ClInclude Include="MarkerDetecter.h" />
     <ClInclude Include="SerializableData.h" />
-    <ClInclude Include="SolidAnimation.h" />
+    <ClInclude Include="PointBody.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Timer.h" />
@@ -165,7 +166,7 @@
     <ClCompile Include="MarkerDetecter.cpp" />
     <ClCompile Include="RegisterationCheck.cpp" />
     <ClCompile Include="SDL_utils.cpp" />
-    <ClCompile Include="SolidAnimation.cpp" />
+    <ClCompile Include="PointBody.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

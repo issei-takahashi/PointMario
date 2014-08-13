@@ -4,9 +4,11 @@
 #include "utils.h"
 #include "Timer.h"
 #include "Eventer.h"
-#include "SolidAnimation.h"
+#include "PointBody.h"
 #include "DownOutMeasure.h"
 #include "MarkerDetecter.h"
+#include "Cross.h"
+#include "MidairObject.h"
 
 using namespace mario;
 
@@ -24,59 +26,41 @@ DeruChara::DeruChara( Eigen::Matrix4d const & _MtoD )
 
 void DeruChara::mainLoop()
 {
+	/* MeasureBasementの生成 */
 	Coordinate<typeM> ret;
 	cout << "MeasureBasementの初期化中..." << endl;
 	DownOutMeasure base(this->MtoDMat);
 	base.start();
 
+	/* Displayの生成 */
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
 
-	auto hiyoko = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/hiyoko/",this->shared_from_this()));
-	hiyoko->displayStart();
-	hiyoko->setDisplayPoint( Coordinate<typeD>(0,20,0) );
-	hiyoko->setVelocity(Eigen::Vector3d(1,1,1));
+	/* 空中オブジェクトの生成 */
+	typedef MidairObject<PointBody,Cross> Obj;
+
+	/* 表示の生成 */
+	auto img = (shared_ptr<mario::Cross>)(new Cross(mario::ColorRGB(255,0,0),10,100));
+	img->displayStart();
+	img->setDisplayPoint( Coordinate<typeD>(150,100,100) );
+	/* ボディの生成 */
+	auto body = (shared_ptr<mario::PointBody>)(new PointBody(this->shared_from_this()));
+	/* オブジェクトにくっつける */
+	shared_ptr<Obj> chara = (shared_ptr<Obj>)(new Obj(body,img));	
 
 	frame_t frameCount = 0;
 	while(1){
 		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
-		/* キャラクターの移動 */
-		auto thisVel = hiyoko->getVelocity();
-		bool edgeHit = false;
-		auto dp = hiyoko->getDisplayPoint();
-		if( dp.x < 0 ){
-			thisVel.x() = abs(thisVel.x());
-			edgeHit = true;
-		}else if( dp.x > disp->getScreenXmm() ){
-			thisVel.x() = -abs(thisVel.x());
-			edgeHit = true;
+		/* 当たり判定 */
+		if( base.collisionDetectionWithCloud(*chara->getBody(),10.0) ){
+			chara->getDisplayed()->setColor(0,255,0);
+		}else{
+			chara->getDisplayed()->setColor(255,0,0);
 		}
-		if( dp.y < 20 ){
-			thisVel.y() = abs(thisVel.y());
-			edgeHit = true;
-		}else if( dp.y > disp->getScreenYmm() ){
-			thisVel.y() = -abs(thisVel.y());
-			edgeHit = true;
-		}
-		if( dp.z < 45 ){
-			thisVel.z() = abs(thisVel.z());
-			edgeHit = true;
-		}else if( dp.z > 300 ){
-			thisVel.z() = -abs(thisVel.z());
-			edgeHit = true;
-		}
-		if( edgeHit ){
-			hiyoko->setVelocity(thisVel);
-		}else{ /* 当たり判定 */
-			if( base.collisionDetectionWithCloud(*hiyoko,10.0) ){
-				hiyoko->setVelocity(-thisVel);
-			}
-		}
-		hiyoko->oneLoop();
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();
-		disp->moveActuatorTo(hiyoko->getDisplayPoint().z);
+		disp->moveActuatorTo(chara->getDisplayed()->getDisplayPoint().z);
 		/* 終了処理 */
 		if( Eventer::getInstance()->quitEvent() ){
 			break;

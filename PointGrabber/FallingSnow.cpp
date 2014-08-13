@@ -4,10 +4,12 @@
 #include "utils.h"
 #include "Timer.h"
 #include "Eventer.h"
-#include "SolidAnimation.h"
+#include "Animation.h"
 #include "DownOutMeasure.h"
 #include "MarkerDetecter.h"
 #include "Circle.h"
+#include "MidairObject.h"
+#include "PointBody.h"
 
 using namespace mario;
 
@@ -42,9 +44,11 @@ void FallingSnow::mainLoop()
 
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
+	cout << "rcD : " << rcD.x << "  " << rcD.y << "  " << rcD.z << endl;
 	disp->moveActuatorTo(rcD.z);
 
-	list<shared_ptr<SolidAnimation> > snows;
+	typedef MidairObject<PointBody,Animation> Obj;
+	list<shared_ptr<Obj> > snows;
 
 	frame_t frameCount = 0;
 	while(1){
@@ -52,23 +56,30 @@ void FallingSnow::mainLoop()
 		auto ms1 = Timer::getInstance()->getms();
 		/* 雪の生成 */
 		if( frameCount % 10 == 0 ){
-			auto circle = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/circle/",this->shared_from_this()));
-			circle->displayStart();
+			// ボディ
 			double ran = utils::random(-300,300);
-			circle->setDisplayPoint( Coordinate<typeD>(rcD.x+ran,rcD.y+300,rcD.z) );
-			circle->setVelocity(Eigen::Vector3d(0,-1,0));
-			snows.push_back(circle);
+			auto body = (shared_ptr<PointBody>)(new PointBody(this->shared_from_this()));
+			body->setPoint( Coordinate<typeD>(rcD.x+ran,rcD.y+300,rcD.z) );
+			body->setVelocity(Eigen::Vector3d(0,-1,0));
+			// 表示
+			auto circle = (shared_ptr<Animation>)(new Animation("image/circle/"));
+			circle->displayStart();
+			circle->setDisplayPoint( body->getPoint() );
+			// 空中オブジェクトにする
+			snows.push_back(shared_ptr<Obj>(new Obj(body,circle) ));
 		}
 		/* 雪の動き */
 		foreach(it,snows){
-			auto dp = (*it)->getDisplayPoint();
+			(*it)->getBody()->oneLoop();
+			auto dp = (*it)->getBody()->getPoint();
+			(*it)->getDisplayed()->setDisplayPoint(dp);
 			if( rcD.x-40.0 < dp.x && dp.x < rcD.x+40.0 ){
 				if( dp.y < rcD.y+40.0 ){
-					(*it)->setVelocity(Eigen::Vector3d::Zero());
+					(*it)->getBody()->setVelocity(Eigen::Vector3d::Zero());
 				}
 			}else{
 				if( dp.y < rcD.y - 15 ){
-					(*it)->setVelocity(Eigen::Vector3d::Zero());
+					(*it)->getBody()->setVelocity(Eigen::Vector3d::Zero());
 				}		
 			}
 		}

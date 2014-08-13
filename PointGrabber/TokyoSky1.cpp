@@ -4,7 +4,7 @@
 #include "utils.h"
 #include "Timer.h"
 #include "Eventer.h"
-#include "SolidAnimation.h"
+#include "Animation.h"
 #include "DownOutMeasure.h"
 #include "MarkerDetecter.h"
 
@@ -42,8 +42,8 @@ void TokyoSky1::mainLoop()
 	Coordinate<typeD> skyP(rcD.x-70,rcD.y+130,rcD.z-150);
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
-	auto tokyo = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/tokyo_name/",this->shared_from_this()));
-	auto sky = (shared_ptr<SolidAnimation>)(new SolidAnimation("image/sky_name/",this->shared_from_this()));
+	auto tokyo = (shared_ptr<Animation>)(new Animation("image/tokyo_name/"));
+	auto sky = (shared_ptr<Animation>)(new Animation("image/sky_name/"));
 	tokyo->displayStart();
 	tokyo->setDisplayPoint(tokyoP);
 	sky->displayStart();

@@ -88,9 +88,6 @@
     <ClCompile Include="Animation.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
-    <ClCompile Include="SolidAnimation.cpp">
-      <Filter>MARIO_Engine\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="TokyoSky1.cpp">
       <Filter>Program\Applications</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="ColorRGB.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="PointBody.cpp">
+      <Filter>MARIO_Engine\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,14 +207,8 @@
     <ClInclude Include="DownOutMeasure.h">
       <Filter>MARIO_Engine\Measure</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionInterface.h">
-      <Filter>MARIO_Engine\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidAnimation.h">
-      <Filter>MARIO_Engine\Collision</Filter>
     </ClInclude>
     <ClInclude Include="TokyoSky1.h">
       <Filter>Program\Applications</Filter>
@@ -242,6 +236,15 @@
     </ClInclude>
     <ClInclude Include="RegisterationCheck.h">
       <Filter>Program\Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidBody.h">
+      <Filter>MARIO_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="PointBody.h">
+      <Filter>MARIO_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MidairObject.h">
+      <Filter>MARIO_Engine\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

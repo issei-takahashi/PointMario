@@ -1,10 +1,10 @@
 #pragma once
 
 namespace mario{
-	class CollisionInterface abstract
+	class SolidBody abstract
 	{
 	public:
-		CollisionInterface( shared_ptr<class Application> _owner )
+		SolidBody( shared_ptr<class Application> _owner )
 		:ownerApp(_owner){}
 		virtual pcl::PointXYZRGBA const getSearchPoint() = 0;
 	protected:

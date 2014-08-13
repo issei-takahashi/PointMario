@@ -16,6 +16,7 @@ namespace mario{
 		~Cross();
 		priority getPriority() const final override;
 		void oneLoop( uint _x, uint _y ) final override;
+		void setColor(uint r,uint g,uint b){this->color=ColorRGB(r,g,b);}
 	private:
 		ColorRGB color;
 		uint const rectShort;

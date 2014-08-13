@@ -1,7 +1,7 @@
 #include "DownOutMeasure.h"
 #include "pcl_utils.h"
 #include "FileIO.h"
-#include "CollisionInterface.h"
+#include "SolidBody.h"
 
 #define MAKE_CLOUD(dst) dst=(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr)(new pcl::PointCloud<pcl::PointXYZRGBA>)
 
@@ -11,7 +11,7 @@ mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
 
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud( CollisionInterface & _obj, double _resolution )
+bool mario::DownOutMeasure::collisionDetectionWithCloud( SolidBody & _obj, double _resolution )
 {
 	this->cld_mutex.lock();
 	indices_t indices;

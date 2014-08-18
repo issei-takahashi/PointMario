@@ -58,7 +58,7 @@ void FallingSnow::mainLoop()
 		if( frameCount % 10 == 0 ){
 			// ボディ
 			double ran = utils::random(-300,300);
-			auto body = (shared_ptr<PointBody>)(new PointBody(this->shared_from_this()));
+			auto body = PointBody::makeShared(this->shared_from_this());
 			body->setPoint( Coordinate<typeD>(rcD.x+ran,rcD.y+300,rcD.z) );
 			body->setVelocity(Eigen::Vector3d(0,-1,0));
 			// 表示

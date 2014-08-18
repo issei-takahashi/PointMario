@@ -3,6 +3,11 @@
 
 using namespace mario;
 
+shared_ptr<PointBody> PointBody::makeShared( shared_ptr<class Application> _owner )
+{
+	return (shared_ptr<PointBody>)(new PointBody(_owner));
+}
+
 PointBody::PointBody(  shared_ptr<class Application> _owner )
 	:SolidBody(_owner),
 	velocity( Eigen::Vector3d::Zero() )

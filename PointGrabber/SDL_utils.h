@@ -22,6 +22,10 @@ extern "C"{
 		int x1, int y1,
 		int x2, int y2,
 		Uint8 R, Uint8 G, Uint8 B);
+	void SDL_DrawFullCircle(SDL_Surface *screen,
+		int x1, int y1,
+		int x2, int y2,
+		Uint8 R, Uint8 G, Uint8 B);
 	void SDL_DrawPaint(SDL_Surface *screen,
 		int x, int y,
 		Uint8 R, Uint8 G, Uint8 B);

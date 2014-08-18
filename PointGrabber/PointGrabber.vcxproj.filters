@@ -52,22 +52,7 @@
     <ClCompile Include="main.cpp">
       <Filter>MARIO_Engine\MarioMain</Filter>
     </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
     <ClCompile Include="LibBase.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="Eventer.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="Cross.cpp">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
     <ClCompile Include="Display.cpp">
@@ -85,9 +70,6 @@
     <ClCompile Include="DownOutMeasure.cpp">
       <Filter>MARIO_Engine\Measure</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
     <ClCompile Include="TokyoSky1.cpp">
       <Filter>Program\Applications</Filter>
     </ClCompile>
@@ -96,12 +78,6 @@
     </ClCompile>
     <ClCompile Include="FallingSnow.cpp">
       <Filter>Program\Applications</Filter>
-    </ClCompile>
-    <ClCompile Include="Circle.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="SDL_utils.cpp">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClCompile>
     <ClCompile Include="MarkerDetecter.cpp">
       <Filter>MARIO_Engine\Measure</Filter>
@@ -114,6 +90,30 @@
     </ClCompile>
     <ClCompile Include="PointBody.cpp">
       <Filter>MARIO_Engine\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Circle.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\SimpleShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Cross.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\SimpleShapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\FileImages</Filter>
+    </ClCompile>
+    <ClCompile Include="Eventer.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\FileImages</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\Texts</Filter>
+    </ClCompile>
+    <ClCompile Include="SDL_utils.cpp">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>MARIO_Engine\Display</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,19 +165,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Others</Filter>
     </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
     <ClInclude Include="LibBase.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Eventer.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyTypes.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
     <ClInclude Include="Displayed.h">
@@ -185,15 +173,6 @@
     </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Others</Filter>
-    </ClInclude>
-    <ClInclude Include="SDL_macros.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="Cross.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
     <ClInclude Include="Counter.h">
       <Filter>Others</Filter>
@@ -207,9 +186,6 @@
     <ClInclude Include="DownOutMeasure.h">
       <Filter>MARIO_Engine\Measure</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
     <ClInclude Include="TokyoSky1.h">
       <Filter>Program\Applications</Filter>
     </ClInclude>
@@ -222,13 +198,7 @@
     <ClInclude Include="FallingSnow.h">
       <Filter>Program\Applications</Filter>
     </ClInclude>
-    <ClInclude Include="Circle.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
     <ClInclude Include="ColorRGB.h">
-      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="SDL_utils.h">
       <Filter>MARIO_Engine\DrawLibWrapper</Filter>
     </ClInclude>
     <ClInclude Include="MarkerDetecter.h">
@@ -245,6 +215,39 @@
     </ClInclude>
     <ClInclude Include="MidairObject.h">
       <Filter>MARIO_Engine\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="RGBColored.h">
+      <Filter>MARIO_Engine\DrawLibWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Circle.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SimpleShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Cross.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SimpleShapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\FileImages</Filter>
+    </ClInclude>
+    <ClInclude Include="Eventer.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\FileImages</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\Texts</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyTypes.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL_macros.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="SDL_utils.h">
+      <Filter>MARIO_Engine\DrawLibWrapper\SDL</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>MARIO_Engine\Display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +298,18 @@
     </Filter>
     <Filter Include="MARIO_Engine\Application">
       <UniqueIdentifier>{16d41427-0ec6-4b44-8ae7-fb8415b362ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\DrawLibWrapper\SimpleShapes">
+      <UniqueIdentifier>{cc1bced2-47aa-4708-9e57-167a574d05ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\DrawLibWrapper\FileImages">
+      <UniqueIdentifier>{73bce4cd-e856-4ab5-b79b-ecaa7465af3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\DrawLibWrapper\SDL">
+      <UniqueIdentifier>{48bfce47-1479-46b8-b9dd-b2769cb7eef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\DrawLibWrapper\Texts">
+      <UniqueIdentifier>{0b08acf4-75c8-4da4-9c36-4b57f65a3e9e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

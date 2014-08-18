@@ -96,6 +96,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Calibration.h" />
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="RGBColored.h" />
     <ClInclude Include="SolidBody.h" />
     <ClInclude Include="ColorRGB.h" />
     <ClInclude Include="Coordinate.h" />

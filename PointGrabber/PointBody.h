@@ -9,7 +9,7 @@ namespace mario{
 	public:
 		SHARED(PointBody);
 	public:
-		PointBody( shared_ptr<class Application> _owner );
+		static shared_ptr<PointBody> makeShared( shared_ptr<class Application> _owner );
 		pcl::PointXYZRGBA const getSearchPoint() final override;
 		void oneLoop();
 		// set
@@ -20,6 +20,7 @@ namespace mario{
 		Eigen::Vector3d getVelocity();
 		Coordinate<typeD> getPoint() const { return this->point; }
 	private:
+		PointBody( shared_ptr<class Application> _owner );
 		Coordinate<typeD> point;
 		boost::mutex velocityMutex;
 		Eigen::Vector3d velocity;

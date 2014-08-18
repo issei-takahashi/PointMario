@@ -8,6 +8,7 @@
 #include "DownOutMeasure.h"
 #include "MarkerDetecter.h"
 #include "Cross.h"
+#include "Circle.h"
 #include "MidairObject.h"
 
 using namespace mario;
@@ -37,14 +38,14 @@ void DeruChara::mainLoop()
 	disp->setScreenMode( true );
 
 	/* 空中オブジェクトの生成 */
-	typedef MidairObject<PointBody,Cross> Obj;
+	typedef MidairObject<PointBody,Circle> Obj;
 
 	/* 表示の生成 */
-	auto img = (shared_ptr<mario::Cross>)(new Cross(mario::ColorRGB(255,0,0),10,100));
+	auto img = Circle::makeShared(100,mario::ColorRGB(0,255,0));
 	img->displayStart();
 	img->setDisplayPoint( Coordinate<typeD>(150,100,100) );
 	/* ボディの生成 */
-	auto body = (shared_ptr<mario::PointBody>)(new PointBody(this->shared_from_this()));
+	auto body = PointBody::makeShared(this->shared_from_this());
 	/* オブジェクトにくっつける */
 	shared_ptr<Obj> chara = (shared_ptr<Obj>)(new Obj(body,img));	
 
@@ -53,10 +54,10 @@ void DeruChara::mainLoop()
 		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
 		/* 当たり判定 */
-		if( base.collisionDetectionWithCloud(*chara->getBody(),10.0) ){
-			chara->getDisplayed()->setColor(0,255,0);
-		}else{
+		if( base.collisionDetectionWithCloud(*chara->getBody(),0.01) ){
 			chara->getDisplayed()->setColor(255,0,0);
+		}else{
+			chara->getDisplayed()->setColor(0,255,0);
 		}
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();

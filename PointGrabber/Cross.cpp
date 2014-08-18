@@ -8,16 +8,15 @@
 using namespace mario;
 
 Cross::Cross()
-	:rectShort(FileIO::getConst("CROSS_SHORT_px")),rectLong(FileIO::getConst("CROSS_LONG_px"))
+	:rectShort(FileIO::getConst("CROSS_SHORT_px")),rectLong(FileIO::getConst("CROSS_LONG_px")),
+	RGBColored(ColorRGB(FileIO::getConst("CALIB_CROSS_R"),FileIO::getConst("CALIB_CROSS_G"),FileIO::getConst("CALIB_CROSS_B")))
 {
-	this->color.R = FileIO::getConst("CALIB_CROSS_R");
-	this->color.G = FileIO::getConst("CALIB_CROSS_G");
-	this->color.B = FileIO::getConst("CALIB_CROSS_B");
+	
 }
 
 Cross::Cross(ColorRGB col)
 	:rectShort(FileIO::getConst("CROSS_SHORT_px")),rectLong(FileIO::getConst("CROSS_LONG_px")),
-	color(col)
+	RGBColored(col)
 {}
 
 Cross::Cross(uint rShort,uint rLong)

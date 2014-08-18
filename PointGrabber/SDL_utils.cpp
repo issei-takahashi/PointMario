@@ -223,200 +223,208 @@ void DrawBox(SDL_Surface *screen,
 void SDL_DrawCircle(SDL_Surface *screen,
 	int x1, int y1,
 	int x2, int y2,
-	Uint8 R, Uint8 G, Uint8 B){
-		Uint32 color = SDL_MapRGB(screen->format, R, G, B);
+	Uint8 R, Uint8 G, Uint8 B)
+{
+	Uint32 color = SDL_MapRGB(screen->format, R, G, B);
 
-		int r;
-		int dx, dy;
-		int xa, ya, xb, yb;
-		int f;
+	int xa, ya, xb, yb;
 
-		if( (x1 < 0) | (screen->w <= x1) |
-			(x2 < 0) | (screen->w <= x2) |
-			(y1 < 0) | (screen->h <= y1) |
-			(y2 < 0) | (screen->h <= y2))
+	if( (x1 < 0) | (screen->w <= x1) |
+		(x2 < 0) | (screen->w <= x2) |
+		(y1 < 0) | (screen->h <= y1) |
+		(y2 < 0) | (screen->h <= y2))
+		return;
+	if(x1 == x2 && y1 == y2){return;}
+
+	if(SDL_MUSTLOCK(screen)){
+		if(SDL_LockSurface(screen) < 0){
 			return;
-		if(x1 == x2 && y1 == y2)
-			return;
+		}
+	}
+	if(x1 > x2){swap(x1,x2);}
+	if(y1 > y2){swap(y1,y2);}
 
-		if(SDL_MUSTLOCK(screen)){
-			if(SDL_LockSurface(screen) < 0){
-				return;
+	auto const dx = x2 - x1;
+	auto const dy = y2 - y1;
+	//int r,f;
+	if(dx >= dy){
+		int const r = dx / 2;
+		int f = 3 - 2 * r;
+		xa = r;
+		ya = 0;
+		x1 += dx / 2;
+		y1 += dy / 2;
+		x2 = x1 + dx % 2;
+		y2 = y1 + dy % 2;
+		while(xa >= ya){
+			xb = (xa * dy) / dx;
+			yb = (ya * dy) / dx;
+			SDL_PutPixel(screen, xa + x2,-yb + y1, color); /*A*/
+			SDL_PutPixel(screen, ya + x2,-xb + y1, color); /*B*/
+			SDL_PutPixel(screen,-ya + x1,-xb + y1, color); /*C*/
+			SDL_PutPixel(screen,-xa + x1,-yb + y1, color); /*D*/
+			SDL_PutPixel(screen,-xa + x1, yb + y2, color); /*E*/
+			SDL_PutPixel(screen,-ya + x1, xb + y2, color); /*F*/
+			SDL_PutPixel(screen, ya + x2, xb + y2, color); /*G*/
+			SDL_PutPixel(screen, xa + x2, yb + y2, color); /*H*/
+			if(f >= 0){
+				xa--;
+				f -= 4 * xa;
 			}
+			ya++;
+			f += 4 * ya + 2;
 		}
-
-		if(x1 > x2){
-			int tmp = x2;
-			x2 = x1;
-			x1 = tmp;
-		}
-		if(y1 > y2){
-			int tmp = y2;
-			y2 = y1;
-			y1 = tmp;
-		}
-
-		dx = x2 - x1 < 0 ? x1 - x2 : x2 - x1;
-		dy = y2 - y1 < 0 ? y1 - y2 : y2 - y1;
-		if(dx >= dy){
-			r = dx / 2;
-			xa = r;
-			ya = 0;
-			f = 3 - 2 * r;
-			x1 += dx / 2;
-			y1 += dy / 2;
-			x2 = x1 + dx % 2;
-			y2 = y1 + dy % 2;
-			while(xa >= ya){
-				xb = (xa * dy) / dx;
-				yb = (ya * dy) / dx;
-				SDL_PutPixel(screen, xa + x2,-yb + y1, color); /*A*/
-				SDL_PutPixel(screen, ya + x2,-xb + y1, color); /*B*/
-				SDL_PutPixel(screen,-ya + x1,-xb + y1, color); /*C*/
-				SDL_PutPixel(screen,-xa + x1,-yb + y1, color); /*D*/
-				SDL_PutPixel(screen,-xa + x1, yb + y2, color); /*E*/
-				SDL_PutPixel(screen,-ya + x1, xb + y2, color); /*F*/
-				SDL_PutPixel(screen, ya + x2, xb + y2, color); /*G*/
-				SDL_PutPixel(screen, xa + x2, yb + y2, color); /*H*/
-				if(f >= 0){
-					xa--;
-					f -= 4 * xa;
-				}
-				ya++;
-				f += 4 * ya + 2;
+	}
+	else{
+		int const r = dy / 2;
+		int f = 3 - 2 * r;
+		ya = r;
+		xa = 0;
+		x1 += dx / 2;
+		y1 += dy / 2;
+		x2 = x1 + dx % 2;
+		y2 = y1 + dy % 2;
+		while(ya >= xa){
+			xb = (xa * dx) / dy;
+			yb = (ya * dx) / dy;
+			SDL_PutPixel(screen, xb + x2,-ya + y1, color); /*A*/
+			SDL_PutPixel(screen, yb + x2,-xa + y1, color); /*B*/
+			SDL_PutPixel(screen,-yb + x1,-xa + y1, color); /*C*/
+			SDL_PutPixel(screen,-xb + x1,-ya + y1, color); /*D*/
+			SDL_PutPixel(screen,-xb + x1, ya + y2, color); /*E*/
+			SDL_PutPixel(screen,-yb + x1, xa + y2, color); /*F*/
+			SDL_PutPixel(screen, yb + x2, xa + y2, color); /*G*/
+			SDL_PutPixel(screen, xb + x2, ya + y2, color); /*H*/
+			if(f >= 0){
+				ya--;
+				f -= 4 * ya;
 			}
+			xa++;
+			f += 4 * xa + 2;
 		}
-		else{
-			r = dy / 2;
-			ya = r;
-			xa = 0;
-			f = 3 - 2 * r;
-			x1 += dx / 2;
-			y1 += dy / 2;
-			x2 = x1 + dx % 2;
-			y2 = y1 + dy % 2;
-			while(ya >= xa){
-				xb = (xa * dx) / dy;
-				yb = (ya * dx) / dy;
-				SDL_PutPixel(screen, xb + x2,-ya + y1, color); /*A*/
-				SDL_PutPixel(screen, yb + x2,-xa + y1, color); /*B*/
-				SDL_PutPixel(screen,-yb + x1,-xa + y1, color); /*C*/
-				SDL_PutPixel(screen,-xb + x1,-ya + y1, color); /*D*/
-				SDL_PutPixel(screen,-xb + x1, ya + y2, color); /*E*/
-				SDL_PutPixel(screen,-yb + x1, xa + y2, color); /*F*/
-				SDL_PutPixel(screen, yb + x2, xa + y2, color); /*G*/
-				SDL_PutPixel(screen, xb + x2, ya + y2, color); /*H*/
-				if(f >= 0){
-					ya--;
-					f -= 4 * ya;
-				}
-				xa++;
-				f += 4 * xa + 2;
-			}
-		}
+	}
 
-		if(SDL_MUSTLOCK(screen)){
-			SDL_UnlockSurface(screen);
-		}
+	if(SDL_MUSTLOCK(screen)){
+		SDL_UnlockSurface(screen);
+	}
+}
+
+void SDL_DrawFullCircle(SDL_Surface *screen,
+		int x1, int y1,
+		int x2, int y2,
+		Uint8 R, Uint8 G, Uint8 B)
+{
+	auto const xr = abs(x1-x2)/2;
+	auto const yr = abs(y1-y2)/2;
+	auto const cx = min(x1,x2) + xr;
+	auto const cy = min(y1,y2) + yr;
+	times(r,1,xr){
+		auto xx1 = cx-r;
+		auto yy1 = cy-r;
+		auto xx2 = cx+r;
+		auto yy2 = cy+r;
+		SDL_DrawCircle(screen,xx1,yy1,xx2,yy2,R,G,B);
+	}
 }
 
 void SDL_DrawPaint(SDL_Surface *screen,
 	int x, int y,
-	Uint8 R, Uint8 G, Uint8 B){
-		Uint32 color = SDL_MapRGB(screen->format, R, G, B);
+	Uint8 R, Uint8 G, Uint8 B)
+{
+	Uint32 color = SDL_MapRGB(screen->format, R, G, B);
 
-		point_t *buffer;
-		int pbuf;
-		Uint32 bcol;
-		int i;
-		int bx1,bx2,by;
+	point_t *buffer;
+	int pbuf;
+	Uint32 bcol;
+	int i;
+	int bx1,bx2,by;
 
-		if( (x < 0) | (screen->w <= x) |
-			(y < 0) | (screen->h <= y))
-			return;
+	if( (x < 0) | (screen->w <= x) |
+		(y < 0) | (screen->h <= y))
+		return;
 
-		buffer = (point_t*)malloc(sizeof(point_t) * (screen->w + 1));
-		if(buffer == NULL)
-			return;
+	buffer = (point_t*)malloc(sizeof(point_t) * (screen->w + 1));
+	if(buffer == NULL)
+		return;
 
-		if(SDL_MUSTLOCK(screen)){
-			if(SDL_LockSurface(screen) < 0){
-				free(buffer);
-				return;
-			}
-		}
-
-		bcol = SDL_GetPixel(screen, x, y);
-		if(bcol == color){
-			if(SDL_MUSTLOCK(screen)){
-				SDL_UnlockSurface(screen);
-			}
+	if(SDL_MUSTLOCK(screen)){
+		if(SDL_LockSurface(screen) < 0){
 			free(buffer);
 			return;
 		}
-		buffer[0].x = x;
-		buffer[0].y = y;
-		pbuf = 1;
-		while(pbuf){
-			pbuf--;
-			bx1 = bx2 = buffer[pbuf].x;
-			by = buffer[pbuf].y;
-			while(bx1 >= 0 && SDL_GetPixel(screen, bx1, by) == bcol)
-				bx1--;
-			while(bx2 < screen->w && SDL_GetPixel(screen, bx2, by) == bcol)
-				bx2++;
-			bx1++;
-			bx2--;
-			for(i = bx1;i <= bx2;i++)
-				SDL_PutPixel(screen, i, by, color);
-			if(by > 0){
-				i = bx1;
-				by--;
-				if(SDL_GetPixel(screen, i, by) == bcol){
-					while(i >= 0 && SDL_GetPixel(screen, i, by) == bcol)
-						i--;
-					i++;
-				}
-				else
-					while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
-						i++;
-				while(i <= bx2){
-					buffer[pbuf].x = i;
-					buffer[pbuf].y = by;
-					pbuf++;
-					while(i < screen->w && SDL_GetPixel(screen, i, by) == bcol)
-						i++;
-					while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
-						i++;
-				}
-			}
-			else
-				by--;
-			if(by + 2 < screen->h){
-				i = bx1;
-				by += 2;
-				if(SDL_GetPixel(screen, i, by) == bcol){
-					while(i >= 0 && SDL_GetPixel(screen, i, by) == bcol)
-						i--;
-					i++;
-				}
-				else
-					while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
-						i++;
-				while(i <= bx2){
-					buffer[pbuf].x = i;
-					buffer[pbuf].y = by;
-					pbuf++;
-					while(i < screen->w && SDL_GetPixel(screen, i, by) == bcol)
-						i++;
-					while( i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
-						i++;
-				}
-			}
-		}
+	}
 
+	bcol = SDL_GetPixel(screen, x, y);
+	if(bcol == color){
 		if(SDL_MUSTLOCK(screen)){
 			SDL_UnlockSurface(screen);
 		}
 		free(buffer);
+		return;
+	}
+	buffer[0].x = x;
+	buffer[0].y = y;
+	pbuf = 1;
+	while(pbuf){
+		pbuf--;
+		bx1 = bx2 = buffer[pbuf].x;
+		by = buffer[pbuf].y;
+		while(bx1 >= 0 && SDL_GetPixel(screen, bx1, by) == bcol)
+			bx1--;
+		while(bx2 < screen->w && SDL_GetPixel(screen, bx2, by) == bcol)
+			bx2++;
+		bx1++;
+		bx2--;
+		for(i = bx1;i <= bx2;i++)
+			SDL_PutPixel(screen, i, by, color);
+		if(by > 0){
+			i = bx1;
+			by--;
+			if(SDL_GetPixel(screen, i, by) == bcol){
+				while(i >= 0 && SDL_GetPixel(screen, i, by) == bcol)
+					i--;
+				i++;
+			}
+			else
+				while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
+					i++;
+			while(i <= bx2){
+				buffer[pbuf].x = i;
+				buffer[pbuf].y = by;
+				pbuf++;
+				while(i < screen->w && SDL_GetPixel(screen, i, by) == bcol)
+					i++;
+				while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
+					i++;
+			}
+		}
+		else
+			by--;
+		if(by + 2 < screen->h){
+			i = bx1;
+			by += 2;
+			if(SDL_GetPixel(screen, i, by) == bcol){
+				while(i >= 0 && SDL_GetPixel(screen, i, by) == bcol)
+					i--;
+				i++;
+			}
+			else
+				while(i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
+					i++;
+			while(i <= bx2){
+				buffer[pbuf].x = i;
+				buffer[pbuf].y = by;
+				pbuf++;
+				while(i < screen->w && SDL_GetPixel(screen, i, by) == bcol)
+					i++;
+				while( i <= bx2 && SDL_GetPixel(screen, i, by) != bcol)
+					i++;
+			}
+		}
+	}
+
+	if(SDL_MUSTLOCK(screen)){
+		SDL_UnlockSurface(screen);
+	}
+	free(buffer);
 }

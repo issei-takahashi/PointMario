@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Displayed.h"
+#include "RGBColored.h"
 #include "ColorRGB.h"
 
 namespace mario{
 
-	class Cross final : public Displayed<Cross>
+	class Cross final : public Displayed<Cross>, public RGBColored
 	{
 		SHARED(Cross);
 	public:

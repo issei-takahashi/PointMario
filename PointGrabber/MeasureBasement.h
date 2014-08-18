@@ -21,7 +21,7 @@ namespace mario{
 	public:
 		bool displayFlag;
 		boost::mutex cld_mutex, img_mutex;
-		pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr spcCloud;
+		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr spcCloud;
 		boost::shared_ptr<openni_wrapper::Image> spImage;
 		// Create the PCLVisualizer object
 		boost::shared_ptr<pcl::visualization::PCLVisualizer> spVisualizer;

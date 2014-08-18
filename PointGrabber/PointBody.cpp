@@ -19,17 +19,20 @@ pcl::PointXYZRGBA const PointBody::getSearchPoint()
 {
 	auto dp = this->point;
 	Eigen::Vector4d vec;
-	vec.x() = dp.x;
-	vec.y() = dp.y;
-	vec.z() = dp.z;
-	vec.w() = 1;
+	vec[0] = dp.x;
+	vec[1] = dp.y;
+	vec[2] = dp.z;
+	vec[3] = 1;
+	cout << "D : (" << vec[0] << "," << vec[1] << "," << vec[2] << "," << vec[3] << ") " << endl;
+	Eigen::Vector4d vec2;
 	if( auto sp = this->ownerApp.lock() ){
-		vec = sp->getMtoDMat().inverse() * vec;
+		vec2 = sp->getDtoMMat() * vec;
+		cout << "M : (" << vec2[0] << "," << vec2[1] << "," << vec2[2] << ") " << endl;
 	}
-	pcl::PointXYZRGBA ret;
-	ret.x = vec.x();
-	ret.y = vec.y();
-	ret.z = vec.z();
+	static pcl::PointXYZRGBA ret;
+	ret.x = vec2[0]/1000;
+	ret.y = vec2[1]/1000;
+	ret.z = vec2[2]/1000;
 	return ret;
 }
 

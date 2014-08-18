@@ -7,6 +7,10 @@ typedef unsigned int uint;
 typedef uint frame_t;
 typedef uint count_t;
 
+#define once_double static double const
+#define once_float static float const
+#define once_int static int const
+
 #define SHARED(__T__) \
 	friend class shared_ptr<__T__>;\
 	friend class unique_ptr<__T__>;\

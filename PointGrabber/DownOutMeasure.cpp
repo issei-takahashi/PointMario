@@ -11,19 +11,66 @@ mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
 
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud( SolidBody & _obj, double _resolution )
+bool mario::DownOutMeasure::collisionDetectionWithCloud_simple( SolidBody & _obj, double _distance )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	auto search = _obj.getSearchPoint();
-	mario::searchNeighbors_voxel( this->spcCloud, search, _resolution, indices );
-	this->cld_mutex.unlock();
-	if( indices ){
-		if( indices->size() > 10 ){
-			return true;
-		}
+	bool ret = mario::searchNeighbors_simple( this->spcCloud, search, _distance, indices );
+	times(i,0,indices->size()){
+		this->spcCloud->points[(*indices)[i]].r = 255 ;
+		this->spcCloud->points[(*indices)[i]].g = 0 ;
+		this->spcCloud->points[(*indices)[i]].b  = 0 ;
 	}
-	return false;
+	this->cld_mutex.unlock();
+	return ret;
+}
+
+bool mario::DownOutMeasure::collisionDetectionWithCloud_voxel( SolidBody & _obj, double _resolution )
+{
+	this->cld_mutex.lock();
+	indices_t indices;
+	auto search = _obj.getSearchPoint();
+	bool ret = mario::searchNeighbors_voxel( this->spcCloud, search, _resolution, indices );
+	times(i,0,indices->size()){
+		this->spcCloud->points[(*indices)[i]].r = 255 ;
+		this->spcCloud->points[(*indices)[i]].g = 0 ;
+		this->spcCloud->points[(*indices)[i]].b  = 0 ;
+	}
+	this->cld_mutex.unlock();
+	return ret;
+}
+
+bool mario::DownOutMeasure::collisionDetectionWithCloud_Knearest( class SolidBody & _obj, float _resolution, int _K )
+{
+	this->cld_mutex.lock();
+	indices_t indices;
+	distances_t distances;
+	auto search = _obj.getSearchPoint();
+	bool ret = mario::searchNeighbors_Knearest( this->spcCloud, search, _resolution,_K, indices, distances );
+	times(i,0,indices->size()){
+		this->spcCloud->points[(*indices)[i]].r = 255 ;
+		this->spcCloud->points[(*indices)[i]].g = 0 ;
+		this->spcCloud->points[(*indices)[i]].b  = 0 ;
+	}
+	this->cld_mutex.unlock();
+	return ret;
+}
+
+bool mario::DownOutMeasure::collisionDetectionWithCloud_radius( class SolidBody & _obj, float _resolution, float _radius )
+{
+	this->cld_mutex.lock();
+	indices_t indices;
+	distances_t distances;
+	auto search = _obj.getSearchPoint();
+	bool ret = mario::searchNeighbors_radius( this->spcCloud, search, _resolution, _radius, indices, distances );
+	times(i,0,indices->size()){
+		this->spcCloud->points[(*indices)[i]].r = 255 ;
+		this->spcCloud->points[(*indices)[i]].g = 0 ;
+		this->spcCloud->points[(*indices)[i]].b  = 0 ;
+	}
+	this->cld_mutex.unlock();
+	return ret;
 }
 
 // Simple callbacks.
@@ -64,17 +111,16 @@ void mario::DownOutMeasure::mouse_callback( const pcl::visualization::MouseEvent
 }
 
 
-void mario::DownOutMeasure::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & mcloud)
+void mario::DownOutMeasure::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloud)
 {
 	FPS_CALC ("callback");
 
 	this->cld_mutex.lock ();
 
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr dcloud ;
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr outcloud ;
 
-	if( this->convertMtoD_withDownAndOut( mcloud, dcloud ) ){
-		this->spcCloud = dcloud->makeShared();
-	}
+	this->downAndOut( _cloud, outcloud );
+	this->spcCloud = outcloud->makeShared();
 
 	this->cld_mutex.unlock ();
 
@@ -93,35 +139,17 @@ void mario::DownOutMeasure::image_callback ( const boost::shared_ptr<openni_wrap
 	this->img_mutex.unlock ();
 }
 
-bool mario::DownOutMeasure::convertMtoD_withDownAndOut( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _mcloud,
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & _dcloud )
+void mario::DownOutMeasure::downAndOut( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _src, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & _dst )
 {
-	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed, filtered;
+	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed;
 	MAKE_CLOUD(downed);
-	MAKE_CLOUD(filtered);
-
-	//downed    = ( pcl::PointCloud<pcl::PointXYZRGBA>::Ptr )(new pcl::PointCloud<pcl::PointXYZRGBA>);
-	if( _dcloud.get() == NULL ){
-		MAKE_CLOUD(_dcloud);
+	if( _dst.get() == NULL ){
+		MAKE_CLOUD(_dst);
 	}
 
-	mario::downSamplingFilter( _mcloud, downed );
-	mario::outlierFilter( downed, filtered );
-	cout << "DownOut:" << filtered->points.size() << endl;
-	times(count,0,filtered->points.size()){
-		Eigen::Vector4d tmpv;
-		tmpv(0) = filtered->points[count].x;
-		tmpv(1) = filtered->points[count].y;
-		tmpv(2) = filtered->points[count].z;
-		tmpv(3) = 1.0;
-		tmpv = this->MtoDMat * tmpv;
-		pcl::PointXYZRGBA pt;
-		pt.x = tmpv(0);
-		pt.y = tmpv(1);
-		pt.z = tmpv(2);
-		_dcloud->push_back( pt );
-	}
-	return true;
+	mario::downSamplingFilter( _src, downed );
+	mario::outlierFilter( downed, _dst );
+	cout << "DownOut:" << _dst->points.size() << endl;
 }
 
 static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");

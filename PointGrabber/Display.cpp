@@ -93,6 +93,6 @@ Display::Actuator::~Actuator()
 
 void Display::Actuator::moveTo( typeD _zd )
 {
-	cout << "Actuator.z (in D) : " << _zd << endl;
+	//cout << "Actuator.z (in D) : " << _zd << endl;
 	this->upPort->putc1( min(255,max(0,300-(int)_zd)) );
 }

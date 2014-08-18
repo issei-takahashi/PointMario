@@ -19,21 +19,20 @@ namespace mario{
 	void cvt2Mat( const boost::shared_ptr<openni_wrapper::Image>& input, boost::shared_ptr<openni_wrapper::Image>& output );
 	void clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, int maxNum );
 
-	void searchNeighbors_voxel( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
-		pcl::PointXYZRGBA const & _searchPoint, float _resolution,
-		indices_t & _ind );
+	bool searchNeighbors_simple( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind );
 
-	void searchNeighbors_Knearest( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
-		pcl::PointXYZRGBA const & _searchPoint, float _resolution, int _K,
-		indices_t & _ind, distances_t & _dist );
+	bool searchNeighbors_voxel( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+		pcl::PointXYZRGBA const & _searchPoint, float _resolution, indices_t & _ind );
 
-	void searchNeighbors_radius( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
-		pcl::PointXYZRGBA const & _searchPoint, float _resolution, float _radius,
-		indices_t & _ind, distances_t & _dist );
+	bool searchNeighbors_Knearest( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+		pcl::PointXYZRGBA const & _searchPoint, float _resolution, int _K, indices_t & _ind, distances_t & _dist );
+
+	bool searchNeighbors_radius( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+		pcl::PointXYZRGBA const & _searchPoint, float _resolution, float _radius, indices_t & _ind, distances_t & _dist );
 
 	void newPointSearch( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudA,
-		const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudB, float _resolution,
-		indices_t & _ind);
+		const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloudB, float _resolution, indices_t & _ind);
 
 	Coordinate<typeM> getAverage( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud );
 }

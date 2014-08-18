@@ -27,6 +27,11 @@ DeruChara::DeruChara( Eigen::Matrix4d const & _MtoD )
 
 void DeruChara::mainLoop()
 {
+	once_double resolution = FileIO::getConst("OCTREE_RESOLUTION");
+	once_double radius = FileIO::getConst("OCTREE_RADIUS");
+	once_double K = FileIO::getConst("OCTREE_K");
+	once_double distance = FileIO::getConst("SIMPLE_SEARCH_DISTANCE");
+
 	/* MeasureBasementの生成 */
 	Coordinate<typeM> ret;
 	cout << "MeasureBasementの初期化中..." << endl;
@@ -41,11 +46,12 @@ void DeruChara::mainLoop()
 	typedef MidairObject<PointBody,Circle> Obj;
 
 	/* 表示の生成 */
-	auto img = Circle::makeShared(100,mario::ColorRGB(0,255,0));
+	auto img = Circle::makeShared(50,mario::ColorRGB(0,255,0));
 	img->displayStart();
 	img->setDisplayPoint( Coordinate<typeD>(150,100,100) );
 	/* ボディの生成 */
 	auto body = PointBody::makeShared(this->shared_from_this());
+	body->setPoint(img->getDisplayPoint());
 	/* オブジェクトにくっつける */
 	shared_ptr<Obj> chara = (shared_ptr<Obj>)(new Obj(body,img));	
 
@@ -54,7 +60,8 @@ void DeruChara::mainLoop()
 		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
 		/* 当たり判定 */
-		if( base.collisionDetectionWithCloud(*chara->getBody(),0.01) ){
+		base.oneLoop();
+		if( base.collisionDetectionWithCloud_simple(*chara->getBody(),distance) ){
 			chara->getDisplayed()->setColor(255,0,0);
 		}else{
 			chara->getDisplayed()->setColor(0,255,0);

@@ -11,7 +11,7 @@ namespace mario{
 	public:
 		virtual ~_Displayed(){
 		}
-		void setWindow( shared_ptr<class Window> _ptr ){ 
+		virtual void setWindow( shared_ptr<class Window> _ptr ){ 
 			this->_DisplayedMutex.lock();
 			this->ownerWindow = _ptr; 
 			this->_DisplayedMutex.unlock();

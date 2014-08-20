@@ -42,8 +42,8 @@ void TokyoSky1::mainLoop()
 	Coordinate<typeD> skyP(rcD.x-70,rcD.y+130,rcD.z-150);
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
-	auto tokyo = (shared_ptr<Animation>)(new Animation("image/tokyo_name/"));
-	auto sky = (shared_ptr<Animation>)(new Animation("image/sky_name/"));
+	auto tokyo = Animation::makeShared("image/tokyo_name/");
+	auto sky = Animation::makeShared("image/sky_name/");
 	tokyo->displayStart();
 	tokyo->setDisplayPoint(tokyoP);
 	sky->displayStart();

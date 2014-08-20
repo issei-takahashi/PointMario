@@ -9,7 +9,7 @@
 #include "MarkerDetecter.h"
 #include "Cross.h"
 #include "Circle.h"
-#include "MidairObject.h"
+#include "MidairChara.h"
 
 using namespace mario;
 
@@ -31,11 +31,16 @@ void DeruChara::mainLoop()
 	once_double radius = FileIO::getConst("OCTREE_RADIUS");
 	once_double K = FileIO::getConst("OCTREE_K");
 	once_double distance = FileIO::getConst("SIMPLE_SEARCH_DISTANCE");
-
+	
+	string ans;
+	cout << "計測データを表示しますか？(y/n)" << endl;
+	cin >> ans;
+	bool showFlag = (ans=="y");
 	/* MeasureBasementの生成 */
 	Coordinate<typeM> ret;
 	cout << "MeasureBasementの初期化中..." << endl;
 	DownOutMeasure base(this->MtoDMat);
+	base.displayFlag = showFlag;
 	base.start();
 
 	/* Displayの生成 */
@@ -43,17 +48,10 @@ void DeruChara::mainLoop()
 	disp->setScreenMode( true );
 
 	/* 空中オブジェクトの生成 */
-	typedef MidairObject<PointBody,Circle> Obj;
-
-	/* 表示の生成 */
-	auto img = Circle::makeShared(50,mario::ColorRGB(0,255,0));
-	img->displayStart();
-	img->setDisplayPoint( Coordinate<typeD>(150,100,100) );
-	/* ボディの生成 */
-	auto body = PointBody::makeShared(this->shared_from_this());
-	body->setPoint(img->getDisplayPoint());
-	/* オブジェクトにくっつける */
-	shared_ptr<Obj> chara = (shared_ptr<Obj>)(new Obj(body,img));	
+	auto chara = MidairChara::makeShared(this->shared_from_this(),"image/hiyoko/");
+	chara->displayStart();
+	chara->setPoint(Coordinate<typeD>(100,100,100));
+	chara->setDisplayPoint(chara->getPoint());
 
 	frame_t frameCount = 0;
 	while(1){
@@ -61,14 +59,14 @@ void DeruChara::mainLoop()
 		auto ms1 = Timer::getInstance()->getms();
 		/* 当たり判定 */
 		base.oneLoop();
-		if( base.collisionDetectionWithCloud_simple(*chara->getBody(),distance) ){
-			chara->getDisplayed()->setColor(255,0,0);
+		if( base.collisionDetectionWithCloud_simple(*chara,distance) ){
+			
 		}else{
-			chara->getDisplayed()->setColor(0,255,0);
+			
 		}
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();
-		disp->moveActuatorTo(chara->getDisplayed()->getDisplayPoint().z);
+		disp->moveActuatorTo(chara->getDisplayPoint().z);
 		/* 終了処理 */
 		if( Eventer::getInstance()->quitEvent() ){
 			break;

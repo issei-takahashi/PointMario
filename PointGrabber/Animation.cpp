@@ -25,11 +25,16 @@ Animation::Animation( string const & _folderPath )
 	if( fileList.size() > 0 ){
 		foreach(it,fileList){
 			if( IS_IMAGE_FILE(*it) ){
-				this->frames[*it] = (shared_ptr<OneAnimationFrame>)(new OneAnimationFrame(_folderPath+(*it),4,this->ownerWindow));
+				this->frames[*it] = (shared_ptr<OneAnimationFrame>)(new OneAnimationFrame(_folderPath+(*it),4,weak_ptr<Window>()));
 			}
 		}
 		this->it_frame = this->frames.begin();
 	}
+}
+
+shared_ptr<Animation> Animation::makeShared( string const & _folderPath )
+{
+	return (shared_ptr<Animation>)(new Animation(_folderPath));
 }
 
 priority Animation::getPriority() const
@@ -54,12 +59,16 @@ void Animation::oneLoop( uint _x, uint _y )
 void Animation::displayStart() 
 {
 	mario::Display::getInstance()->addDisplayedElement( this->shared_from_this() );
-	foreach(it,this->frames){
-		it->second->image->setWindow(this->ownerWindow.lock());
-	}
 }
 
 void Animation::displayStop()
 {
 	//mario::Display::getInstance()->removeDisplayedElement( this->shared_from_this() );
+}
+
+void Animation::setWindow( shared_ptr<Window> _owner )
+{
+	foreach(it,this->frames){
+		it->second->image->setWindow(_owner);
+	}
 }

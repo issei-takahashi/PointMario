@@ -29,6 +29,9 @@ int main(int argc, char** argv)
 	catch( boost::exception & ex ){
 		cout << "boost exception" << endl;
 	}
+	catch( ... ){
+		cout << "some exception" << endl;
+	}
 	::quit();
 	return ret;
 }

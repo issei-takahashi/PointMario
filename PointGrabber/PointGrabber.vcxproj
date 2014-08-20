@@ -72,7 +72,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -91,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MidairChara.h" />
     <ClInclude Include="MidairObject.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="issei_grad_main.cpp" />
     <ClCompile Include="MeasureBasement.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MidairChara.cpp" />
     <ClCompile Include="pcl_utils.cpp" />
     <ClCompile Include="PointCapture.cpp" />
     <ClCompile Include="PointMario_main.cpp" />

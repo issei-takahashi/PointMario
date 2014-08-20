@@ -19,8 +19,9 @@ namespace mario{
 		// get
 		Eigen::Vector3d getVelocity();
 		Coordinate<typeD> getPoint() const { return this->point; }
-	private:
+	protected:
 		PointBody( shared_ptr<class Application> _owner );
+	private:
 		Coordinate<typeD> point;
 		boost::mutex velocityMutex;
 		Eigen::Vector3d velocity;

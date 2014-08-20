@@ -31,9 +31,7 @@ void mario::MeasureBasement::start()
 	this->bindedFunction = boost::bind( &MeasureBasement::cloud_cb, this, _1);
 	this->signals2Connection = this->upGrabberInterface->registerCallback( this->bindedFunction );
 
-	if( this->displayFlag ){
-		this->upGrabberInterface->start();
-	}
+	this->upGrabberInterface->start();
 }
 
 void mario::MeasureBasement::stop()
@@ -59,8 +57,8 @@ void mario::MeasureBasement::oneLoop()
 		FPS_CALC ("drawing");
 		this->showCloud();
 		//this->showImage();
+		boost::this_thread::sleep (boost::posix_time::microseconds (100));
 	}
-	boost::this_thread::sleep (boost::posix_time::microseconds (100));
 }
 
 bool mario::MeasureBasement::quitEvent()

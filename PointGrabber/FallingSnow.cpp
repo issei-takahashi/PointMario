@@ -62,7 +62,7 @@ void FallingSnow::mainLoop()
 			body->setPoint( Coordinate<typeD>(rcD.x+ran,rcD.y+300,rcD.z) );
 			body->setVelocity(Eigen::Vector3d(0,-1,0));
 			// 表示
-			auto circle = (shared_ptr<Animation>)(new Animation("image/circle/"));
+			auto circle = Animation::makeShared("image/circle/");
 			circle->displayStart();
 			circle->setDisplayPoint( body->getPoint() );
 			// 空中オブジェクトにする

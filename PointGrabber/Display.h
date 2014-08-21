@@ -4,6 +4,7 @@
 #include "Singleton.h"
 
 typedef int pix;
+class ProjCtrlWinClass;
 
 namespace mario
 {
@@ -25,11 +26,16 @@ namespace mario
 		int getScreenXpx() const { return this->screenXpx; }
 		int getScreenYpx() const { return this->screenYpx; }
 	private:
+		void sendInfoToProjector();
+	private:
+		/* モニタ関連 */
 		shared_ptr<class Window> window;
 		int screenXmm;
 		int screenYmm;
 		int screenXpx;
 		int screenYpx;
+		/* プロジェクタ関連 */
+		shared_ptr<ProjCtrlWinClass> pSysProjCtrlWinClass;
 		/* アクチュエータ */
 		class Actuator
 		{
@@ -41,7 +47,6 @@ namespace mario
 			typeD zd;
 			unique_ptr<class WinRS>  upPort; // Arduino用のポート
 		};
-		/* アクチュエータ関連 */
 		shared_ptr<mario::Display::Actuator> actuator;
 	};
 };

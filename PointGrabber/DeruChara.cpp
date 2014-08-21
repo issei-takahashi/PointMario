@@ -52,7 +52,7 @@ void DeruChara::mainLoop()
 	while(1){
 		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
-		base->oneLoop();
+		//base->oneLoop();
 
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();

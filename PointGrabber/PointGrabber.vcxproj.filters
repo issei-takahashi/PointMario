@@ -255,6 +255,27 @@
     <ClInclude Include="MidairChara.h">
       <Filter>MARIO_Engine\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="LokiExport.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjecterControl.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="WinClass.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="Window_DDT.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="LokiSingleton.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
+    <ClInclude Include="LokiThreads.h">
+      <Filter>MARIO_Engine\Projector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Program">
@@ -316,6 +337,9 @@
     </Filter>
     <Filter Include="MARIO_Engine\DrawLibWrapper\Texts">
       <UniqueIdentifier>{0b08acf4-75c8-4da4-9c36-4b57f65a3e9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MARIO_Engine\Projector">
+      <UniqueIdentifier>{2ecca8e5-760f-4766-ae8f-fd9895eb6741}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

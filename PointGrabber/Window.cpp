@@ -25,6 +25,7 @@ mario::Window::Window( int _width, int _height, string const & _windowName, bool
 	this->wmInfo = (shared_ptr<SDL_SysWMinfo>)(new SDL_SysWMinfo());
 	SDL_VERSION(&this->wmInfo->version);
 	SDL_GetWMInfo(&*this->wmInfo);
+	this->hInstance = (HINSTANCE)(GetWindowLong(this->wmInfo->window,GWL_HINSTANCE));
 
 	this->surface = SDL_SetVideoMode( _width, _height, 32, SDL_HWSURFACE );
 	this->setScreenMode(_screenModeFlag);

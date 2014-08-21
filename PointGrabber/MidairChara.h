@@ -18,5 +18,6 @@ namespace mario
 		map<string, shared_ptr<class Animation> >::iterator currentMotion;
 		weak_ptr<class DownOutMeasure> const measureBase;
 		frame_t frameToJump;
+		frame_t jumpingFrame;
 	};
 };

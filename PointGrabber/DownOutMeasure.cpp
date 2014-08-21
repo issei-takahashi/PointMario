@@ -23,11 +23,17 @@ bool DownOutMeasure::simpleCollisionDetectionAndGetHighestPoint   ( class SolidB
 	this->cld_mutex.lock();
 	indices_t indices;
 	auto search = _obj.getSearchPoint();
-	bool ret = simpleNeighborsSearchAndGetHighestPoint( this->spcCloud, search, _distance, indices, _highDst );
+	int highIndex = -1;
+	bool ret = simpleNeighborsSearchAndGetHighestPoint( this->spcCloud, search, _distance, indices, _highDst, highIndex );
 	times(i,0,indices->size()){
 		this->spcCloud->points[(*indices)[i]].r = 255 ;
 		this->spcCloud->points[(*indices)[i]].g = 0 ;
-		this->spcCloud->points[(*indices)[i]].b  = 0 ;
+		this->spcCloud->points[(*indices)[i]].b = 0 ;
+	}
+	if( highIndex != -1 ){
+		this->spcCloud->points[highIndex].r = 0 ;
+		this->spcCloud->points[highIndex].g = 255 ;
+		this->spcCloud->points[highIndex].b = 0 ;
 	}
 	this->cld_mutex.unlock();
 	return ret;

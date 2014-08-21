@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "Displayed.h"
 #include "Window.h"
+#include "ProjecterControl.h"
 
 using namespace mario;
 
@@ -16,11 +17,18 @@ static std::string const SCREEN_CAPTION = "SDL window test";
 
 Display::Display()
 {
+	/* ƒ‚ƒjƒ^ŠÖ˜A‚Ì‰Šú‰» */
 	this->screenXmm = FileIO::getConst("DISP_X_mm");
 	this->screenYmm = FileIO::getConst("DISP_Y_mm");
 	static int const DISP_Z_mm = FileIO::getConst("DISP_Z_mm");
 	this->screenXpx = FileIO::getConst("DISP_X_px");
 	this->screenYpx = FileIO::getConst("DISP_Y_px");
+	MAKE_WINDOW_IF_NOT_EXIST;
+
+	/* ƒvƒƒWƒFƒNƒ^ŠÖ˜A‚Ì‰Šú‰» */
+	this->pSysProjCtrlWinClass = shared_ptr<ProjCtrlWinClass> (new ProjCtrlWinClass( this->window->gethInstance() ) );
+	DWORD dwThId;
+	Thread proj_thrd(ProjCtrlFuncThread, &dwThId);
 
 	/* ƒAƒNƒ`ƒ…ƒG[ƒ^‚Ì‰Šú‰» */
 	this->actuator = (shared_ptr<Actuator>)(new Actuator());
@@ -31,6 +39,36 @@ void Display::oneLoop()
 {
 	MAKE_WINDOW_IF_NOT_EXIST;
 	this->window->oneLoop();
+	this->sendInfoToProjector();
+}
+
+void Display::sendInfoToProjector()
+{
+	/*------------¦À•WŒn‚Ìˆá‚¢‚É’ˆÓII¦--------------
+
+	@@@@@DCRA‘¤
+	@@QQQQQQQQQ
+	@^@@@@@@@@^
+	^@@@@@@@@^
+	PPPPPPPPP
+	@@l‘¤
+
+	Sekai: ’PˆÊ‚ÍŠî–{mmB
+	  y
+	  |Q x
+	 ^
+	z
+
+	DDT:’PˆÊ‚ÍpxBƒuƒƒbƒN‚ªŠî€B100px=60mmB
+	  z
+	  |Q x
+	 ^
+	y
+
+	-----------------------*/
+	static int a[3] = {50,50,50};
+	this->pSysProjCtrlWinClass->SendMessageToProjecter( 12 , &a );
+
 }
 
 void Display::moveActuatorTo( typeD _z )

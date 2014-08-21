@@ -19,9 +19,11 @@ namespace mario{
 		void setScreenMode(bool _isScreenMode);
 		void wait( int _ms );
 		SDL_Surface* getSurface() const { return this->surface; }
+		HINSTANCE gethInstance() const { return this->hInstance; }
 	private:
 		SDL_Surface* surface;
 		shared_ptr<SDL_SysWMinfo> wmInfo;
+		HINSTANCE hInstance;
 		int width;
 		int height;
 		string windowName;

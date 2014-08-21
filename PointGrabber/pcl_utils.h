@@ -20,7 +20,7 @@ namespace mario{
 	void clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & cloud,  pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & dst, list< pcl::PointCloud<pcl::PointXYZRGBA>::Ptr >& l_dst, int maxNum );
 
 	bool simpleNeighborsSearchAndGetHighestPoint( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
-		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind, mario::Coordinate<mario::typeD> & _highDst );
+		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind, mario::Coordinate<mario::typeD> & _highDst, int& _highIndex );
 
 	bool searchNeighbors_simple( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
 		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind );

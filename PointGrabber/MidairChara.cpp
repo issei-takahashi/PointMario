@@ -9,7 +9,7 @@ using namespace mario;
 
 MidairChara::MidairChara( shared_ptr<Application> _owner, shared_ptr<DownOutMeasure> _base, string const & _folderPath )
 	:PointBody(_owner), measureBase(_base),
-	frameToJump(0)
+	frameToJump(0), jumpingFrame(0)
 {
 	list<string> fileList;
 	utils::getFileList(_folderPath,fileList); // フォルダのリストを取得
@@ -42,27 +42,30 @@ void MidairChara::oneLoop( uint _x, uint _y )
 		once_double radius = FileIO::getConst("OCTREE_RADIUS");
 		once_double K = FileIO::getConst("OCTREE_K");
 		once_double distance = FileIO::getConst("SIMPLE_SEARCH_DISTANCE");
+		once_double GRAVITY = FileIO::getConst("GRAVITY");
+		once_int WAIT_FRAME = FileIO::getConst("WAIT_FRAME");
+		once_int FLYING_FRAME = FileIO::getConst("FLYING_FRAME");
+		once_int NO_COLLISION_FRAME = FileIO::getConst("NO_COLLISION_FRAME");
 		// 計測データから最高点データとキャラクター近傍データを抜き出し（1回のみ）
 		Coordinate<typeD> highest;
 		bool hit = sp->simpleCollisionDetectionAndGetHighestPoint(*this,distance,highest);
 		/* 最高点目指して移動 */
-		if( ++this->frameToJump > 60 ){
+		if( ++this->frameToJump > WAIT_FRAME ){
 			cout << "highest : " << highest.x << "," << highest.y << "," << highest.z << endl;
 			this->frameToJump = 0;
-			Eigen::Vector3d vel;
+			this->jumpingFrame = 0;
 			auto thispos = this->getPoint();
-			vel.x() = highest.x - thispos.x;
-			vel.y() = highest.y - thispos.y;
-			vel.z() = highest.z - thispos.z;
-			double len = sqrt( pow(vel.x(),2) + pow(vel.y(),2) + pow(vel.z(),2) );
-			vel *= 50/len;
+			Eigen::Vector3d vel;
+			vel.x() = (highest.x-thispos.x)/FLYING_FRAME;
+			vel.y() = (GRAVITY*FLYING_FRAME)/2 + (highest.y-thispos.y)/FLYING_FRAME;
+			vel.z() = (highest.z-thispos.z)/FLYING_FRAME;
 			this->setVelocity( vel );
 		}else{
 			auto thisvel = this->getVelocity();
-			if( thisvel.z() > 0 && hit ){
-				this->setVelocity(0,1,0);
+			if( ++this->jumpingFrame > NO_COLLISION_FRAME && thisvel.y() <= 0 && hit ){
+				this->setVelocity(0,0,0);
 			}else{
-				thisvel.y() -= 0.1;
+				thisvel.y() -= GRAVITY;
 				this->setVelocity(thisvel);
 			}
 		}

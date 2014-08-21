@@ -26,12 +26,7 @@ DeruChara::DeruChara( Eigen::Matrix4d const & _MtoD )
 }
 
 void DeruChara::mainLoop()
-{
-	once_double resolution = FileIO::getConst("OCTREE_RESOLUTION");
-	once_double radius = FileIO::getConst("OCTREE_RADIUS");
-	once_double K = FileIO::getConst("OCTREE_K");
-	once_double distance = FileIO::getConst("SIMPLE_SEARCH_DISTANCE");
-	
+{	
 	string ans;
 	cout << "計測データを表示しますか？(y/n)" << endl;
 	cin >> ans;
@@ -39,31 +34,26 @@ void DeruChara::mainLoop()
 	/* MeasureBasementの生成 */
 	Coordinate<typeM> ret;
 	cout << "MeasureBasementの初期化中..." << endl;
-	DownOutMeasure base(this->MtoDMat);
-	base.displayFlag = showFlag;
-	base.start();
+	auto base = DownOutMeasure::makeShared(this->MtoDMat);
+	base->displayFlag = showFlag;
+	base->start();
 
 	/* Displayの生成 */
 	auto disp = Display::getInstance();
 	disp->setScreenMode( true );
 
 	/* 空中オブジェクトの生成 */
-	auto chara = MidairChara::makeShared(this->shared_from_this(),"image/hiyoko/");
+	auto chara = MidairChara::makeShared(this->shared_from_this(),base,"image/hiyoko/");
 	chara->displayStart();
-	chara->setPoint(Coordinate<typeD>(100,100,100));
+	chara->setPoint(Coordinate<typeD>(150,150,150));
 	chara->setDisplayPoint(chara->getPoint());
 
 	frame_t frameCount = 0;
 	while(1){
 		frameCount++;
 		auto ms1 = Timer::getInstance()->getms();
-		/* 当たり判定 */
-		base.oneLoop();
-		if( base.collisionDetectionWithCloud_simple(*chara,distance) ){
-			
-		}else{
-			
-		}
+		base->oneLoop();
+
 		/* ディスプレイの描画と移動 */
 		disp->oneLoop();
 		disp->moveActuatorTo(chara->getDisplayPoint().z);

@@ -23,11 +23,11 @@ pcl::PointXYZRGBA const PointBody::getSearchPoint()
 	vec[1] = dp.y;
 	vec[2] = dp.z;
 	vec[3] = 1;
-	cout << "D : (" << vec[0] << "," << vec[1] << "," << vec[2] << "," << vec[3] << ") " << endl;
+	//cout << "D : (" << vec[0] << "," << vec[1] << "," << vec[2] << "," << vec[3] << ") " << endl;
 	Eigen::Vector4d vec2;
 	if( auto sp = this->ownerApp.lock() ){
 		vec2 = sp->getDtoMMat() * vec;
-		cout << "M : (" << vec2[0] << "," << vec2[1] << "," << vec2[2] << ") " << endl;
+		//cout << "M : (" << vec2[0] << "," << vec2[1] << "," << vec2[2] << ") " << endl;
 	}
 	static pcl::PointXYZRGBA ret;
 	ret.x = vec2[0]/1000;

@@ -413,6 +413,38 @@ void mario::clusterize( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & clo
 	}
 }
 
+bool mario::simpleNeighborsSearchAndGetHighestPoint( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
+		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind, mario::Coordinate<mario::typeD> & _highDst )
+{
+	bool ret = false;
+	pcl::PointXYZRGBA highest;
+	highest.x = 0;
+	highest.y = 0;
+	highest.z = 98765;
+	if( _inputCloud ){
+		static indices_t pointIdxVec = (indices_t)(new vector<int>());
+		pointIdxVec->clear();
+		int i=0;
+		foreach(it,_inputCloud->points){
+			// Å‚“_ŒŸo
+			if( it->z < highest.z ){
+				highest = *it;
+			}
+			// “–‚½‚è”»’è
+			if( abs(_searchPoint.x-it->x)<=_distance && abs(_searchPoint.y-it->y)<=_distance && abs(_searchPoint.z-it->z)<=_distance ){
+				pointIdxVec->push_back(i);
+				ret = true;
+			}
+			i++;
+		}
+		_ind = pointIdxVec;
+	}
+	_highDst.x = highest.x*1000; // m -> mm
+	_highDst.y = highest.y*1000; // m -> mm
+	_highDst.z = highest.z*1000; // m -> mm
+	return ret;
+}
+
 bool mario::searchNeighbors_simple( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _inputCloud,
 		pcl::PointXYZRGBA const & _searchPoint, float _distance, indices_t & _ind )
 {

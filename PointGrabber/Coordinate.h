@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 namespace mario
 {
 	typedef double typeR;
@@ -16,7 +18,7 @@ namespace mario
 	class Coordinate
 	{
 		friend class boost::serialization::access;
-
+		friend ostream& operator<<(ostream& os, const Coordinate<T>& obj);
 	public:
 		//ç¿ïWíl
 		T x,y,z;
@@ -212,5 +214,5 @@ namespace mario
 			z -= obj(2);
 		}	
 	};
-
 };
+

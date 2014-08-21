@@ -5,18 +5,25 @@
 
 #define MAKE_CLOUD(dst) dst=(pcl::PointCloud<pcl::PointXYZRGBA>::Ptr)(new pcl::PointCloud<pcl::PointXYZRGBA>)
 
-mario::DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
+using namespace mario;
+
+shared_ptr<DownOutMeasure> DownOutMeasure::makeShared( Eigen::Matrix4d const & _mat )
+{
+	return (shared_ptr<DownOutMeasure>)(new DownOutMeasure(_mat));
+}
+
+DownOutMeasure::DownOutMeasure( Eigen::Matrix4d const & _mat )
  :MeasureBasement(), MtoDMat(_mat)
 {
 
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud_simple( SolidBody & _obj, double _distance )
+bool DownOutMeasure::simpleCollisionDetectionAndGetHighestPoint   ( class SolidBody & _obj, double _distance, Coordinate<typeD> & _highDst )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	auto search = _obj.getSearchPoint();
-	bool ret = mario::searchNeighbors_simple( this->spcCloud, search, _distance, indices );
+	bool ret = simpleNeighborsSearchAndGetHighestPoint( this->spcCloud, search, _distance, indices, _highDst );
 	times(i,0,indices->size()){
 		this->spcCloud->points[(*indices)[i]].r = 255 ;
 		this->spcCloud->points[(*indices)[i]].g = 0 ;
@@ -26,12 +33,12 @@ bool mario::DownOutMeasure::collisionDetectionWithCloud_simple( SolidBody & _obj
 	return ret;
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud_voxel( SolidBody & _obj, double _resolution )
+bool DownOutMeasure::collisionDetectionWithCloud_simple( SolidBody & _obj, double _distance )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	auto search = _obj.getSearchPoint();
-	bool ret = mario::searchNeighbors_voxel( this->spcCloud, search, _resolution, indices );
+	bool ret = searchNeighbors_simple( this->spcCloud, search, _distance, indices );
 	times(i,0,indices->size()){
 		this->spcCloud->points[(*indices)[i]].r = 255 ;
 		this->spcCloud->points[(*indices)[i]].g = 0 ;
@@ -41,13 +48,28 @@ bool mario::DownOutMeasure::collisionDetectionWithCloud_voxel( SolidBody & _obj,
 	return ret;
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud_Knearest( class SolidBody & _obj, float _resolution, int _K )
+bool DownOutMeasure::collisionDetectionWithCloud_voxel( SolidBody & _obj, double _resolution )
+{
+	this->cld_mutex.lock();
+	indices_t indices;
+	auto search = _obj.getSearchPoint();
+	bool ret = searchNeighbors_voxel( this->spcCloud, search, _resolution, indices );
+	times(i,0,indices->size()){
+		this->spcCloud->points[(*indices)[i]].r = 255 ;
+		this->spcCloud->points[(*indices)[i]].g = 0 ;
+		this->spcCloud->points[(*indices)[i]].b  = 0 ;
+	}
+	this->cld_mutex.unlock();
+	return ret;
+}
+
+bool DownOutMeasure::collisionDetectionWithCloud_Knearest( class SolidBody & _obj, float _resolution, int _K )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	distances_t distances;
 	auto search = _obj.getSearchPoint();
-	bool ret = mario::searchNeighbors_Knearest( this->spcCloud, search, _resolution,_K, indices, distances );
+	bool ret = searchNeighbors_Knearest( this->spcCloud, search, _resolution,_K, indices, distances );
 	times(i,0,indices->size()){
 		this->spcCloud->points[(*indices)[i]].r = 255 ;
 		this->spcCloud->points[(*indices)[i]].g = 0 ;
@@ -57,13 +79,13 @@ bool mario::DownOutMeasure::collisionDetectionWithCloud_Knearest( class SolidBod
 	return ret;
 }
 
-bool mario::DownOutMeasure::collisionDetectionWithCloud_radius( class SolidBody & _obj, float _resolution, float _radius )
+bool DownOutMeasure::collisionDetectionWithCloud_radius( class SolidBody & _obj, float _resolution, float _radius )
 {
 	this->cld_mutex.lock();
 	indices_t indices;
 	distances_t distances;
 	auto search = _obj.getSearchPoint();
-	bool ret = mario::searchNeighbors_radius( this->spcCloud, search, _resolution, _radius, indices, distances );
+	bool ret = searchNeighbors_radius( this->spcCloud, search, _resolution, _radius, indices, distances );
 	times(i,0,indices->size()){
 		this->spcCloud->points[(*indices)[i]].r = 255 ;
 		this->spcCloud->points[(*indices)[i]].g = 0 ;
@@ -74,7 +96,7 @@ bool mario::DownOutMeasure::collisionDetectionWithCloud_radius( class SolidBody 
 }
 
 // Simple callbacks.
-void mario::DownOutMeasure::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
+void DownOutMeasure::keyboard_callback( const pcl::visualization::KeyboardEvent& _evt, void* cookie )
 {
 	//std::string* message = (std::string*)cookie;
 	//cout << (*message) << " :: ";
@@ -98,7 +120,7 @@ void mario::DownOutMeasure::keyboard_callback( const pcl::visualization::Keyboar
 	//}
 }
 
-void mario::DownOutMeasure::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
+void DownOutMeasure::mouse_callback( const pcl::visualization::MouseEvent& mouse_event, void* cookie )
 {
 	std::string* message = (std::string*) cookie;
 	// ¶ƒNƒŠƒbƒN
@@ -111,7 +133,7 @@ void mario::DownOutMeasure::mouse_callback( const pcl::visualization::MouseEvent
 }
 
 
-void mario::DownOutMeasure::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloud)
+void DownOutMeasure::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _cloud)
 {
 	FPS_CALC ("callback");
 
@@ -126,20 +148,20 @@ void mario::DownOutMeasure::cloud_cb (const pcl::PointCloud<pcl::PointXYZRGBA>::
 
 }
 
-void mario::DownOutMeasure::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
+void DownOutMeasure::image_callback ( const boost::shared_ptr<openni_wrapper::Image>& image )
 {
 	FPS_CALC ("image callback");
 
 	this->img_mutex.lock ();
 	static boost::shared_ptr<openni_wrapper::Image> filtered_image;
-	mario::cvt2Mat(image,filtered_image);
+	cvt2Mat(image,filtered_image);
 	if( filtered_image ){
 		this->spImage = image;
 	}
 	this->img_mutex.unlock ();
 }
 
-void mario::DownOutMeasure::downAndOut( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _src, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & _dst )
+void DownOutMeasure::downAndOut( const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr & _src, pcl::PointCloud<pcl::PointXYZRGBA>::Ptr & _dst )
 {
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr downed;
 	MAKE_CLOUD(downed);
@@ -147,15 +169,15 @@ void mario::DownOutMeasure::downAndOut( const pcl::PointCloud<pcl::PointXYZRGBA>
 		MAKE_CLOUD(_dst);
 	}
 
-	mario::downSamplingFilter( _src, downed );
-	mario::outlierFilter( downed, _dst );
+	downSamplingFilter( _src, downed );
+	outlierFilter( downed, _dst );
 	cout << "DownOut:" << _dst->points.size() << endl;
 }
 
 static string const mouseMsg3D ("Mouse coordinates in PCL Visualizer");
 static string const keyMsg3D ("Key event for PCL Visualizer");
-void mario::DownOutMeasure::setCallBackFunctions()
+void DownOutMeasure::setCallBackFunctions()
 {
-	this->spVisualizer->registerMouseCallback   ( &mario::DownOutMeasure::mouse_callback   , (void*)(&mouseMsg3D) );    
-	this->spVisualizer->registerKeyboardCallback( &mario::DownOutMeasure::keyboard_callback, (void*)(&keyMsg3D) );
+	this->spVisualizer->registerMouseCallback   ( &DownOutMeasure::mouse_callback   , (void*)(&mouseMsg3D) );    
+	this->spVisualizer->registerKeyboardCallback( &DownOutMeasure::keyboard_callback, (void*)(&keyMsg3D) );
 }
